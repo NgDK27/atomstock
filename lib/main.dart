@@ -1,56 +1,43 @@
 import 'package:flutter/material.dart';
-import 'api_service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'main.g.dart';
+
+// We create a "provider", which will store a value (here "Hello world").
+// By using a provider, this allows us to mock/override the value exposed.
+@riverpod
+String helloWorld(HelloWorldRef ref) {
+  return 'Hello world';
+}
 
 void main() {
-  runApp(const MyApp());
-}
+  runApp(
+    // For widgets to be able to read providers, we need to wrap the entire
+    // application in a "ProviderScope" widget.
+    // This is where the state of our providers will be stored.
+    ProviderScope(
+      child: MyApp(),
+    ),
+  );}
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+// Extend ConsumerWidget instead of StatelessWidget, which is exposed by Riverpod
+class MyApp extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: HomeScreen(),
-    );
-  }
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final String value = ref.watch(helloWorldProvider);
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
-
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  String _response = '';
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchData();
-  }
-
-  void _fetchData() async {
-    try {
-      String response = await ApiService().fetchHello();
-      setState(() {
-        _response = response;
-      });
-    } catch (e) {
-      print('Failed to load data: $e');
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Flutter & Go App'),
+    return MaterialApp(
+      title: 'Oppenhomies App',
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Example')),
+        body: Center(
+          child: Text(value),
+        ),
       ),
-      body: Center(
-        child: Text(_response.isEmpty ? 'Loading...' : _response),
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
       ),
     );
   }
