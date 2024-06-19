@@ -5,34 +5,31 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:oppenhomies/styles/colors.dart';
 
 import '../../styles/radius.dart';
+import 'OpButton.dart';
 
-class OpTonalButton extends ConsumerWidget {
-  final String text;
-  final VoidCallback? onPressed;
 
-  const OpTonalButton({super.key, required this.text, this.onPressed});
+class OpTonalButton extends OpButton {
+  const OpTonalButton({super.key, required super.text, super.onPressed});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return PlatformTextButton(
-      onPressed: onPressed,
-      cupertino: (_, __) => CupertinoTextButtonData(
-        borderRadius: BorderRadius.circular(OpRadius.full),
-        color: OpDynamicColor.secondaryContainer,
-      ),
-      material: (_, __) => MaterialTextButtonData(
-          style: TextButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-              overlayColor: Theme.of(context).colorScheme.onSecondaryContainer)),
-      child: Text(
-        text,
-        style: TextStyle(
-            color: platformThemeData(context,
-                material: (ThemeData data) => data.colorScheme.onSecondaryContainer,
-                cupertino: (CupertinoThemeData data) =>
-                data.primaryColor),
-            fontVariations: const [FontVariation.weight(600)]),
-      ),
-    );
+  Color getCupertinoColor(BuildContext context) {
+    return OpDynamicColor.secondaryContainer;
+  }
+
+  @override
+  Color getMaterialBackgroundColor(BuildContext context) {
+    return Theme.of(context).colorScheme.secondaryContainer;
+  }
+
+  @override
+  Color getMaterialOverlayColor(BuildContext context) {
+    return Theme.of(context).colorScheme.onSecondaryContainer;
+  }
+
+  @override
+  Color getTextColor(BuildContext context) {
+    return platformThemeData(context,
+        material: (ThemeData data) => data.colorScheme.onSecondaryContainer,
+        cupertino: (CupertinoThemeData data) => data.primaryColor);
   }
 }
