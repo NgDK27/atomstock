@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:oppenhomies/styles/opacities.dart';
 
 class OpDynamicColor {
   OpDynamicColor._();
@@ -16,12 +17,12 @@ class OpDynamicColor {
   static const Color _primaryDark = OpColor.aqua100;
   static Color get primary => _getDynamicColor(_primaryLight, _primaryDark);
 
-  static final Color _primarySecondaryLight = OpColor.aqua140.withAlpha(153);
-  static final Color _primarySecondaryDark = OpColor.aqua100.withAlpha(153);
+  static final Color _primarySecondaryLight = OpColor.aqua140.withAlpha(OpOpacity.secondary);
+  static final Color _primarySecondaryDark = OpColor.aqua100.withAlpha(OpOpacity.secondary);
   static Color get primarySecondary => _getDynamicColor(_primarySecondaryLight, _primarySecondaryDark);
 
-  static final Color _primaryQuarternaryLight = OpColor.aqua140.withAlpha(40);
-  static final Color _primaryQuarternaryDark = OpColor.aqua100.withAlpha(40);
+  static final Color _primaryQuarternaryLight = OpColor.aqua140.withAlpha(OpOpacity.quaternary);
+  static final Color _primaryQuarternaryDark = OpColor.aqua100.withAlpha(OpOpacity.quaternary);
   static Color get primaryQuarternary => _getDynamicColor(_primaryQuarternaryLight, _primaryQuarternaryDark);
 
   // Stock
@@ -41,12 +42,12 @@ class OpDynamicColor {
   static final Color _stockRiseGradientInDark = OpColor.aqua80.withAlpha(102);
   static Color get stockRiseGradientIn => _getDynamicColor(_stockRiseGradientInLight, _stockRiseGradientInDark);
 
-  static final Color _stockFallGradientOutLight = OpColor.cherry120.withAlpha(0);
-  static final Color _stockFallGradientOutDark = OpColor.cherry80.withAlpha(0);
+  static final Color _stockFallGradientOutLight = OpColor.cherry120.withAlpha(OpOpacity.none);
+  static final Color _stockFallGradientOutDark = OpColor.cherry80.withAlpha(OpOpacity.none);
   static Color get stockFallGradientOut => _getDynamicColor(_stockFallGradientOutLight, _stockFallGradientOutDark);
 
-  static final Color _stockRiseGradientOutLight = OpColor.aqua120.withAlpha(0);
-  static final Color _stockRiseGradientOutDark = OpColor.aqua80.withAlpha(0);
+  static final Color _stockRiseGradientOutLight = OpColor.aqua120.withAlpha(OpOpacity.none);
+  static final Color _stockRiseGradientOutDark = OpColor.aqua80.withAlpha(OpOpacity.none);
   static Color get stockRiseGradientOut => _getDynamicColor(_stockRiseGradientOutLight, _stockRiseGradientOutDark);
 
   // AI
@@ -54,8 +55,8 @@ class OpDynamicColor {
   static final Color _aiGradientInDark = OpColor.grape80.withAlpha(102);
   static Color get aiGradientIn => _getDynamicColor(_aiGradientInLight, _aiGradientInDark);
 
-  static final Color _aiGradientOutLight = OpColor.grape120.withAlpha(0);
-  static final Color _aiGradientOutDark = OpColor.grape80.withAlpha(0);
+  static final Color _aiGradientOutLight = OpColor.grape120.withAlpha(OpOpacity.none);
+  static final Color _aiGradientOutDark = OpColor.grape80.withAlpha(OpOpacity.none);
   static Color get aiGradientOut => _getDynamicColor(_aiGradientOutLight, _aiGradientOutDark);
 
   static const Color _aiLight = OpColor.grape120;
@@ -76,12 +77,12 @@ class OpDynamicColor {
   static const Color _surfaceInverseDark = OpColor.mono100;
   static Color get surfaceInverse => _getDynamicColor(_surfaceInverseLight, _surfaceInverseDark);
 
-  static final Color _surfaceSecondaryLight = OpColor.charcoal120.withAlpha(153);
-  static final Color _surfaceSecondaryDark = OpColor.charcoal20.withAlpha(76);
+  static final Color _surfaceSecondaryLight = OpColor.charcoal120.withAlpha(OpOpacity.secondary);
+  static final Color _surfaceSecondaryDark = OpColor.charcoal20.withAlpha(OpOpacity.tertiary);
   static Color get surfaceSecondary => _getDynamicColor(_surfaceSecondaryLight, _surfaceSecondaryDark);
 
-  static final Color _surfaceQuarternaryLight = OpColor.charcoal120.withAlpha(40);
-  static final Color _surfaceQuarternaryDark = OpColor.charcoal20.withAlpha(40);
+  static final Color _surfaceQuarternaryLight = OpColor.charcoal120.withAlpha(OpOpacity.quaternary);
+  static final Color _surfaceQuarternaryDark = OpColor.charcoal20.withAlpha(OpOpacity.quaternary);
   static Color get surfaceQuarternary => _getDynamicColor(_surfaceQuarternaryLight, _surfaceQuarternaryDark);
 
   static const Color _surfaceVariantLight = OpColor.mono99;
@@ -130,9 +131,13 @@ class OpDynamicColor {
   static const Color _containerNeutralLv2Dark = OpColor.mono60;
   static Color get containerNeutralLv2 => _getDynamicColor(_containerNeutralLv2Light, _containerNeutralLv2Dark);
 
-  static const Color _containerPrimaryLight = OpColor.aqua60;
-  static const Color _containerPrimaryDark = OpColor.aqua140;
-  static Color get containerPrimary => _getDynamicColor(_containerPrimaryLight, _containerPrimaryDark);
+  static const Color _primaryContainerLight = OpColor.aqua60;
+  static const Color _primaryContainerDark = OpColor.aqua140;
+  static Color get primaryContainer => _getDynamicColor(_primaryContainerLight, _primaryContainerDark);
+
+  static final Color _secondaryContainerLight = OpColor.aqua60.withAlpha(OpOpacity.tertiary);
+  static final Color _secondaryContainerDark = OpColor.aqua140.withAlpha(OpOpacity.tertiary);
+  static Color get secondaryContainer => _getDynamicColor(_secondaryContainerLight, _secondaryContainerDark);
 }
 
 class OpColor {

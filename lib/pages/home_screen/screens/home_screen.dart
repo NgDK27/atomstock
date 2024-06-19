@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:oppenhomies/styles/spacings.dart';
+import 'package:oppenhomies/widgets/buttons/FilledButton.dart';
 import 'package:oppenhomies/widgets/buttons/FilledGlowButton.dart';
+import 'package:oppenhomies/widgets/buttons/OpTonalButton.dart';
 import 'package:oppenhomies/widgets/scaffold/OpPlatformSliverScaffold.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -10,17 +12,26 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => OpPlatformSliverScaffold(
-    title: "Test",
+        title: "Test",
         sliver: SliverList(
           delegate: SliverChildBuilderDelegate(
             (BuildContext context, int index) => Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 OpFilledGlowButton(
-                  text: "Button Text",
+                  text: "Filled Glow Button",
                   onPressed: () {},
                 ),
                 const SizedBox(height: OpSpacing.md),
+                OpFilledButton(
+                  text: "Filled Button",
+                  onPressed: () {},
+                ),
+                const SizedBox(height: OpSpacing.md),
+                OpTonalButton(
+                  text: "Hmm Button",
+                  onPressed: () {},
+                ),
               ],
             ),
             childCount: 1,
