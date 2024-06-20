@@ -135,7 +135,7 @@ class OpDynamicColor {
   static const Color _primaryContainerDark = OpColor.aqua140;
   static Color get primaryContainer => _getDynamicColor(_primaryContainerLight, _primaryContainerDark);
 
-  static final Color _secondaryContainerLight = OpColor.aqua60.withAlpha(OpOpacity.tertiary);
+  static final Color _secondaryContainerLight = OpColor.aqua80.withAlpha(OpOpacity.tertiary);
   static final Color _secondaryContainerDark = OpColor.aqua140.withAlpha(OpOpacity.tertiary);
   static Color get secondaryContainer => _getDynamicColor(_secondaryContainerLight, _secondaryContainerDark);
 }

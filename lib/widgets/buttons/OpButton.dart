@@ -12,14 +12,14 @@ abstract class OpButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return PlatformElevatedButton(
+    return PlatformTextButton(
       onPressed: onPressed,
-      cupertino: (_, __) => CupertinoElevatedButtonData(
+      cupertino: (_, __) => CupertinoTextButtonData(
         borderRadius: BorderRadius.circular(OpRadius.full),
         color: getCupertinoColor(context),
       ),
-      material: (_, __) => MaterialElevatedButtonData(
-          style: ElevatedButton.styleFrom(
+      material: (_, __) => MaterialTextButtonData(
+          style: TextButton.styleFrom(
               backgroundColor: getMaterialBackgroundColor(context),
               overlayColor: getMaterialOverlayColor(context))),
       child: Text(
