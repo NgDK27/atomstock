@@ -17,6 +17,7 @@ class OpPlatformSliverAppBar extends ConsumerWidget {
       ),
       cupertino: (_, __) => CupertinoSliverNavigationBar(
         largeTitle: Text(title),
+        stretch: true,
       ),
     );
   }

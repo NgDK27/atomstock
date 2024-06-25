@@ -6,6 +6,6 @@ class OnboardingGeneral extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const OnboardingLayout(text: "Invest like a genius, without the heavy lifting");
+    return const OnboardingLayout(title: "Invest like a genius, without the\nheavy lifting");
   }
 }

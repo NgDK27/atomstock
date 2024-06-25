@@ -1,13 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../styles/radius.dart';
-import 'OpButton.dart';
+import '../OpButton.dart';
 
-class OpFilledButton extends OpButton {
-  const OpFilledButton({super.key, required super.text, super.onPressed});
+class OpFilledPrimaryButton extends OpButton {
+  const OpFilledPrimaryButton({super.key, required super.text, super.onPressed});
 
   @override
   Color getCupertinoColor(BuildContext context) {
