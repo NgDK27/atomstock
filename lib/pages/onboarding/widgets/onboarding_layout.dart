@@ -6,6 +6,10 @@ import 'package:oppenhomies/styles/opacities.dart';
 import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/widgets/buttons/primary/OpFilledGlowPrimaryButton.dart';
 import 'package:oppenhomies/widgets/buttons/primary/OpTonalPrimaryButton.dart';
+import 'package:oppenhomies/widgets/illustrations/alarm_clock_illustration.dart';
+import 'package:oppenhomies/widgets/illustrations/light_bulb_illustration.dart';
+import 'package:oppenhomies/widgets/illustrations/lightning_illustration.dart';
+import 'package:oppenhomies/widgets/illustrations/shield_check_illustration.dart';
 
 import '../../../widgets/illustrations/crown_illustration.dart';
 import '../../../widgets/illustrations/pie_chart_illustration.dart';
@@ -59,8 +63,10 @@ class OnboardingLayout extends StatelessWidget {
                 Expanded(
                   child: Center(
                       child:
-                      // CrownIllustration()
-                      PieChartIllustration()
+                    Transform.scale(
+                      scale: 1.25,
+                      child: AlarmClockIllustration(),
+                    )
                   ),
                 ),
                 const SizedBox(height: OpSpacing.md),
