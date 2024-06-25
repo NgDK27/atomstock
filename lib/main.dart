@@ -44,7 +44,7 @@ class OppenhomiesApp extends ConsumerWidget {
                 cupertinoDarkTheme: opCupertinoDarkTheme,
                 builder: (context) => const PlatformApp(
                   title: 'Flutter Platform Widgets',
-                  home: OnboardingGeneral(),
+                  home: OnboardingSecurity(),
                   // Hide "Debug" banner
                   debugShowCheckedModeBanner: false,
                   // Platform App

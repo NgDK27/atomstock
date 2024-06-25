@@ -2,9 +2,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:oppenhomies/widgets/illustrations/svg_helpers.dart';
 
 import 'glassmorphism_base.dart';
+import 'glassmorphism_colors.dart';
 
-class LightBulbIllustration extends GlassmorphismIllustration {
-  const LightBulbIllustration({super.key});
+class LightBulbIllustration extends GlassmorphismIllustration  with GlassmorphismColorMixin<LightBulbIllustration> {
+  const LightBulbIllustration({super.key,
+    super.overlayBeginColor,
+    super.overlayEndColor,
+    super.underlyingBeginColor,
+    super.underlyingEndColor,
+    super.overlayBorderColor,});
 
   @override
   String get underlyingSvg =>
@@ -46,4 +52,21 @@ class LightBulbIllustration extends GlassmorphismIllustration {
 
   @override
   double get topmostBottomPositionOffset => -70;
+
+  @override
+  LightBulbIllustration copyWith({
+    Color? overlayBeginColor,
+    Color? overlayEndColor,
+    Color? underlyingBeginColor,
+    Color? underlyingEndColor,
+    Color? overlayBorderColor,
+  }) {
+    return LightBulbIllustration(
+      overlayBeginColor: overlayBeginColor ?? this.overlayBeginColor,
+      overlayEndColor: overlayEndColor ?? this.overlayEndColor,
+      underlyingBeginColor: underlyingBeginColor ?? this.underlyingBeginColor,
+      underlyingEndColor: underlyingEndColor ?? this.underlyingEndColor,
+      overlayBorderColor: overlayBorderColor ?? this.overlayBorderColor,
+    );
+  }
 }

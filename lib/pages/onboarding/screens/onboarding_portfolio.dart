@@ -10,7 +10,7 @@ class OnboardingPortfolio extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return OnboardingLayout(
       title: "Command your portfolio, conquer the market",
-      illustration: const CrownIllustration(),
+      illustration: const CrownIllustration().withDynamicColors(context),
       backgroundScale: 4,
       backgroundAlignment: Alignment.centerRight,
       onSignInPressed: () {},

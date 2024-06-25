@@ -10,7 +10,7 @@ class OnboardingSecurity extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return OnboardingLayout(
       title: "Thieves lose, you win. Every time.",
-      illustration: const ShieldCheckIllustration(),
+      illustration: const ShieldCheckIllustration().withDynamicColors(context),
       backgroundScale: 2,
       backgroundAlignment: Alignment.topRight,
       onSignInPressed: () {},

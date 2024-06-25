@@ -49,6 +49,8 @@ abstract class GlassmorphismIllustration extends StatelessWidget {
   double get topmostRightPositionOffset => 0;
   Alignment get topmostAlignment => Alignment.center;
 
+  GlassmorphismIllustration copyWith();
+
   @override
   Widget build(BuildContext context) {
     return Stack(

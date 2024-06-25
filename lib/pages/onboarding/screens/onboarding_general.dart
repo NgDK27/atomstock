@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:oppenhomies/pages/onboarding/widgets/onboarding_layout.dart';
 import 'package:oppenhomies/widgets/illustrations/pie_chart_illustration.dart';
@@ -13,7 +12,7 @@ class OnboardingGeneral extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return OnboardingLayout(
       title: "Invest like a genius, without the heavy lifting",
-      illustration: PieChartIllustration(),
+      illustration: const PieChartIllustration().withDynamicColors(context),
       backgroundScale: 2,
       backgroundAlignment: Alignment.topLeft,
       onSignInPressed: () {},

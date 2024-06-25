@@ -2,9 +2,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:oppenhomies/widgets/illustrations/svg_helpers.dart';
 
 import 'glassmorphism_base.dart';
+import 'glassmorphism_colors.dart';
 
-class LightningIllustration extends GlassmorphismIllustration {
-  const LightningIllustration({super.key});
+class LightningIllustration extends GlassmorphismIllustration
+    with GlassmorphismColorMixin<LightningIllustration> {
+  const LightningIllustration({
+    super.key,
+    super.overlayBeginColor,
+    super.overlayEndColor,
+    super.underlyingBeginColor,
+    super.underlyingEndColor,
+    super.overlayBorderColor,
+  });
 
   @override
   String get underlyingSvg =>
@@ -35,4 +44,21 @@ class LightningIllustration extends GlassmorphismIllustration {
 
   @override
   double get overlayHeight => 265;
+
+  @override
+  LightningIllustration copyWith({
+    Color? overlayBeginColor,
+    Color? overlayEndColor,
+    Color? underlyingBeginColor,
+    Color? underlyingEndColor,
+    Color? overlayBorderColor,
+  }) {
+    return LightningIllustration(
+      overlayBeginColor: overlayBeginColor ?? this.overlayBeginColor,
+      overlayEndColor: overlayEndColor ?? this.overlayEndColor,
+      underlyingBeginColor: underlyingBeginColor ?? this.underlyingBeginColor,
+      underlyingEndColor: underlyingEndColor ?? this.underlyingEndColor,
+      overlayBorderColor: overlayBorderColor ?? this.overlayBorderColor,
+    );
+  }
 }

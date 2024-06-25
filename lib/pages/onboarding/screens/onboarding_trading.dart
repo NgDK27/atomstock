@@ -10,8 +10,7 @@ class OnboardingTrading extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return OnboardingLayout(
       title: "Automated trading round the clock, never miss an opportunity",
-      illustration: const AlarmClockIllustration(
-      ),
+      illustration: const AlarmClockIllustration().withDynamicColors(context),
       backgroundScale: 3,
       backgroundAlignment: Alignment.centerRight,
       onSignInPressed: () {},

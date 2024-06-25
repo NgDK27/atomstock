@@ -13,7 +13,7 @@ class OnboardingMarket extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return OnboardingLayout(
       title: "Lightning fast access to real-time market data",
-      illustration: const LightningIllustration(),
+      illustration: const LightningIllustration().withDynamicColors(context),
       backgroundScale: 4,
       backgroundAlignment: Alignment.bottomCenter,
       onSignInPressed: () {},

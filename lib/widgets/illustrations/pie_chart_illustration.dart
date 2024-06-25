@@ -2,8 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:oppenhomies/widgets/illustrations/svg_helpers.dart';
 
 import 'glassmorphism_base.dart';
+import 'glassmorphism_colors.dart';
 
-class PieChartIllustration extends GlassmorphismIllustration {
+class PieChartIllustration extends GlassmorphismIllustration
+    with GlassmorphismColorMixin<PieChartIllustration>{
   const PieChartIllustration({
     super.key,
     super.overlayBeginColor,
@@ -43,4 +45,21 @@ class PieChartIllustration extends GlassmorphismIllustration {
 
   @override
   double get overlayHeight => 214;
+
+  @override
+  PieChartIllustration copyWith({
+    Color? overlayBeginColor,
+    Color? overlayEndColor,
+    Color? underlyingBeginColor,
+    Color? underlyingEndColor,
+    Color? overlayBorderColor,
+  }) {
+    return PieChartIllustration(
+      overlayBeginColor: overlayBeginColor ?? this.overlayBeginColor,
+      overlayEndColor: overlayEndColor ?? this.overlayEndColor,
+      underlyingBeginColor: underlyingBeginColor ?? this.underlyingBeginColor,
+      underlyingEndColor: underlyingEndColor ?? this.underlyingEndColor,
+      overlayBorderColor: overlayBorderColor ?? this.overlayBorderColor,
+    );
+  }
 }
