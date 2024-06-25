@@ -46,6 +46,7 @@ dependencies:
   flutter_platform_widgets: ^7.0.0
   flutter_svg: ^2.0.9
   svg_path_parser: ^1.1.2
+  prevent_orphan_text: ^0.0.3
 
 dev_dependencies:
   flutter_test:
@@ -107,8 +108,6 @@ flutter:
   assets:
     # images
     - assets/images/onboarding_bg.png
-    # svgs
-    - assets/svgs/pie_chart.svg
 
   fonts:
     - family: Inter

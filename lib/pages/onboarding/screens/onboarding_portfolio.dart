@@ -1,0 +1,20 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:oppenhomies/pages/onboarding/widgets/onboarding_layout.dart';
+import 'package:oppenhomies/widgets/illustrations/crown_illustration.dart';
+
+class OnboardingPortfolio extends ConsumerWidget {
+  const OnboardingPortfolio({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return OnboardingLayout(
+      title: "Command your portfolio, conquer the market",
+      illustration: const CrownIllustration(),
+      backgroundScale: 4,
+      backgroundAlignment: Alignment.centerRight,
+      onSignInPressed: () {},
+      onGetStartedPressed: () {},
+    );
+  }
+}

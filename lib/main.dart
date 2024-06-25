@@ -5,7 +5,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:oppenhomies/pages/home_screen/screens/home_screen.dart';
+import 'package:oppenhomies/pages/onboarding/screens/onboarding_ai.dart';
 import 'package:oppenhomies/pages/onboarding/screens/onboarding_general.dart';
+import 'package:oppenhomies/pages/onboarding/screens/onboarding_portfolio.dart';
+import 'package:oppenhomies/pages/onboarding/screens/onboarding_security.dart';
+import 'package:oppenhomies/pages/onboarding/screens/onboarding_trading.dart';
 import 'package:oppenhomies/styles/cupertino_theme.dart';
 import 'package:oppenhomies/styles/fonts.dart';
 

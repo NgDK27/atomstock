@@ -4,7 +4,14 @@ import 'package:oppenhomies/widgets/illustrations/svg_helpers.dart';
 import 'glassmorphism_base.dart';
 
 class PieChartIllustration extends GlassmorphismIllustration {
-  const PieChartIllustration({super.key});
+  const PieChartIllustration({
+    super.key,
+    super.overlayBeginColor,
+    super.overlayEndColor,
+    super.underlyingBeginColor,
+    super.underlyingEndColor,
+    super.overlayBorderColor,
+  });
 
   @override
   String get underlyingSvg =>

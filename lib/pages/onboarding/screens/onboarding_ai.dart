@@ -1,21 +1,19 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:oppenhomies/pages/onboarding/widgets/onboarding_layout.dart';
+import 'package:oppenhomies/widgets/illustrations/light_bulb_illustration.dart';
 import 'package:oppenhomies/widgets/illustrations/pie_chart_illustration.dart';
 
-class OnboardingGeneral extends ConsumerWidget {
-  const OnboardingGeneral({
-    super.key,
-  });
+class OnboardingAi extends ConsumerWidget {
+  const OnboardingAi({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return OnboardingLayout(
-      title: "Invest like a genius, without the heavy lifting",
-      illustration: PieChartIllustration(),
+      title: "Outsmart the market with your AI Advisor",
+      illustration: const LightBulbIllustration(),
       backgroundScale: 2,
-      backgroundAlignment: Alignment.topLeft,
+      backgroundAlignment: Alignment.bottomRight,
       onSignInPressed: () {},
       onGetStartedPressed: () {},
     );
