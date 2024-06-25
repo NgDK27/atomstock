@@ -12,7 +12,7 @@ class MaterialPrimaryGlow extends BoxDecoration {
         color: Theme.of(context)
             .colorScheme
             .primary
-            .withAlpha(OpOpacity.secondary),
+            .withOpacity(OpOpacity.secondary),
         blurRadius: 2,
         spreadRadius: -5,
       ),
@@ -20,7 +20,7 @@ class MaterialPrimaryGlow extends BoxDecoration {
         color: Theme.of(context)
             .colorScheme
             .primary
-            .withAlpha(OpOpacity.secondary),
+            .withOpacity(OpOpacity.secondary),
         blurRadius: 18,
         spreadRadius: -8,
       ),

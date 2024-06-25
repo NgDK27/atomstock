@@ -7,13 +7,6 @@ import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/widgets/buttons/primary/OpFilledGlowPrimaryButton.dart';
 import 'package:oppenhomies/widgets/buttons/primary/OpTonalPrimaryButton.dart';
 import 'package:oppenhomies/widgets/illustrations/alarm_clock_illustration.dart';
-import 'package:oppenhomies/widgets/illustrations/light_bulb_illustration.dart';
-import 'package:oppenhomies/widgets/illustrations/lightning_illustration.dart';
-import 'package:oppenhomies/widgets/illustrations/shield_check_illustration.dart';
-
-import '../../../widgets/illustrations/crown_illustration.dart';
-import '../../../widgets/illustrations/pie_chart_illustration.dart';
-
 
 class OnboardingLayout extends StatelessWidget {
   final String title;
@@ -28,16 +21,16 @@ class OnboardingLayout extends StatelessWidget {
             colorFilter: ColorFilter.mode(
               platformThemeData(context,
                   material: (ThemeData data) =>
-                      data.colorScheme.surface.withAlpha(OpOpacity.secondary),
-                  cupertino: (_) => OpDynamicColor.primary.withOpacity(0.1)),
+                      data.colorScheme.surface.withOpacity(OpOpacity.secondary),
+                  cupertino: (_) => OpDynamicColor.primary.withOpacity(OpOpacity.quaternary)),
               BlendMode.srcOver,
             ),
             child: ColorFiltered(
               colorFilter: ColorFilter.mode(
                 platformThemeData(context,
                     material: (ThemeData data) =>
-                        data.colorScheme.surface.withAlpha(OpOpacity.secondary),
-                    cupertino: (_) => OpDynamicColor.surface.withAlpha(OpOpacity.tertiary)),
+                        data.colorScheme.surface.withOpacity(OpOpacity.secondary),
+                    cupertino: (_) => OpDynamicColor.surface.withOpacity(OpOpacity.tertiary)),
                 BlendMode.srcOver,
               ),
               child: SizedBox.expand(

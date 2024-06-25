@@ -17,12 +17,12 @@ class OpDynamicColor {
   static const Color _primaryDark = OpColor.aqua100;
   static Color get primary => _getDynamicColor(_primaryLight, _primaryDark);
 
-  static final Color _primarySecondaryLight = OpColor.aqua140.withAlpha(OpOpacity.secondary);
-  static final Color _primarySecondaryDark = OpColor.aqua100.withAlpha(OpOpacity.secondary);
+  static final Color _primarySecondaryLight = OpColor.aqua140.withOpacity(OpOpacity.secondary);
+  static final Color _primarySecondaryDark = OpColor.aqua100.withOpacity(OpOpacity.secondary);
   static Color get primarySecondary => _getDynamicColor(_primarySecondaryLight, _primarySecondaryDark);
 
-  static final Color _primaryQuarternaryLight = OpColor.aqua140.withAlpha(OpOpacity.quaternary);
-  static final Color _primaryQuarternaryDark = OpColor.aqua100.withAlpha(OpOpacity.quaternary);
+  static final Color _primaryQuarternaryLight = OpColor.aqua140.withOpacity(OpOpacity.quaternary);
+  static final Color _primaryQuarternaryDark = OpColor.aqua100.withOpacity(OpOpacity.quaternary);
   static Color get primaryQuarternary => _getDynamicColor(_primaryQuarternaryLight, _primaryQuarternaryDark);
 
   // Stock
@@ -34,29 +34,29 @@ class OpDynamicColor {
   static const Color _stockRiseDark = OpColor.aqua80;
   static Color get stockRise => _getDynamicColor(_stockRiseLight, _stockRiseDark);
 
-  static final Color _stockFallGradientInLight = OpColor.cherry120.withAlpha(102);
-  static final Color _stockFallGradientInDark = OpColor.cherry80.withAlpha(102);
+  static final Color _stockFallGradientInLight = OpColor.cherry120.withOpacity(102);
+  static final Color _stockFallGradientInDark = OpColor.cherry80.withOpacity(102);
   static Color get stockFallGradientIn => _getDynamicColor(_stockFallGradientInLight, _stockFallGradientInDark);
 
-  static final Color _stockRiseGradientInLight = OpColor.aqua120.withAlpha(102);
-  static final Color _stockRiseGradientInDark = OpColor.aqua80.withAlpha(102);
+  static final Color _stockRiseGradientInLight = OpColor.aqua120.withOpacity(102);
+  static final Color _stockRiseGradientInDark = OpColor.aqua80.withOpacity(102);
   static Color get stockRiseGradientIn => _getDynamicColor(_stockRiseGradientInLight, _stockRiseGradientInDark);
 
-  static final Color _stockFallGradientOutLight = OpColor.cherry120.withAlpha(OpOpacity.none);
-  static final Color _stockFallGradientOutDark = OpColor.cherry80.withAlpha(OpOpacity.none);
+  static final Color _stockFallGradientOutLight = OpColor.cherry120.withOpacity(OpOpacity.none);
+  static final Color _stockFallGradientOutDark = OpColor.cherry80.withOpacity(OpOpacity.none);
   static Color get stockFallGradientOut => _getDynamicColor(_stockFallGradientOutLight, _stockFallGradientOutDark);
 
-  static final Color _stockRiseGradientOutLight = OpColor.aqua120.withAlpha(OpOpacity.none);
-  static final Color _stockRiseGradientOutDark = OpColor.aqua80.withAlpha(OpOpacity.none);
+  static final Color _stockRiseGradientOutLight = OpColor.aqua120.withOpacity(OpOpacity.none);
+  static final Color _stockRiseGradientOutDark = OpColor.aqua80.withOpacity(OpOpacity.none);
   static Color get stockRiseGradientOut => _getDynamicColor(_stockRiseGradientOutLight, _stockRiseGradientOutDark);
 
   // AI
-  static final Color _aiGradientInLight = OpColor.grape120.withAlpha(102);
-  static final Color _aiGradientInDark = OpColor.grape80.withAlpha(102);
+  static final Color _aiGradientInLight = OpColor.grape120.withOpacity(102);
+  static final Color _aiGradientInDark = OpColor.grape80.withOpacity(102);
   static Color get aiGradientIn => _getDynamicColor(_aiGradientInLight, _aiGradientInDark);
 
-  static final Color _aiGradientOutLight = OpColor.grape120.withAlpha(OpOpacity.none);
-  static final Color _aiGradientOutDark = OpColor.grape80.withAlpha(OpOpacity.none);
+  static final Color _aiGradientOutLight = OpColor.grape120.withOpacity(OpOpacity.none);
+  static final Color _aiGradientOutDark = OpColor.grape80.withOpacity(OpOpacity.none);
   static Color get aiGradientOut => _getDynamicColor(_aiGradientOutLight, _aiGradientOutDark);
 
   static const Color _aiLight = OpColor.grape120;
@@ -77,12 +77,12 @@ class OpDynamicColor {
   static const Color _surfaceInverseDark = OpColor.mono100;
   static Color get surfaceInverse => _getDynamicColor(_surfaceInverseLight, _surfaceInverseDark);
 
-  static final Color _surfaceSecondaryLight = OpColor.charcoal120.withAlpha(OpOpacity.secondary);
-  static final Color _surfaceSecondaryDark = OpColor.charcoal20.withAlpha(OpOpacity.tertiary);
+  static final Color _surfaceSecondaryLight = OpColor.charcoal120.withOpacity(OpOpacity.secondary);
+  static final Color _surfaceSecondaryDark = OpColor.charcoal20.withOpacity(OpOpacity.tertiary);
   static Color get surfaceSecondary => _getDynamicColor(_surfaceSecondaryLight, _surfaceSecondaryDark);
 
-  static final Color _surfaceQuarternaryLight = OpColor.charcoal120.withAlpha(OpOpacity.quaternary);
-  static final Color _surfaceQuarternaryDark = OpColor.charcoal20.withAlpha(OpOpacity.quaternary);
+  static final Color _surfaceQuarternaryLight = OpColor.charcoal120.withOpacity(OpOpacity.quaternary);
+  static final Color _surfaceQuarternaryDark = OpColor.charcoal20.withOpacity(OpOpacity.quaternary);
   static Color get surfaceQuarternary => _getDynamicColor(_surfaceQuarternaryLight, _surfaceQuarternaryDark);
 
   static const Color _surfaceVariantLight = OpColor.mono99;
@@ -135,8 +135,8 @@ class OpDynamicColor {
   static const Color _primaryContainerDark = OpColor.aqua140;
   static Color get primaryContainer => _getDynamicColor(_primaryContainerLight, _primaryContainerDark);
 
-  static final Color _secondaryContainerLight = OpColor.aqua80.withAlpha(OpOpacity.tertiary);
-  static final Color _secondaryContainerDark = OpColor.aqua140.withAlpha(OpOpacity.tertiary);
+  static final Color _secondaryContainerLight = OpColor.aqua80.withOpacity(OpOpacity.tertiary);
+  static final Color _secondaryContainerDark = OpColor.aqua140.withOpacity(OpOpacity.tertiary);
   static Color get secondaryContainer => _getDynamicColor(_secondaryContainerLight, _secondaryContainerDark);
 }
 

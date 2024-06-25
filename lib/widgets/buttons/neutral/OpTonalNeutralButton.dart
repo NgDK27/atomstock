@@ -17,7 +17,7 @@ class OpTonalNeutralButton extends OpButton {
 
   @override
   Color getMaterialBackgroundColor(BuildContext context) {
-    return Theme.of(context).colorScheme.secondaryContainer.withAlpha(OpOpacity.tertiary);
+    return Theme.of(context).colorScheme.secondaryContainer.withOpacity(OpOpacity.tertiary);
   }
 
   @override

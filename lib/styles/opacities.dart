@@ -1,9 +1,9 @@
 class OpOpacity {
   OpOpacity._();
 
-  static const int primary = 255; // 100%
-  static const int secondary = 153; // 60%
-  static const int tertiary = 76; // 30%
-  static const int quaternary = 41; // 16%
-  static const int none = 0;
+  static const double primary = 1; // 100%
+  static const double secondary = 0.6; // 60%
+  static const double tertiary = 0.3; // 30%
+  static const double quaternary = 0.16; // 16%
+  static const double none = 0;
 }
