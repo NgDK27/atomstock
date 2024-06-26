@@ -12,6 +12,7 @@ import 'package:oppenhomies/widgets/illustrations/glassmorphism_base.dart';
 import 'package:prevent_orphan_text/prevent_orphan_text.dart';
 
 import '../../../styles/cupertino_theme.dart';
+import '../../../widgets/story/story_header.dart';
 
 class OnboardingLayout extends ConsumerWidget {
   final String title;
@@ -94,6 +95,7 @@ class OnboardingLayout extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  const StoryHeader(),
                   const SizedBox(height: OpSpacing.xl),
                   PreventOrphanText(
                     title,
