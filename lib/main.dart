@@ -10,6 +10,7 @@ import 'package:oppenhomies/pages/onboarding/screens/onboarding_general.dart';
 import 'package:oppenhomies/pages/onboarding/screens/onboarding_portfolio.dart';
 import 'package:oppenhomies/pages/onboarding/screens/onboarding_security.dart';
 import 'package:oppenhomies/pages/onboarding/screens/onboarding_trading.dart';
+import 'package:oppenhomies/pages/onboarding/widgets/onboarding_story.dart';
 import 'package:oppenhomies/styles/cupertino_theme.dart';
 import 'package:oppenhomies/styles/fonts.dart';
 
@@ -44,7 +45,7 @@ class OppenhomiesApp extends ConsumerWidget {
                 cupertinoDarkTheme: opCupertinoDarkTheme,
                 builder: (context) => const PlatformApp(
                   title: 'Flutter Platform Widgets',
-                  home: OnboardingSecurity(),
+                  home: OnboardingStory(),
                   // Hide "Debug" banner
                   debugShowCheckedModeBanner: false,
                   // Platform App

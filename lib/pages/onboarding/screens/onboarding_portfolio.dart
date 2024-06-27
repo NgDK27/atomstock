@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:oppenhomies/pages/onboarding/widgets/onboarding_layout.dart';
+import 'package:oppenhomies/pages/onboarding/widgets/onboarding_content_layout.dart';
 import 'package:oppenhomies/widgets/illustrations/crown_illustration.dart';
 
 class OnboardingPortfolio extends ConsumerWidget {
@@ -8,7 +8,7 @@ class OnboardingPortfolio extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return OnboardingLayout(
+    return OnboardingContentLayout(
       title: "Command your portfolio, conquer the market",
       illustration: const CrownIllustration().withDynamicColors(context),
       backgroundScale: 4,

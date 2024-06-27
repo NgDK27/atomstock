@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:oppenhomies/pages/onboarding/widgets/onboarding_layout.dart';
+import 'package:oppenhomies/pages/onboarding/widgets/onboarding_content_layout.dart';
 import 'package:oppenhomies/widgets/illustrations/alarm_clock_illustration.dart';
 import 'package:oppenhomies/widgets/illustrations/light_bulb_illustration.dart';
 import 'package:oppenhomies/widgets/illustrations/lightning_illustration.dart';
@@ -11,7 +11,7 @@ class OnboardingMarket extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return OnboardingLayout(
+    return OnboardingContentLayout(
       title: "Lightning fast access to real-time market data",
       illustration: const LightningIllustration().withDynamicColors(context),
       backgroundScale: 4,

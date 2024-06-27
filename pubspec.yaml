@@ -47,6 +47,7 @@ dependencies:
   flutter_svg: ^2.0.9
   svg_path_parser: ^1.1.2
   prevent_orphan_text: ^0.0.3
+  story: ^1.1.0
 
 dev_dependencies:
   flutter_test:
