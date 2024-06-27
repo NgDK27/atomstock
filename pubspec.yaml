@@ -108,6 +108,7 @@ flutter:
   assets:
     # images
     - assets/images/onboarding_bg.png
+    - assets/images/app_icon.png
 
   fonts:
     - family: Inter
