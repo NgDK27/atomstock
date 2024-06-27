@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:oppenhomies/widgets/helpers/colors_tint_with.dart';
 
@@ -21,12 +20,12 @@ mixin GlassmorphismColorMixin<T extends GlassmorphismIllustration> {
       ),
       underlyingBeginColor: platformThemeData(
         context,
-        material: (ThemeData data) => data.colorScheme.primaryFixed,
+        material: (ThemeData data) => data.colorScheme.primary,
         cupertino: (_) => (this as T).underlyingBeginColor,
       ),
       underlyingEndColor: platformThemeData(
         context,
-        material: (ThemeData data) => data.colorScheme.tertiaryFixed,
+        material: (ThemeData data) => data.colorScheme.tertiaryContainer,
         cupertino: (_) => (this as T).underlyingEndColor,
       ),
       overlayBorderColor: platformThemeData(

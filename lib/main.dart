@@ -10,7 +10,7 @@ import 'package:oppenhomies/pages/onboarding/screens/onboarding_general.dart';
 import 'package:oppenhomies/pages/onboarding/screens/onboarding_portfolio.dart';
 import 'package:oppenhomies/pages/onboarding/screens/onboarding_security.dart';
 import 'package:oppenhomies/pages/onboarding/screens/onboarding_trading.dart';
-import 'package:oppenhomies/pages/onboarding/widgets/onboarding_story.dart';
+import 'package:oppenhomies/pages/onboarding/screens/onboarding_story.dart';
 import 'package:oppenhomies/styles/cupertino_theme.dart';
 import 'package:oppenhomies/styles/fonts.dart';
 
