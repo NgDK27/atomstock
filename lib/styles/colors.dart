@@ -51,8 +51,8 @@ class OpDynamicColor {
   static Color get stockRiseGradientOut => _getDynamicColor(_stockRiseGradientOutLight, _stockRiseGradientOutDark);
 
   // AI
-  static final Color _aiGradientInLight = OpColor.grape120.withOpacity(102);
-  static final Color _aiGradientInDark = OpColor.grape80.withOpacity(102);
+  static final Color _aiGradientInLight = OpColor.grape120.withOpacity(OpOpacity.secondary);
+  static final Color _aiGradientInDark = OpColor.grape80.withOpacity(OpOpacity.secondary);
   static Color get aiGradientIn => _getDynamicColor(_aiGradientInLight, _aiGradientInDark);
 
   static final Color _aiGradientOutLight = OpColor.grape120.withOpacity(OpOpacity.none);

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:oppenhomies/pages/ai_select/screens/ai_select.dart';
 import 'package:oppenhomies/pages/home_screen/screens/home_screen.dart';
 import 'package:oppenhomies/pages/onboarding/screens/onboarding_ai.dart';
 import 'package:oppenhomies/pages/onboarding/screens/onboarding_general.dart';
@@ -45,7 +46,7 @@ class OppenhomiesApp extends ConsumerWidget {
                 cupertinoDarkTheme: opCupertinoDarkTheme,
                 builder: (context) => const PlatformApp(
                   title: 'Flutter Platform Widgets',
-                  home: OnboardingStory(),
+                  home: AiSelect(),
                   // Hide "Debug" banner
                   debugShowCheckedModeBanner: false,
                   // Platform App

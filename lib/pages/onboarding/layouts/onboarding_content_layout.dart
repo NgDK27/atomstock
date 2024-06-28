@@ -1,4 +1,3 @@
-import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,8 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/opacities.dart';
 import 'package:oppenhomies/styles/spacings.dart';
-import 'package:oppenhomies/widgets/buttons/primary/OpFilledGlowPrimaryButton.dart';
-import 'package:oppenhomies/widgets/buttons/primary/OpTonalPrimaryButton.dart';
+import 'package:oppenhomies/styles/text.dart';
 import 'package:oppenhomies/widgets/helpers/colors_tint_with.dart';
 import 'package:oppenhomies/widgets/illustrations/glassmorphism_base.dart';
 import 'package:prevent_orphan_text/prevent_orphan_text.dart';
@@ -100,16 +98,15 @@ class OnboardingContentLayout extends ConsumerWidget {
                   const SizedBox(height: OpSpacing.sm),
                   const StoryHeader(),
                   const SizedBox(height: OpSpacing.xl),
-                  PreventOrphanText(
-                    title,
-                    style: platformThemeData(context,
-                        material: (ThemeData data) =>
-                            data.textTheme.displaySmall?.copyWith(
-                                color: OpColor.mono100.tintWithPrimary(context)),
-                        cupertino: (CupertinoThemeData data) => data
-                            .textTheme.navLargeTitleTextStyle
-                            .copyWith(color: OpColor.mono100)),
-                  ),
+                  PreventOrphanText(title,
+                      style: OpTextStyle.display(context)?.copyWith(
+                          inherit: true,
+                          color: switch (currentPlatform) {
+                            PlatformTarget.android =>
+                              OpColor.mono100.tintWithPrimary(context),
+                            PlatformTarget.iOS => OpColor.mono100,
+                            _ => OpTextStyle.display(context)?.color,
+                          })),
                   Expanded(
                     child: Center(
                       child: Transform.scale(
@@ -119,17 +116,21 @@ class OnboardingContentLayout extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: OpSpacing.md),
-                  SizedBox.fromSize(child: PlatformTextButton(
-                    color: Colors.transparent,
-                    onPressed: () {},
-                    child: const Text(""),
-                  ),),
+                  SizedBox.fromSize(
+                    child: PlatformTextButton(
+                      color: Colors.transparent,
+                      onPressed: () {},
+                      child: const Text(""),
+                    ),
+                  ),
                   const SizedBox(height: OpSpacing.md),
-                  SizedBox.fromSize(child: PlatformTextButton(
-                    color: Colors.transparent,
-                    onPressed: () {},
-                    child: const Text(""),
-                  ),),
+                  SizedBox.fromSize(
+                    child: PlatformTextButton(
+                      color: Colors.transparent,
+                      onPressed: () {},
+                      child: const Text(""),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -137,5 +138,3 @@ class OnboardingContentLayout extends ConsumerWidget {
         ));
   }
 }
-
-

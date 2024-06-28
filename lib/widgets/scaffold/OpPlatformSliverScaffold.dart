@@ -4,7 +4,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../styles/spacings.dart';
-import '../OpAppBar.dart';
+import '../app_bars/OpAppBar.dart';
 
 class OpPlatformSliverScaffold extends ConsumerWidget {
   final String title;
