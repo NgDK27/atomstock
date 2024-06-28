@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:oppenhomies/pages/onboarding/widgets/onboarding_content_layout.dart';
 import 'package:oppenhomies/widgets/illustrations/alarm_clock_illustration.dart';
+
+import '../layouts/onboarding_content_layout.dart';
 
 class OnboardingTrading extends ConsumerWidget {
   const OnboardingTrading({super.key});
