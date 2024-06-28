@@ -48,6 +48,8 @@ dependencies:
   svg_path_parser: ^1.1.2
   prevent_orphan_text: ^0.0.3
   story: ^1.1.0
+  go_router: ^14.2.0
+  flutter_markdown: ^0.7.2+1
 
 dev_dependencies:
   flutter_test:
