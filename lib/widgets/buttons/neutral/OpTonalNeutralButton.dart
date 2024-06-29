@@ -12,7 +12,7 @@ class OpTonalNeutralButton extends OpButton {
 
   @override
   Color getCupertinoColor(BuildContext context) {
-    return OpDynamicColor.surfaceQuarternary;
+    return OpLightDarkColor.surfaceQuarternary;
   }
 
   @override
@@ -29,6 +29,6 @@ class OpTonalNeutralButton extends OpButton {
   Color getTextColor(BuildContext context) {
     return platformThemeData(context,
         material: (ThemeData data) => data.colorScheme.onSecondaryContainer,
-        cupertino: (CupertinoThemeData data) => OpDynamicColor.onSurface);
+        cupertino: (CupertinoThemeData data) => OpLightDarkColor.onSurface);
   }
 }

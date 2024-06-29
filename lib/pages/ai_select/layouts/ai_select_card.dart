@@ -6,18 +6,20 @@ import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/radius.dart';
 import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/styles/text.dart';
+import 'package:oppenhomies/widgets/chip/chip_base.dart';
 import 'package:oppenhomies/widgets/illustrations/glassmorphism_base.dart';
 
 import '../../../styles/opacities.dart';
 import '../../../widgets/illustrations/light_bulb_illustration.dart';
+
+enum AiSelectCardType { recommended, comingSoon }
 
 class AiSelectCard extends ConsumerWidget {
   final GlassmorphismIllustration illustration;
   final String aiName;
   final String summary;
   final String description;
-  final bool isAvailable;
-  final bool isRecommended;
+  final AiSelectCardType type;
   final int accuracyPercentage;
   final String supportingText;
 
@@ -26,8 +28,7 @@ class AiSelectCard extends ConsumerWidget {
       required this.aiName,
       required this.summary,
       required this.description,
-      this.isAvailable = true,
-      this.isRecommended = false,
+      required this.type,
       required this.accuracyPercentage,
       required this.supportingText,
       super.key});
@@ -43,11 +44,11 @@ class AiSelectCard extends ConsumerWidget {
                     begin: Alignment.topRight,
                     end: Alignment.bottomLeft,
                     colors: [
-                      OpDynamicColor.ai.withOpacity(OpOpacity.tertiary),
-                      OpDynamicColor.aiGradientOut
+                      OpLightDarkColor.ai.withOpacity(OpOpacity.tertiary),
+                      OpLightDarkColor.aiGradientOut
                     ]),
                 border: Border.all(
-                    color: OpDynamicColor.onSurfaceVariantStrokes, width: 1),
+                    color: OpLightDarkColor.onSurfaceVariantStrokes, width: 1),
                 borderRadius: BorderRadius.all(Radius.circular(OpRadius.md))),
             child: Padding(
               padding: EdgeInsets.fromLTRB(
@@ -56,6 +57,8 @@ class AiSelectCard extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
                           width: 80,
@@ -67,10 +70,12 @@ class AiSelectCard extends ConsumerWidget {
                               child: illustration,
                             ),
                           )),
-                      Container(
-                        // TODO Add chip widget
-                        child: Text('Recommended'),
-                      )
+                      switch (type) {
+                        AiSelectCardType.recommended =>
+                          ChipMediumPrimary(text: "Recommended"),
+                        AiSelectCardType.comingSoon =>
+                          ChipMediumNeutral(text: "Coming soon"),
+                      }
                     ],
                   ),
                   SizedBox(height: OpSpacing.lg),

@@ -26,13 +26,16 @@ class AiSelect extends ConsumerWidget {
                     ),
                     AiSelectCard(
                       aiName: "Slow and Steady",
+                      type: AiSelectCardType.recommended,
                       summary:
                           'Tuned for the right mix of risk and reward, personalized to your choices',
                       description: '''
                       Balanced portfolio for low risk tolerance
 Consistent, long-term growth approach
 Regular re-balancing for optimal allocation
-Diversified across sectors and assets''', accuracyPercentage: 78, supportingText: 'Over the past 6 months',
+Diversified across sectors and assets''',
+                      accuracyPercentage: 78,
+                      supportingText: 'Over the past 6 months',
                     ),
                     // TODO Add horizontal scroll indicator
                     OpFilledGlowPrimaryButton(

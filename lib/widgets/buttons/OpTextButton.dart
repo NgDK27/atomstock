@@ -23,6 +23,6 @@ class OpTextButton extends OpButton {
   }
 
   @override getTextColor(BuildContext context) {
-    return platformThemeData(context, material: (ThemeData data) => data.colorScheme.onSurface, cupertino: (CupertinoThemeData data) => OpDynamicColor.onSurface);
+    return platformThemeData(context, material: (ThemeData data) => data.colorScheme.onSurface, cupertino: (CupertinoThemeData data) => OpLightDarkColor.onSurface);
   }
 }

@@ -18,4 +18,13 @@ class OpTextStyle {
               fontVariations: [FontVariation.weight(600)],
               fontSize:
                   (data.textTheme.navTitleTextStyle.fontSize ?? 16) * 1.2));
+
+  static TextStyle? labelMediumProminent(BuildContext context) =>
+      platformThemeData(context,
+          material: (ThemeData data) => data.textTheme.labelMedium,
+          cupertino: (CupertinoThemeData data) =>
+              data.textTheme.tabLabelTextStyle.copyWith(
+                  inherit: true, fontVariations: [FontVariation.weight(600)],
+                  fontSize:
+                  (data.textTheme.tabLabelTextStyle.fontSize ?? 10) * 1.3));
 }

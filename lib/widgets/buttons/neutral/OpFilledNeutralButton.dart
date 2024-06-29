@@ -10,7 +10,7 @@ class OpFilledNeutralButton extends OpButton {
 
   @override
   Color getCupertinoColor(BuildContext context) {
-    return OpDynamicColor.surfaceInverse;
+    return OpLightDarkColor.surfaceInverse;
   }
 
   @override
@@ -27,7 +27,7 @@ class OpFilledNeutralButton extends OpButton {
   Color getTextColor(BuildContext context) {
     return platformThemeData(context,
         material: (ThemeData data) => data.colorScheme.surface,
-        cupertino: (CupertinoThemeData data) => OpDynamicColor.onSurfaceInverse);
+        cupertino: (CupertinoThemeData data) => OpLightDarkColor.onSurfaceInverse);
   }
 }
 

@@ -11,7 +11,7 @@ class OpTonalPrimaryButton extends OpButton {
 
   @override
   Color getCupertinoColor(BuildContext context) {
-    return OpDynamicColor.secondaryContainer;
+    return OpLightDarkColor.secondaryContainer;
   }
 
   @override

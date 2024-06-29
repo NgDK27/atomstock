@@ -9,11 +9,11 @@ class CupertinoPrimaryGlow extends BoxDecoration {
     borderRadius: BorderRadius.circular(OpRadius.full),
     boxShadow: [
       BoxShadow(
-        color: OpDynamicColor.primarySecondary,
+        color: OpLightDarkColor.primarySecondary,
         blurRadius: 4,
       ),
       BoxShadow(
-        color: OpDynamicColor.primarySecondary,
+        color: OpLightDarkColor.primarySecondary,
         blurRadius: 12,
         spreadRadius: 2,
       ),
