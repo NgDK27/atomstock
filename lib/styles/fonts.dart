@@ -81,10 +81,12 @@ final opCupertinoTextTheme = const CupertinoTextThemeData().copyWith(
     textStyle: const CupertinoTextThemeData().textStyle.copyWith(
       fontFamily: "Inter",
       fontFeatures: interFontFeatures,
+      letterSpacing: 0
     ),
     actionTextStyle: const CupertinoTextThemeData().actionTextStyle.copyWith(
       fontFamily: "Inter",
       fontFeatures: interFontFeatures,
+
     ),
     tabLabelTextStyle: const CupertinoTextThemeData().tabLabelTextStyle.copyWith(
       fontFamily: "Inter",
