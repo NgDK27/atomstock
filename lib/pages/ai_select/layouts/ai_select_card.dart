@@ -18,7 +18,10 @@ class AiSelectCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final Color themeColorHarmonized = model.themeColor.harmonized(context);
+
     return Container(
+      margin: EdgeInsets.symmetric(horizontal: OpSpacing.md),
         decoration: BoxDecoration(
             color: OpDynamicColor.surface(context).withOpacity(OpOpacity.secondary),
             borderRadius: BorderRadius.all(Radius.circular(OpRadius.md))),
@@ -28,11 +31,11 @@ class AiSelectCard extends ConsumerWidget {
                   center: Alignment.topRight,
                   radius: 1,
                   colors: [
-                    model.themeColor.withOpacity(OpOpacity.quaternary),
-                    model.themeColor.withOpacity(OpOpacity.quaternary * 2 / 3),
-                    model.themeColor.withOpacity(OpOpacity.quaternary * 1 / 3),
-                    model.themeColor.withOpacity(OpOpacity.quaternary * 1 / 6),
-                    model.themeColor.withOpacity(OpOpacity.quaternary * 1 / 15),
+                    themeColorHarmonized.withOpacity(OpOpacity.quaternary),
+                    themeColorHarmonized.withOpacity(OpOpacity.quaternary * 2 / 3),
+                    themeColorHarmonized.withOpacity(OpOpacity.quaternary * 1 / 3),
+                    themeColorHarmonized.withOpacity(OpOpacity.quaternary * 1 / 6),
+                    themeColorHarmonized.withOpacity(OpOpacity.quaternary * 1 / 15),
                     OpDynamicColor.surface(context).withOpacity(0.0),
                   ],
                   stops: [0.0, 0.3, 0.5, 0.7, 0.9, 1.0],
@@ -96,7 +99,7 @@ class AiSelectCard extends ConsumerWidget {
                     children: [
                       Text('${model.accuracyPercentage}%',
                           style: OpTextStyle.labelMediumProminent(context)
-                              ?.copyWith(color: model.themeColor)),
+                              ?.copyWith(color: themeColorHarmonized)),
                       Text(
                         ' average weekly accuracy',
                         style: OpTextStyle.labelMediumProminent(context)

@@ -5,9 +5,9 @@ import '../../../widgets/illustrations/light_bulb_illustration.dart';
 import 'AiSelectCardModel.dart';
 
 class AiSelectCardData {
-  static AiSelectCardModel slowAndSteadyAi(BuildContext context) =>
+  static AiSelectCardModel get slowAndSteadyAi =>
       AiSelectCardModel(
-        themeColor: OpDynamicColor.aiHarmonized(context),
+        themeColor: OpLightDarkColor.ai,
         aiName: "Slow and Steady",
         type: AiSelectCardType.recommended,
         summary:
@@ -19,22 +19,22 @@ class AiSelectCardData {
 - Diversified across sectors and assets
 ''',
         illustration: LightBulbIllustration(
-          overlayBeginColor: OpDynamicColor.aiHarmonized(context),
-          overlayEndColor: OpDynamicColor.aiHarmonized(context),
-          underlyingBeginColor: OpDynamicColor.aiHarmonized(context),
-          underlyingEndColor: OpDynamicColor.aiHarmonized(context),
+          overlayBeginColor: OpLightDarkColor.ai,
+          overlayEndColor: OpLightDarkColor.ai,
+          underlyingBeginColor: OpLightDarkColor.ai,
+          underlyingEndColor: OpLightDarkColor.ai,
         ),
         accuracyPercentage: 78,
         supportingText: 'Over the past 6 months',
       );
 
-  static AiSelectCardModel playItSaferAi(BuildContext context) =>
+  static AiSelectCardModel get playItSaferAi =>
       AiSelectCardModel(
-        themeColor: OpDynamicColor.aquaHarmonized(context),
+        themeColor: OpLightDarkColor.primary,
         aiName: "Play it Safer",
         type: AiSelectCardType.comingSoon,
         summary:
-        'Prioritizing capital preservation and stability, for safe, long-term investment',
+            'Prioritizing capital preservation and stability, for safe, long-term investment',
         description: '''
 - Low-risk portfolio with minimal volatility
 - Focus on safe, reliable investments
@@ -42,22 +42,22 @@ class AiSelectCardData {
 - Gradual, steady growth over time
 ''',
         illustration: LightBulbIllustration(
-          overlayBeginColor: OpDynamicColor.aquaHarmonized(context),
-          overlayEndColor: OpDynamicColor.aquaHarmonized(context),
-          underlyingBeginColor: OpDynamicColor.aquaHarmonized(context),
-          underlyingEndColor: OpDynamicColor.aquaHarmonized(context),
+          overlayBeginColor: OpLightDarkColor.primary,
+          overlayEndColor: OpLightDarkColor.primary,
+          underlyingBeginColor: OpLightDarkColor.primary,
+          underlyingEndColor: OpLightDarkColor.primary,
         ),
         accuracyPercentage: 80,
         supportingText: 'During testing',
       );
 
-  static AiSelectCardModel rocketScienceAi(BuildContext context) =>
+  static AiSelectCardModel get rocketScienceAi =>
       AiSelectCardModel(
-        themeColor: OpDynamicColor.cherryHarmonized(context),
+        themeColor: OpLightDarkColor.stockFall,
         aiName: "Rocket Science",
         type: AiSelectCardType.comingSoon,
         summary:
-        'Aggressive strategies aimed at maximizing returns, for risk-takers',
+            'Aggressive strategies aimed at maximizing returns, for risk-takers',
         description: '''
 - High-growth portfolio with high potential
 - Focus on emerging markets investments
@@ -65,12 +65,18 @@ class AiSelectCardData {
 - Frequent balancing to catch trends
 ''',
         illustration: LightBulbIllustration(
-          overlayBeginColor: OpDynamicColor.cherryHarmonized(context),
-          overlayEndColor: OpDynamicColor.cherryHarmonized(context),
-          underlyingBeginColor: OpDynamicColor.cherryHarmonized(context),
-          underlyingEndColor: OpDynamicColor.cherryHarmonized(context),
+          overlayBeginColor: OpLightDarkColor.stockFall,
+          overlayEndColor: OpLightDarkColor.stockFall,
+          underlyingBeginColor: OpLightDarkColor.stockFall,
+          underlyingEndColor: OpLightDarkColor.stockFall,
         ),
         accuracyPercentage: 82,
         supportingText: 'During testing',
       );
+
+  static List<AiSelectCardModel> get allAis => [
+        slowAndSteadyAi,
+        playItSaferAi,
+        rocketScienceAi,
+      ];
 }
