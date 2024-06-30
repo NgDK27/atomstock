@@ -1,6 +1,14 @@
+import 'package:dynamic_color/dynamic_color.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:oppenhomies/styles/opacities.dart';
+
+extension OpHarmonizedColors on Color {
+  Color harmonized(BuildContext context) => platformThemeData(context,
+      material: (ThemeData data) => harmonizeWith(data.colorScheme.primary),
+      cupertino: (CupertinoThemeData data) => this);
+}
 
 class OpDynamicColor {
   OpDynamicColor._();
@@ -28,6 +36,56 @@ class OpDynamicColor {
         material: (ThemeData data) => data.colorScheme.onPrimaryContainer,
         cupertino: (_) => OpLightDarkColor.onSurface);
   }
+
+  static Color surface(context) {
+    return platformThemeData(context,
+        material: (ThemeData data) => data.colorScheme.surface,
+        cupertino: (_) => OpLightDarkColor.surface);
+  }
+
+  static Color onSurface(context) {
+    return platformThemeData(context,
+        material: (ThemeData data) => data.colorScheme.onSurface,
+        cupertino: (CupertinoThemeData data) =>
+            data.textTheme.textStyle.color ??
+            OpDynamicColor.onSurface(context));
+  }
+
+  static Color onSurfaceVariant(context) {
+    return platformThemeData(context,
+        material: (ThemeData data) => data.colorScheme.onSurfaceVariant,
+        cupertino: (CupertinoThemeData data) =>
+            OpLightDarkColor.onSurfaceVariant).withOpacity(OpOpacity.secondary);
+  }
+
+  static Color outlineVariant(context) {
+    return platformThemeData(context,
+        material: (ThemeData data) => data.colorScheme.outlineVariant,
+        cupertino: (CupertinoThemeData data) => OpLightDarkColor
+            .onSurfaceVariantStrokes
+            .withOpacity(OpOpacity.secondary));
+  }
+
+  static Color aiHarmonized(context) {
+    return platformThemeData(context,
+        material: (ThemeData data) =>
+            OpLightDarkColor.ai.harmonizeWith(data.colorScheme.primary),
+        cupertino: (CupertinoThemeData data) => OpLightDarkColor.ai);
+  }
+
+  static Color aquaHarmonized(context) {
+    return platformThemeData(context,
+        material: (ThemeData data) =>
+            OpLightDarkColor.primary.harmonizeWith(data.colorScheme.primary),
+        cupertino: (CupertinoThemeData data) => OpLightDarkColor.primary);
+  }
+
+  static Color cherryHarmonized(context) {
+    return platformThemeData(context,
+        material: (ThemeData data) =>
+            OpLightDarkColor.stockFall.harmonizeWith(data.colorScheme.primary),
+        cupertino: (CupertinoThemeData data) => OpLightDarkColor.stockFall);
+  }
 }
 
 class OpLightDarkColor {
@@ -42,7 +100,7 @@ class OpLightDarkColor {
       _isLightMode ? lightColor : darkColor;
 
   // Primary
-  static const Color _primaryLight = OpColor.aqua140;
+  static const Color _primaryLight = OpColor.aqua120;
   static const Color _primaryDark = OpColor.aqua100;
   static Color get primary => _getDynamicColor(_primaryLight, _primaryDark);
 

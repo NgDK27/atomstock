@@ -5,7 +5,7 @@ import 'package:oppenhomies/styles/fonts.dart';
 final opCupertinoLightTheme = const CupertinoThemeData().copyWith(
   textTheme: opCupertinoTextTheme,
   primaryColor: OpLightDarkColor.primary,
-  primaryContrastingColor: OpLightDarkColor.surface,
+  primaryContrastingColor: OpLightDarkColor.onSurface,
   barBackgroundColor: OpLightDarkColor.surface.withAlpha(240),
   scaffoldBackgroundColor: OpLightDarkColor.surface,
 );

@@ -1,54 +1,44 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:oppenhomies/styles/colors.dart';
+import 'package:oppenhomies/styles/opacities.dart';
 import 'package:oppenhomies/styles/radius.dart';
 import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/styles/text.dart';
 import 'package:oppenhomies/widgets/chip/chip_base.dart';
-import 'package:oppenhomies/widgets/illustrations/glassmorphism_base.dart';
+import 'package:oppenhomies/widgets/icons/sparkle.dart';
 
-import '../../../styles/opacities.dart';
-import '../../../widgets/illustrations/light_bulb_illustration.dart';
-
-enum AiSelectCardType { recommended, comingSoon }
+import '../models/AiSelectCardModel.dart';
 
 class AiSelectCard extends ConsumerWidget {
-  final GlassmorphismIllustration illustration;
-  final String aiName;
-  final String summary;
-  final String description;
-  final AiSelectCardType type;
-  final int accuracyPercentage;
-  final String supportingText;
+  final AiSelectCardModel model;
 
-  const AiSelectCard(
-      {this.illustration = const LightBulbIllustration(),
-      required this.aiName,
-      required this.summary,
-      required this.description,
-      required this.type,
-      required this.accuracyPercentage,
-      required this.supportingText,
-      super.key});
+  const AiSelectCard({required this.model, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Stack(
-      children: [
-        Container(
-            // TODO Make this into a re-usable widget
+    return Container(
+        decoration: BoxDecoration(
+            color: OpDynamicColor.surface(context).withOpacity(OpOpacity.secondary),
+            borderRadius: BorderRadius.all(Radius.circular(OpRadius.md))),
+        child: Container(
             decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.topRight,
-                    end: Alignment.bottomLeft,
-                    colors: [
-                      OpLightDarkColor.ai.withOpacity(OpOpacity.tertiary),
-                      OpLightDarkColor.aiGradientOut
-                    ]),
+                gradient: RadialGradient(
+                  center: Alignment.topRight,
+                  radius: 1,
+                  colors: [
+                    model.themeColor.withOpacity(OpOpacity.quaternary),
+                    model.themeColor.withOpacity(OpOpacity.quaternary * 2 / 3),
+                    model.themeColor.withOpacity(OpOpacity.quaternary * 1 / 3),
+                    model.themeColor.withOpacity(OpOpacity.quaternary * 1 / 6),
+                    model.themeColor.withOpacity(OpOpacity.quaternary * 1 / 15),
+                    OpDynamicColor.surface(context).withOpacity(0.0),
+                  ],
+                  stops: [0.0, 0.3, 0.5, 0.7, 0.9, 1.0],
+                ),
                 border: Border.all(
-                    color: OpLightDarkColor.onSurfaceVariantStrokes, width: 1),
+                    color: OpDynamicColor.outlineVariant(context), width: 1),
                 borderRadius: BorderRadius.all(Radius.circular(OpRadius.md))),
             child: Padding(
               padding: EdgeInsets.fromLTRB(
@@ -64,13 +54,13 @@ class AiSelectCard extends ConsumerWidget {
                           width: 80,
                           height: 80,
                           child: Padding(
-                            padding: EdgeInsets.all(OpSpacing.xs),
+                            padding: const EdgeInsets.all(OpSpacing.xs),
                             child: FittedBox(
                               fit: BoxFit.contain,
-                              child: illustration,
+                              child: model.illustration,
                             ),
                           )),
-                      switch (type) {
+                      switch (model.type) {
                         AiSelectCardType.recommended =>
                           ChipMediumPrimary(text: "Recommended"),
                         AiSelectCardType.comingSoon =>
@@ -81,41 +71,46 @@ class AiSelectCard extends ConsumerWidget {
                   SizedBox(height: OpSpacing.lg),
                   Row(
                     children: [
-                      PlatformWidget(
-                        material: (_, __) => Icon(Icons.star_rate_rounded),
-                        cupertino: (_, __) => Icon(CupertinoIcons.star_fill),
-                      ),
+                      Sparkle(),
                       SizedBox(width: OpSpacing.xs),
-                      Text(aiName, style: OpTextStyle.headline(context))
+                      Text(model.aiName, style: OpTextStyle.headline(context))
                     ],
                   ),
                   SizedBox(height: OpSpacing.lg),
                   Text(
-                    summary, // TODO Add style
+                    model.summary, // TODO Add style
                   ),
                   SizedBox(height: OpSpacing.md),
-                  Text(description
-                      // TODO Add content and style
-                      ),
+                  MarkdownBody(
+                    data: model.description,
+                    styleSheet: MarkdownStyleSheet(
+                        p: OpTextStyle.labelLarge(context),
+                        listBullet: OpTextStyle.labelLarge(context)),
+                  ),
                   SizedBox(height: OpSpacing.lg),
-                  Divider(),
+                  Divider(
+                    color: OpDynamicColor.outlineVariant(context),
+                  ),
                   SizedBox(height: OpSpacing.md),
                   Row(
                     children: [
-                      Text('$accuracyPercentage%'
-                          // TODO Add style
-                          ),
-                      Text(' average weekly accuracy' // TODO Add style
-                          ),
+                      Text('${model.accuracyPercentage}%',
+                          style: OpTextStyle.labelMediumProminent(context)
+                              ?.copyWith(color: model.themeColor)),
+                      Text(
+                        ' average weekly accuracy',
+                        style: OpTextStyle.labelMediumProminent(context)
+                            ?.copyWith(
+                                color: OpDynamicColor.onSurface(context)),
+                      ),
                     ],
                   ),
                   SizedBox(height: OpSpacing.xs3),
-                  Text(supportingText // TODO Add style
-                      )
+                  Text(model.supportingText,
+                      style: OpTextStyle.labelMedium(context)?.copyWith(
+                          color: OpDynamicColor.onSurfaceVariant(context)))
                 ],
               ),
-            ))
-      ],
-    );
+            )));
   }
 }

@@ -1,52 +1,84 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:oppenhomies/pages/ai_select/layouts/ai_select_card.dart';
 import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/styles/text.dart';
 import 'package:oppenhomies/widgets/buttons/primary/OpFilledGlowPrimaryButton.dart';
+
+import '../../../styles/colors.dart';
+import '../../../widgets/gradients/gradient.dart';
+import '../layouts/ai_select_card.dart';
+import '../models/AiSelectCardData.dart';
 
 class AiSelect extends ConsumerWidget {
   const AiSelect({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Stack(
-      children: [
-        Column(
-          children: [
-            // TODO Add nav bar
-            SafeArea(
-                minimum: EdgeInsets.symmetric(horizontal: OpSpacing.md),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+    return PlatformWidgetBuilder(
+        material: (_, child, __) => Scaffold(
+              appBar: AppBar(
+                leading: PlatformIconButton(
+                  icon: Icon(PlatformIcons(context).back),
+                  onPressed: () {},
+                ),
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+              ),
+              extendBodyBehindAppBar: true,
+              body: child,
+            ),
+        cupertino: (_, child, __) => CupertinoPageScaffold(
+              navigationBar: CupertinoNavigationBar(
+                border: Border(bottom: BorderSide(color: Colors.transparent)),
+                padding: EdgeInsetsDirectional.zero,
+                backgroundColor: Colors.transparent,
+                leading: CupertinoNavigationBarBackButton(
+                  onPressed: () {},
+                  color: OpDynamicColor.onSurface(context),
+                ),
+              ),
+              child: child!,
+            ),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: OpGradient.pageGradient(context,
+                beginColor: OpDynamicColor.aiHarmonized(context)),
+          ),
+          child: SafeArea(
+            minimum: EdgeInsets.symmetric(horizontal: OpSpacing.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: OpSpacing.sm),
+                Text(
+                  "Which AI Advisor matches your vibe?",
+                  style: OpTextStyle.display(context),
+                ),
+                const SizedBox(height: OpSpacing.xl),
+                Expanded(
+                    child: Column(
                   children: [
-                    Text(
-                      "Which AI Advisor matches your vibe?",
-                      style: OpTextStyle.display(context),
-                    ),
                     AiSelectCard(
-                      aiName: "Slow and Steady",
-                      type: AiSelectCardType.recommended,
-                      summary:
-                          'Tuned for the right mix of risk and reward, personalized to your choices',
-                      description: '''
-                      Balanced portfolio for low risk tolerance
-Consistent, long-term growth approach
-Regular re-balancing for optimal allocation
-Diversified across sectors and assets''',
-                      accuracyPercentage: 78,
-                      supportingText: 'Over the past 6 months',
+                      model: AiSelectCardData.rocketScienceAi(context),
                     ),
-                    // TODO Add horizontal scroll indicator
-                    OpFilledGlowPrimaryButton(
-                      text: "Select", onPressed: () {},
-                      // TODO Customize the text here
-                    )
                   ],
-                ))
-          ],
-        )
-      ],
-    );
+                )),
+                OpFilledGlowPrimaryButton(
+                  text: "Select",
+                  onPressed: () {},
+                ),
+              ],
+            ),
+          ),
+        ));
   }
+}
+
+class SpecialColor extends Color {
+  const SpecialColor() : super(0x00000000);
+
+  @override
+  int get alpha => 0xFF;
 }
