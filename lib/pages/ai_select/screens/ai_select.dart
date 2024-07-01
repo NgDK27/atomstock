@@ -25,7 +25,15 @@ class AiSelect extends ConsumerStatefulWidget {
 class _AiSelectState extends ConsumerState<AiSelect> {
   final allAis = AiSelectCardData.allAis;
   int _current = 0;
-  final CarouselController _controller = CarouselController();
+
+  void _handleNavigateBack() {
+    // Navigator.of(context).pop();
+  }
+
+  void _handleAiSelection() {
+    // Logic for AI selection
+    // print("Selected AI: ${_current}");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +42,7 @@ class _AiSelectState extends ConsumerState<AiSelect> {
               appBar: AppBar(
                 leading: PlatformIconButton(
                   icon: Icon(PlatformIcons(context).back),
-                  onPressed: () {},
+                  onPressed: _handleNavigateBack,
                 ),
                 backgroundColor: Colors.transparent,
                 elevation: 0,
@@ -48,7 +56,7 @@ class _AiSelectState extends ConsumerState<AiSelect> {
                 padding: EdgeInsetsDirectional.zero,
                 backgroundColor: Colors.transparent,
                 leading: CupertinoNavigationBarBackButton(
-                  onPressed: () {},
+                  onPressed: _handleNavigateBack,
                   color: OpDynamicColor.onSurfaceVariant(context),
                 ),
               ),
@@ -109,7 +117,7 @@ class _AiSelectState extends ConsumerState<AiSelect> {
                   child: switch (allAis[_current].type) {
                     AiSelectCardType.recommended => OpFilledGlowPrimaryButton(
                         text: "Select ${allAis[_current].aiName}",
-                        onPressed: () {},
+                        onPressed: _handleAiSelection,
                       ),
                     AiSelectCardType.comingSoon =>
                       OpTextButton(text: "Coming soon"),

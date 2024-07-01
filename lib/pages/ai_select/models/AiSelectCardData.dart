@@ -1,4 +1,6 @@
 import 'package:flutter/cupertino.dart';
+import 'package:oppenhomies/widgets/illustrations/piggy_bank_illustration.dart';
+import 'package:oppenhomies/widgets/illustrations/rocket_illustration.dart';
 
 import '../../../styles/colors.dart';
 import '../../../widgets/illustrations/light_bulb_illustration.dart';
@@ -41,7 +43,7 @@ class AiSelectCardData {
 - Emphasis on bonds and blue-chip stocks
 - Gradual, steady growth over time
 ''',
-        illustration: LightBulbIllustration(
+        illustration: PiggyBankIllustration(
           overlayBeginColor: OpLightDarkColor.primary,
           overlayEndColor: OpLightDarkColor.primary,
           underlyingBeginColor: OpLightDarkColor.primary,
@@ -64,11 +66,12 @@ class AiSelectCardData {
 - Leveraged positions to amplify returns
 - Frequent balancing to catch trends
 ''',
-        illustration: LightBulbIllustration(
+        illustration: RocketIllustration(
           overlayBeginColor: OpLightDarkColor.stockFall,
           overlayEndColor: OpLightDarkColor.stockFall,
           underlyingBeginColor: OpLightDarkColor.stockFall,
           underlyingEndColor: OpLightDarkColor.stockFall,
+
         ),
         accuracyPercentage: 82,
         supportingText: 'During testing',

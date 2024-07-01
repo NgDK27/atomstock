@@ -119,8 +119,8 @@ abstract class GlassmorphismIllustration extends StatelessWidget {
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                           colors: [
-                            overlayBeginColor.withOpacity(0.1),
-                            overlayEndColor.withOpacity(0.1)
+                            overlayBeginColor.withOpacity(0.4),
+                            overlayEndColor.withOpacity(0.4)
                           ],
                         ),
                         boxShadow: [
