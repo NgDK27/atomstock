@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:oppenhomies/pages/ai_select/screens/ai_select.dart';
-import 'package:oppenhomies/pages/testing/screens/flex_test.dart';
 import 'package:oppenhomies/styles/cupertino_theme.dart';
 import 'package:oppenhomies/styles/fonts.dart';
 

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:oppenhomies/pages/onboarding/screens/onboarding_stories.dart';
-import 'package:oppenhomies/pages/onboarding/models/story_model.dart';
-import 'package:oppenhomies/pages/onboarding/screens/onboarding_security.dart';
 import 'package:story/story_page_view.dart';
 
 import '../../../styles/spacings.dart';

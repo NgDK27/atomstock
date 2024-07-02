@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:oppenhomies/widgets/illustrations/piggy_bank_illustration.dart';
 import 'package:oppenhomies/widgets/illustrations/rocket_illustration.dart';
 

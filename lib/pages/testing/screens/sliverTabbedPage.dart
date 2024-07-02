@@ -9,7 +9,7 @@ import 'sliver_view.dart';
 class SliverTabbedPage extends StatefulWidget {
   final TargetPlatform platform;
 
-  const SliverTabbedPage({Key? key, required this.platform}) : super(key: key);
+  const SliverTabbedPage({super.key, required this.platform});
 
   @override
   _SliverTabbedPageState createState() => _SliverTabbedPageState();
