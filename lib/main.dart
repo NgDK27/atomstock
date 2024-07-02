@@ -1,57 +1,56 @@
+import 'package:dynamic_color/dynamic_color.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'api_service.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:oppenhomies/pages/ai_select/screens/ai_select.dart';
+import 'package:oppenhomies/pages/testing/screens/flex_test.dart';
+import 'package:oppenhomies/styles/cupertino_theme.dart';
+import 'package:oppenhomies/styles/fonts.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    const ProviderScope(
+      child: OppenhomiesApp(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class OppenhomiesApp extends ConsumerWidget {
+  const OppenhomiesApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: HomeScreen(),
-    );
-  }
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Edge-to-edge
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.transparent));
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
-
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  String _response = '';
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchData();
-  }
-
-  void _fetchData() async {
-    try {
-      String response = await ApiService().fetchHello();
-      setState(() {
-        _response = response;
-      });
-    } catch (e) {
-      print('Failed to load data: $e');
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Flutter & Go App'),
-      ),
-      body: Center(
-        child: Text(_response.isEmpty ? 'Loading...' : _response),
-      ),
+    return PlatformProvider(
+      builder: (context) => DynamicColorBuilder(
+          builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) =>
+              PlatformTheme(
+                themeMode: ThemeMode.system,
+                materialDarkTheme: ThemeData(
+                    colorScheme: darkDynamic, textTheme: opMaterialTextTheme),
+                materialLightTheme: ThemeData(
+                    colorScheme: lightDynamic, textTheme: opMaterialTextTheme),
+                cupertinoLightTheme: opCupertinoLightTheme,
+                cupertinoDarkTheme: opCupertinoDarkTheme,
+                builder: (context) => const PlatformApp(
+                  title: 'Flutter Platform Widgets',
+                  home: AiSelect(),
+                  // Hide "Debug" banner
+                  debugShowCheckedModeBanner: false,
+                  // Platform App
+                  localizationsDelegates: <LocalizationsDelegate<dynamic>>[
+                    DefaultMaterialLocalizations.delegate,
+                    DefaultWidgetsLocalizations.delegate,
+                    DefaultCupertinoLocalizations.delegate,
+                  ],
+                ),
+              )),
     );
   }
 }
