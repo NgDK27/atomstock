@@ -25,9 +25,9 @@ import (
 
 var (
 	cognitoClient *cognitoidentityprovider.Client
-	userPoolID    string = os.Getenv("userPoolID")
-	clientID      string = os.Getenv("clientID")
-	clientSecret  string = os.Getenv("clientSecret")
+	userPoolID    string 
+	clientID      string 
+	clientSecret  string 
 	db            *sql.DB
 )
 
@@ -186,21 +186,21 @@ func signInHandler(c *gin.Context) {
 	}
 
 	// Check if user exists in PostgreSQL
-	var email string
-	err = db.QueryRow("SELECT email FROM users WHERE user_id = $1", userID).Scan(&email)
-	if err == sql.ErrNoRows {
-		// User does not exist, create user
-		_, err = db.Exec("INSERT INTO users (user_id, email, balance) VALUES ($1, $2, 0)", userID, input.Email)
-		if err != nil {
-			log.Printf("Failed to create user: %v", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
-			return
-		}
-	} else if err != nil {
-		log.Printf("Failed to query user: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to query user"})
-		return
-	}
+	// var email string
+	// err = db.QueryRow("SELECT email FROM users WHERE user_id = $1", userID).Scan(&email)
+	// if err == sql.ErrNoRows {
+	// 	// User does not exist, create user
+	// 	_, err = db.Exec("INSERT INTO users (user_id, email, balance) VALUES ($1, $2, 0)", userID, input.Email)
+	// 	if err != nil {
+	// 		log.Printf("Failed to create user: %v", err)
+	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
+	// 		return
+	// 	}
+	// } else if err != nil {
+	// 	log.Printf("Failed to query user: %v", err)
+	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to query user"})
+	// 	return
+	// }
 
 	response := SignInResponse{
 		AccessToken:  accessToken,
@@ -300,6 +300,9 @@ func main() {
 	}
 
 	cognitoClient = cognitoidentityprovider.NewFromConfig(cfg)
+	userPoolID = os.Getenv("userPoolID")
+    clientID = os.Getenv("clientID")
+    clientSecret = os.Getenv("clientSecret")
 
 	r := gin.Default()
 
@@ -310,7 +313,7 @@ func main() {
 	protected := r.Group("/")
 	protected.Use(AuthMiddleware())
 	protected.GET("/hello", helloWorldHandler)
-	protected.POST("/update_balance", updateBalanceHandler) // New route for updating balance
+	protected.POST("/update_balance", updateBalanceHandler) 
 
 	log.Fatal(r.Run(":8080"))
 }
