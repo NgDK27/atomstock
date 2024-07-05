@@ -22,7 +22,7 @@ def md_get_index_list():
 	print(client.index_list(config, model.index_list('hnx', 1, 100)))
 
 def md_get_daily_OHLC():
-	print(client.daily_ohlc(config, model.daily_ohlc('ssi', '15/10/2020', '15/10/2020', 1, 100, True)))
+	print(client.daily_ohlc(config, model.daily_ohlc('ssi', '15/10/2008', '15/10/2008', 1, 100, True)))
 
 def md_get_intraday_OHLC():
 	print(client.intraday_ohlc(config, model.intraday_ohlc('fpt', '15/10/2020', '15/10/2020', 1, 100, True, 1)))

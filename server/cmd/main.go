@@ -267,10 +267,7 @@ func AuthMiddleware() gin.HandlerFunc {
 }
 
 func ConnectDatabase() {
-	err := godotenv.Load() //by default, it is .env so we don't have to write
-	if err != nil {
-		fmt.Println("Error occurred while loading .env file")
-	}
+	
 	// Load database connection parameters
 	host := os.Getenv("HOST")
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
@@ -281,8 +278,8 @@ func ConnectDatabase() {
 	// Set up PostgreSQL connection
 	psqlSetup := fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable",
 		host, port, user, dbname, pass)
-	database, errSql := sql.Open("postgres", psqlSetup)
-	if errSql != nil {
+	database, err := sql.Open("postgres", psqlSetup)
+	if err != nil {
 		fmt.Println("Error while connecting to the database:", err)
 		panic(err)
 	} else {
@@ -292,6 +289,8 @@ func ConnectDatabase() {
 }
 
 func main() {
+	godotenv.Load() 
+	
 	ConnectDatabase()
 
 	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("ap-southeast-2"))
