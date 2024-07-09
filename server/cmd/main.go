@@ -187,10 +187,10 @@ func signInHandler(c *gin.Context) {
 
 	// Check if user exists in PostgreSQL
 	// var email string
-	// err = db.QueryRow("SELECT email FROM users WHERE user_id = $1", userID).Scan(&email)
+	// err = db.QueryRow("SELECT email FROM users WHERE id = $1", userID).Scan(&email)
 	// if err == sql.ErrNoRows {
 	// 	// User does not exist, create user
-	// 	_, err = db.Exec("INSERT INTO users (user_id, email, balance) VALUES ($1, $2, 0)", userID, input.Email)
+	// 	_, err = db.Exec("INSERT INTO users (id, email, balance) VALUES ($1, $2)", userID, input.Email)
 	// 	if err != nil {
 	// 		log.Printf("Failed to create user: %v", err)
 	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
