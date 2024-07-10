@@ -12,6 +12,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"reflect"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -25,7 +26,6 @@ import (
 
 var (
 	cognitoClient *cognitoidentityprovider.Client
-	userPoolID    string 
 	clientID      string 
 	clientSecret  string 
 	db            *sql.DB
@@ -186,21 +186,27 @@ func signInHandler(c *gin.Context) {
 	}
 
 	// Check if user exists in PostgreSQL
-	// var email string
-	// err = db.QueryRow("SELECT email FROM users WHERE id = $1", userID).Scan(&email)
-	// if err == sql.ErrNoRows {
-	// 	// User does not exist, create user
-	// 	_, err = db.Exec("INSERT INTO users (id, email, balance) VALUES ($1, $2)", userID, input.Email)
-	// 	if err != nil {
-	// 		log.Printf("Failed to create user: %v", err)
-	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
-	// 		return
-	// 	}
-	// } else if err != nil {
-	// 	log.Printf("Failed to query user: %v", err)
-	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to query user"})
-	// 	return
-	// }
+	var email string
+	err = db.QueryRow("SELECT email FROM users WHERE id = $1", userID).Scan(&email)
+	if err == sql.ErrNoRows {
+		// User does not exist, create user
+		_, err = db.Exec("INSERT INTO users (id, email) VALUES ($1, $2)", userID, input.Email)
+		if err != nil {
+			log.Printf("Failed to create user: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
+			return
+		}
+		_, err = db.Exec("INSERT INTO portfolios (user_id) VALUES ($1)", userID)
+		if err != nil {
+			log.Printf("Failed to create portfolio: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user's portfolio"})
+			return
+		}
+	} else if err != nil {
+		log.Printf("Failed to query user: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to query user"})
+		return
+	}
 
 	response := SignInResponse{
 		AccessToken:  accessToken,
@@ -212,7 +218,7 @@ func signInHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-func updateBalanceHandler(c *gin.Context) {
+func depositHandler(c *gin.Context) {
 	var input UpdateBalanceInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
@@ -228,16 +234,16 @@ func updateBalanceHandler(c *gin.Context) {
 	tokenString := c.GetHeader("Authorization")
 	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
 	userID, err := extractUserIDFromToken(tokenString)
-	fmt.Println("userID", userID)
+	fmt.Println(reflect.TypeOf(amount))
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 		return
 	}
 
-	_, err = db.Exec("UPDATE users SET balance = balance + $1 WHERE user_id = $2", amount, userID)
+	_, err = db.Exec("UPDATE users SET balance = balance + $1 WHERE id = $2", amount, userID)
 	if err != nil {
-		log.Printf("Failed to update balance for user %s: %v", userID, err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update balance"})
+		log.Printf("Failed to deposit for user %s: %v", userID, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to deposit"})
 		return
 	}
 
@@ -299,7 +305,6 @@ func main() {
 	}
 
 	cognitoClient = cognitoidentityprovider.NewFromConfig(cfg)
-	userPoolID = os.Getenv("userPoolID")
     clientID = os.Getenv("clientID")
     clientSecret = os.Getenv("clientSecret")
 
@@ -312,7 +317,7 @@ func main() {
 	protected := r.Group("/")
 	protected.Use(AuthMiddleware())
 	protected.GET("/hello", helloWorldHandler)
-	protected.POST("/update_balance", updateBalanceHandler) 
+	protected.POST("/deposit", depositHandler) 
 
 	log.Fatal(r.Run(":8080"))
 }
