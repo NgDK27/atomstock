@@ -21,8 +21,15 @@ CREATE TABLE stocks (
 
 CREATE TABLE indexes (
     market_id INT REFERENCES markets(id),
-    symbol VARCHAR(10) PRIMARY KEY
+    symbol VARCHAR(20) PRIMARY KEY
 );
+
+INSERT INTO indexes (market_id, symbol) VALUES
+    (1, 'VNIndex'),
+    (1, 'VN30'),
+    (2, 'HNXIndex'),
+    (2, 'HNX30'),
+    (3, 'HNXUpcomIndex');
 
 CREATE TABLE daily_stocks (
     id SERIAL PRIMARY KEY,

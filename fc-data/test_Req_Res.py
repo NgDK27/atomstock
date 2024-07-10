@@ -18,13 +18,13 @@ def md_get_index_list():
 	print(client.index_list(config, model.index_list()))
 
 def md_get_intraday_OHLC():
-	print(client.intraday_ohlc(config, model.intraday_ohlc('HPG', '10/07/2024', '10/07/2024', 1, 1000, True, 1)))
+	print(client.intraday_ohlc(config, model.intraday_ohlc('VPB', '10/07/2024', '10/07/2024', 1, 1000, True, 1)))
 
 def md_get_daily_index():
-	print(client.daily_index(config, model.daily_index('', 'VN100', '', '', 1, 100, '', '')))
+	print(client.daily_index(config, model.daily_index('', 'VNIndex', '11/07/2024', '11/07/2024', 1, 100, '', '')))
 
 def md_get_stock_price():
-	print(client.daily_stock_price(config, model.daily_stock_price ('vpb', '10/07/2024', '10/07/2024', 1, 100)))
+	print(client.daily_stock_price(config, model.daily_stock_price ('VPB', '11/07/2024', '11/07/2024', 1, 100)))
 
 
 
