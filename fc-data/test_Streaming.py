@@ -19,9 +19,8 @@ def getError(error):
 #main function
 def main():
 
-	selected_channel = input("Please select channel: ")
 	mm = MarketDataStream(config, MarketDataClient(config))
-	mm.start(get_market_data, getError, selected_channel)
+	mm.start(get_market_data, getError, '{chanel_name}:{symbol}')
 	message = None
 	while message != "exit()":
 		message = input(">> ")
