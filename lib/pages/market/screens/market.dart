@@ -58,7 +58,7 @@ class Market extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: OpSpacing.lg),
-              OpTitle("Indices"),
+              OpTitle("Indexes"),
               ...sampleStocks.map((stock) => StockListTile(stock: stock)),
               const SizedBox(height: OpSpacing.xl),
               OpTitle(
