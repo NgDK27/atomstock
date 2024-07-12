@@ -19,6 +19,13 @@ class OpDynamicColor {
         cupertino: (_) => OpLightDarkColor.primary);
   }
 
+  static Color primaryVariant(context) {
+    return platformThemeData(context,
+        material: (ThemeData data) => data.colorScheme.primaryFixedDim,
+        cupertino: (_) => OpLightDarkColor.primaryQuarternary);
+  }
+
+
   static Color surfaceContainerHigh(context) {
     return platformThemeData(context,
         material: (ThemeData data) => data.colorScheme.surfaceContainerHigh,

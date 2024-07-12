@@ -21,8 +21,6 @@ files.pythonhosted.org --proxy=http://<username>:<password>@<host>:<port> dist/s
 pip install ssi-fc-data
 ```
 
-pip install -r requirements.txt
-
 # Sample usage
 ## Config
 Get `consumerID` and `consumerSecret` from [iBoard](https://iboard.ssi.com.vn/support/api-service/management)

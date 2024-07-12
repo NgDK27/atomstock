@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:oppenhomies/widgets/buttons/primary/OpFilledPrimaryButton.dart';
+import 'package:oppenhomies/widgets/buttons/primary/filled_primary_button.dart';
 import 'package:oppenhomies/widgets/effects/shadows/CupertinoPrimaryGlow.dart';
 import 'package:oppenhomies/widgets/effects/shadows/MaterialPrimaryGlow.dart';
 

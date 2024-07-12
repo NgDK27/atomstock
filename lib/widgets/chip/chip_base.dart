@@ -19,9 +19,9 @@ abstract class ChipBase extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
           color: getColor(context),
-          borderRadius: BorderRadius.all(Radius.circular(OpRadius.full))),
+          borderRadius: const BorderRadius.all(Radius.circular(OpRadius.full))),
       child: Padding(
-        padding: EdgeInsets.symmetric(
+        padding: const EdgeInsets.symmetric(
             vertical: OpSpacing.xs2, horizontal: OpSpacing.xs),
         child: Text(
           text,

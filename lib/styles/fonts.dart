@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 const interFontFeatures = <FontFeature>[
   FontFeature.enable('tnum'),
+  FontFeature.enable('pnum'),
   FontFeature.enable('opsz'),
   FontFeature.enable('cv01'),
   FontFeature.enable('cv02'),
@@ -70,6 +71,9 @@ final opMaterialTextTheme = const TextTheme().copyWith(
   labelMedium: const TextStyle(
     fontFamily: "Inter",
     fontFeatures: interFontFeatures,
+    fontVariations: [
+      FontVariation.weight(550)
+    ]
   ),
   labelSmall: const TextStyle(
     fontFamily: "Inter",
