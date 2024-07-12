@@ -3,7 +3,7 @@
 #### From tar ball (most stable)
 If you download file [fc-data.py.zip](https://github.com/SSI-Securities-Corporation/python-fcdata/releases/latest/download/fc-data.py.zip), we include tarball file:
 ``` python
-pip install dist/ssi-fc-data-2.1.0.tar.gz
+pip install dist/ssi-fc-data-2.2.2.tar.gz
 ```
 #### Install behind proxy
 ```python

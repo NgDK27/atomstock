@@ -46,3 +46,4 @@ app.*.map.json
 docs
 fc-data/dist
 .env
+server/.env
