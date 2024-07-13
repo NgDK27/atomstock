@@ -47,7 +47,7 @@ def get_symbols():
     try:
         # Fetch stocks symbols with their names and markets
         cursor.execute("""
-            SELECT s.symbol, s.name, m.en_name 
+            SELECT s.symbol, s.en_name, m.name 
             FROM stocks s 
             JOIN markets m ON s.market_id = m.id
         """)
@@ -56,7 +56,7 @@ def get_symbols():
 
         # Fetch indexes symbols with their markets
         cursor.execute("""
-            SELECT i.symbol, m.en_name 
+            SELECT i.symbol, m.name 
             FROM indexes i 
             JOIN markets m ON i.market_id = m.id
         """)

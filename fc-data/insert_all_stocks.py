@@ -21,8 +21,8 @@ DB_PASSWORD = os.getenv('PASSWORD')
 
 client = fc_md_client.MarketDataClient(config)
 
-def get_securities_list():
-    req = model.securities('UPCOM', 1, 1000)
+def get_securities_list(market: str):
+    req = model.securities(market, 1, 1000)
     res = client.securities(config, req)
     secs = res['data']
     total = res['totalRecord']
@@ -38,14 +38,28 @@ def get_securities_list():
     
     cursor = conn.cursor()
     
-    # Fetch the market_id for 'HOSE'
-    cursor.execute("SELECT id FROM markets WHERE name = 'UPCOM'")
+    cursor.execute("SELECT id FROM markets WHERE name = '{market}'")
     market_id = cursor.fetchone()[0]
 
     for sec in secs:
+        
         symbol = sec['Symbol']
         name = sec['StockName']
         en_name = sec['StockEnName']
+
+        response = client.daily_stock_price(
+            config,
+            model.daily_stock_price(
+                symbol,
+                fromDate='11/07/2024',
+                toDate='11/07/2024',
+                pageIndex=1,
+                pageSize=1000
+            )
+        )
+        
+        if response['status'] != 'Success':
+            continue
 
         if len(symbol) > 3:
             continue
@@ -66,5 +80,9 @@ def get_securities_list():
     cursor.close()
     conn.close()
 
-    print(f"Inserted {valid} records into the stocks table")
+    print(f"Inserted {valid} records into the stocks table out of {total} records")
+
+get_securities_list('HOSE')
+get_securities_list('HNX')
+get_securities_list('UPCOM')
 
