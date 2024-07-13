@@ -8,7 +8,7 @@ def md_access_token():
 	print(client.access_token(model.accessToken(config.consumerID, config.consumerSecret)))
 
 def md_get_securities_list():
-    req = model.securities('UPCOM', 1, 1000)
+    req = model.securities('HOSE', 1, 1000)
     print(client.securities(config, req))
 
 def md_get_index_components():
@@ -24,7 +24,7 @@ def md_get_daily_index():
 	print(client.daily_index(config, model.daily_index('', 'VNIndex', '11/07/2024', '11/07/2024', 1, 100, '', '')))
 
 def md_get_stock_price():
-	print(client.daily_stock_price(config, model.daily_stock_price ('BT6', '11/07/2024', '11/07/2024', 1, 100)))
+	print(client.daily_stock_price(config, model.daily_stock_price ('SZC', '11/07/2024', '11/07/2024', 1, 100)))
 
 def main():
     

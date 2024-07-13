@@ -2,6 +2,7 @@ from ssi_fc_data import fc_md_client , model
 import config
 import psycopg2
 import os
+import time
 from dotenv import load_dotenv
 from pathlib import Path
 
@@ -38,14 +39,18 @@ def get_securities_list(market: str):
     
     cursor = conn.cursor()
     
-    cursor.execute("SELECT id FROM markets WHERE name = '{market}'")
+    cursor.execute("SELECT id FROM markets WHERE name = %s", (market,))
     market_id = cursor.fetchone()[0]
 
     for sec in secs:
         
         symbol = sec['Symbol']
-        name = sec['StockName']
         en_name = sec['StockEnName']
+
+        if len(symbol) > 3:
+            continue
+
+        time.sleep(1)
 
         response = client.daily_stock_price(
             config,
@@ -54,23 +59,24 @@ def get_securities_list(market: str):
                 fromDate='11/07/2024',
                 toDate='11/07/2024',
                 pageIndex=1,
-                pageSize=1000
+                pageSize=10
             )
         )
+
+        print(response)
         
         if response['status'] != 'Success':
             continue
 
-        if len(symbol) > 3:
-            continue
+        print(f"Inserting {symbol} into the stocks table")
 
         # Insert data into the stocks table
         cursor.execute(
             """
-            INSERT INTO stocks (market_id, symbol, name, en_name)
-            VALUES (%s, %s, %s, %s)
+            INSERT INTO stocks (market_id, symbol, en_name)
+            VALUES (%s, %s, %s)
             """,
-            (market_id, symbol, name, en_name)
+            (market_id, symbol, en_name)
         )
 
         valid += 1

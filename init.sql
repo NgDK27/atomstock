@@ -15,7 +15,6 @@ INSERT INTO markets (name) VALUES ('HOSE'), ('HNX'), ('UPCOM');
 CREATE TABLE stocks (
     market_id INT REFERENCES markets(id),
     symbol VARCHAR(10) PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
     en_name VARCHAR(255)
 );
 
