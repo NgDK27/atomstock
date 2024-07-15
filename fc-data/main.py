@@ -1,8 +1,9 @@
 import asyncio
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
 from datetime import datetime, timedelta
 from ssi_fc_data import fc_md_client, model
+from ssi_fc_data.fc_md_stream import MarketDataStream
 import config
 import os
 from dotenv import load_dotenv
@@ -10,8 +11,10 @@ from pathlib import Path
 import psycopg2
 import redis
 import json
-
-app = FastAPI()
+from contextlib import asynccontextmanager
+from collections import defaultdict
+import threading
+from queue import Queue, Empty
 
 # Load environment variables
 project_root = Path(__file__).parent.parent.parent
@@ -29,11 +32,114 @@ redis_client = redis.Redis(host='localhost', port=6379, db=0)
 # Initialize the client
 client = fc_md_client.MarketDataClient(config)
 
+class StreamManager:
+    def __init__(self):
+        self.stock_stream = MarketDataStream(config, client)
+        self.index_stream = MarketDataStream(config, client)
+        self.main_view_subscribers = set()
+        self.stock_subscribers = defaultdict(set)
+        self.index_subscribers = defaultdict(set)
+        self.message_queue = Queue()
+        self.should_stop = threading.Event()
+        self.processing_thread = threading.Thread(target=self._process_messages)
+        self.processing_thread.start()
+
+    def _process_messages(self):
+        while not self.should_stop.is_set():
+            try:
+                message_type, data = self.message_queue.get(timeout=1)
+                if message_type == 'stock':
+                    asyncio.run(self.broadcast_stock_update(data['symbol'], data['data']))
+                elif message_type == 'index':
+                    asyncio.run(self.broadcast_index_update(data['index'], data['data']))
+            except Empty:
+                continue
+            except Exception as e:
+                print(f"Error processing message: {e}")
+
+    def stop(self):
+        self.should_stop.set()
+        self.processing_thread.join()
+
+    async def subscribe_main_view(self, websocket: WebSocket):
+        self.main_view_subscribers.add(websocket)
+        if len(self.main_view_subscribers) == 1:
+            self.stock_stream.swith_channel("X:ALL")
+            self.index_stream.swith_channel("MI:ALL")
+
+    async def unsubscribe_main_view(self, websocket: WebSocket):
+        self.main_view_subscribers.remove(websocket)
+        if len(self.main_view_subscribers) == 0:
+            self._update_stream_channels()
+
+    async def subscribe_stock(self, symbol: str, websocket: WebSocket):
+        self.stock_subscribers[symbol].add(websocket)
+
+    async def unsubscribe_stock(self, symbol: str, websocket: WebSocket):
+        self.stock_subscribers[symbol].remove(websocket)
+        if len(self.stock_subscribers[symbol]) == 0:
+            del self.stock_subscribers[symbol]
+
+    async def subscribe_index(self, index: str, websocket: WebSocket):
+        self.index_subscribers[index].add(websocket)
+
+    async def unsubscribe_index(self, index: str, websocket: WebSocket):
+        self.index_subscribers[index].remove(websocket)
+        if len(self.index_subscribers[index]) == 0:
+            del self.index_subscribers[index]
+
+    def _update_stream_channels(self):
+        if self.main_view_subscribers:
+            self.stock_stream.swith_channel("X:ALL")
+            self.index_stream.swith_channel("MI:ALL")
+        else:
+            stock_symbols = list(self.stock_subscribers.keys())
+            index_symbols = list(self.index_subscribers.keys())
+            if stock_symbols:
+                self.stock_stream.swith_channel(f"X:{'-'.join(stock_symbols)}")
+            else:
+                self.stock_stream.swith_channel("X:NONE")
+            if index_symbols:
+                self.index_stream.swith_channel(f"MI:{'-'.join(index_symbols)}")
+            else:
+                self.index_stream.swith_channel("MI:NONE")
+
+    async def broadcast_stock_update(self, symbol: str, data: dict):
+        try:
+            for websocket in self.main_view_subscribers:
+                await websocket.send_json({"type": "stock_update", "symbol": symbol, "data": data})
+            for websocket in self.stock_subscribers[symbol]:
+                await websocket.send_json({"type": "stock_update", "symbol": symbol, "data": data})
+        except Exception as e:
+            print(f"Error broadcasting stock update: {e}")
+
+    async def broadcast_index_update(self, index: str, data: dict):
+        try:
+            for websocket in self.main_view_subscribers:
+                await websocket.send_json({"type": "index_update", "index": index, "data": data})
+            for websocket in self.index_subscribers[index]:
+                await websocket.send_json({"type": "index_update", "index": index, "data": data})
+        except Exception as e:
+            print(f"Error broadcasting index update: {e}")
+
+stream_manager = StreamManager()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    stream_manager.stock_stream.start(on_stock_message, on_error, "X:ALL")
+    stream_manager.index_stream.start(on_index_message, on_error, "MI:ALL")
+    yield
+    # Shutdown
+    stream_manager.stock_stream.stop()
+    stream_manager.index_stream.stop()
+    stream_manager.stop()
+
+app = FastAPI(lifespan=lifespan)
+
 def get_symbols():
     stock_symbols = []
-    stock_data = []
     index_symbols = []
-    index_data = []
 
     conn = psycopg2.connect(
         host=DB_HOST,
@@ -45,23 +151,19 @@ def get_symbols():
     cursor = conn.cursor()
 
     try:
-        # Fetch stocks symbols with their names and markets
         cursor.execute("""
             SELECT s.symbol, s.en_name, m.name 
             FROM stocks s 
             JOIN markets m ON s.market_id = m.id
         """)
-        stock_data = cursor.fetchall()
-        stock_symbols = [(row[0], row[1], row[2]) for row in stock_data]
+        stock_symbols = [(row[0], row[1], row[2]) for row in cursor.fetchall()]
 
-        # Fetch indexes symbols with their markets
         cursor.execute("""
             SELECT i.symbol, m.name 
             FROM indexes i 
             JOIN markets m ON i.market_id = m.id
         """)
-        index_data = cursor.fetchall()
-        index_symbols = [(row[0], row[1]) for row in index_data]
+        index_symbols = [(row[0], row[1]) for row in cursor.fetchall()]
 
     except Exception as error:
         print("Error while fetching symbols:", error)
@@ -71,13 +173,7 @@ def get_symbols():
 
     return stock_symbols, index_symbols
 
-# Example usage
 stocks, indexes = get_symbols()
-# for symbol, name, market in stocks:
-#     print(f"Symbol: {symbol}, Name: {name}, Market: {market}")
-
-# for symbol, market in indexes:
-#     print(f"Symbol: {symbol}, Market: {market}")
 
 class StockPriceRequest(BaseModel):
     symbol: str
@@ -178,7 +274,7 @@ async def fetch_stock_prices(symbol: str, start_date: datetime, end_date: dateti
     if cache_data:
         return json.loads(cache_data)
 
-    is_index = symbol in ['VNIndex', 'VN30', 'HNXIndex', 'HNX30', 'HNXUpcomIndex']
+    is_index = symbol in [index[0] for index in indexes]
     all_data = []
 
     if range in ['1d', '1w']:
@@ -204,19 +300,78 @@ async def get_stock_prices(request: StockPriceRequest):
     try:
         start_date, end_date = get_date_range(request.range)
         data = await fetch_stock_prices(request.symbol, start_date, end_date, request.range)
-        stock_info = next((stock for stock in stocks if stock[0] == request.symbol), None)
-        name = stock_info[1]
-        market = stock_info[2]
+        if request.symbol in [index[0] for index in indexes]:
+            index_info = next((index for index in indexes if index[0] == request.symbol), None)
+            name = request.symbol
+            market = index_info[1]
+        else:
+            stock_info = next((stock for stock in stocks if stock[0] == request.symbol), None)
+            name = stock_info[1]
+            market = stock_info[2]
         return {"symbol": request.symbol, "name": name, "market": market, "data": data}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 
-
 @app.get("/market/")
 def get_market():
     return {"stocks": stocks, "indexes": indexes}
+
+def on_stock_message(message):
+    try:
+        data = json.loads(message['Content'])
+        symbol = data['Symbol']
+        stream_manager.message_queue.put(('stock', {'symbol': symbol, 'data': data}))
+    except json.JSONDecodeError:
+        print(f"Failed to decode stock message: {message}")
+    except Exception as e:
+        print(f"Error in on_stock_message: {e}")
+
+def on_index_message(message):
+    try:
+        data = json.loads(message['Content'])
+        index_id = data['IndexId']
+        stream_manager.message_queue.put(('index', {'index': index_id, 'data': data}))
+    except json.JSONDecodeError:
+        print(f"Failed to decode index message: {message}")
+    except Exception as e:
+        print(f"Error in on_index_message: {e}")
+
+def on_error(error):
+    print(f"Streaming error occurred: {error}")
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        while True:
+            try:
+                data = await websocket.receive_json()
+                if data['type'] == 'subscribe':
+                    if data['category'] == 'main_view':
+                        await stream_manager.subscribe_main_view(websocket)
+                    elif data['category'] == 'stock':
+                        await stream_manager.subscribe_stock(data['symbol'], websocket)
+                    elif data['category'] == 'index':
+                        await stream_manager.subscribe_index(data['symbol'], websocket)
+                elif data['type'] == 'unsubscribe':
+                    if data['category'] == 'main_view':
+                        await stream_manager.unsubscribe_main_view(websocket)
+                    elif data['category'] == 'stock':
+                        await stream_manager.unsubscribe_stock(data['symbol'], websocket)
+                    elif data['category'] == 'index':
+                        await stream_manager.unsubscribe_index(data['symbol'], websocket)
+            except json.JSONDecodeError:
+                print("Received invalid JSON")
+            except Exception as e:
+                print(f"Error in websocket communication: {e}")
+    except WebSocketDisconnect:
+        await stream_manager.unsubscribe_main_view(websocket)
+        for symbol in list(stream_manager.stock_subscribers.keys()):
+            await stream_manager.unsubscribe_stock(symbol, websocket)
+        for index in list(stream_manager.index_subscribers.keys()):
+            await stream_manager.unsubscribe_index(index, websocket)
 
 if __name__ == "__main__":
     import uvicorn

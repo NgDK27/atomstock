@@ -28,10 +28,10 @@ def main():
 			mm.swith_channel(message)
 	
 main()
-# def bruh(channel):
+def bruh(channel):
 
-# 	mm = MarketDataStream(config, MarketDataClient(config))
-# 	mm.start(get_market_data, getError, channel)
+	mm = MarketDataStream(config, MarketDataClient(config))
+	mm.start(get_market_data, getError, channel)
 	
-# bruh('X:SSI')
+# bruh("X:SSI")
 # bruh('X:ACB')
