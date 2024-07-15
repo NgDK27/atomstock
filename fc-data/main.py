@@ -1,5 +1,6 @@
 import asyncio
-from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect, status
+from fastapi.websockets import WebSocketState
 from pydantic import BaseModel
 from datetime import datetime, timedelta
 from ssi_fc_data import fc_md_client, model
@@ -66,61 +67,73 @@ class StreamManager:
         if len(self.main_view_subscribers) == 1:
             self.stock_stream.swith_channel("X:ALL")
             self.index_stream.swith_channel("MI:ALL")
+        print(f"Subscribed to main view. Total subscribers: {len(self.main_view_subscribers)}")
 
     async def unsubscribe_main_view(self, websocket: WebSocket):
-        self.main_view_subscribers.remove(websocket)
+        self.main_view_subscribers.discard(websocket)
         if len(self.main_view_subscribers) == 0:
             self._update_stream_channels()
+        print(f"Unsubscribed from main view. Total subscribers: {len(self.main_view_subscribers)}")
 
     async def subscribe_stock(self, symbol: str, websocket: WebSocket):
         self.stock_subscribers[symbol].add(websocket)
+        self._update_stock_stream()
+        print(f"Subscribed to stock: {symbol}. Total subscribers: {len(self.stock_subscribers[symbol])}")
 
     async def unsubscribe_stock(self, symbol: str, websocket: WebSocket):
-        self.stock_subscribers[symbol].remove(websocket)
+        self.stock_subscribers[symbol].discard(websocket)
         if len(self.stock_subscribers[symbol]) == 0:
             del self.stock_subscribers[symbol]
+        self._update_stock_stream()
+        print(f"Unsubscribed from stock: {symbol}")
 
     async def subscribe_index(self, index: str, websocket: WebSocket):
         self.index_subscribers[index].add(websocket)
+        self._update_index_stream()
+        print(f"Subscribed to index: {index}. Total subscribers: {len(self.index_subscribers[index])}")
 
     async def unsubscribe_index(self, index: str, websocket: WebSocket):
-        self.index_subscribers[index].remove(websocket)
+        self.index_subscribers[index].discard(websocket)
         if len(self.index_subscribers[index]) == 0:
             del self.index_subscribers[index]
+        self._update_index_stream()
+        print(f"Unsubscribed from index: {index}")
+
+    def _update_stock_stream(self):
+        symbols = list(self.stock_subscribers.keys())
+        channel = f"X:{'-'.join(symbols)}" if symbols else "X:NONE"
+        print(f"Updating stock stream: {channel}")
+        self.stock_stream.swith_channel(channel)
+
+    def _update_index_stream(self):
+        indices = list(self.index_subscribers.keys())
+        channel = f"MI:{'-'.join(indices)}" if indices else "MI:NONE"
+        print(f"Updating index stream: {channel}")
+        self.index_stream.swith_channel(channel)
 
     def _update_stream_channels(self):
-        if self.main_view_subscribers:
-            self.stock_stream.swith_channel("X:ALL")
-            self.index_stream.swith_channel("MI:ALL")
-        else:
-            stock_symbols = list(self.stock_subscribers.keys())
-            index_symbols = list(self.index_subscribers.keys())
-            if stock_symbols:
-                self.stock_stream.swith_channel(f"X:{'-'.join(stock_symbols)}")
-            else:
-                self.stock_stream.swith_channel("X:NONE")
-            if index_symbols:
-                self.index_stream.swith_channel(f"MI:{'-'.join(index_symbols)}")
-            else:
-                self.index_stream.swith_channel("MI:NONE")
+        self._update_stock_stream()
+        self._update_index_stream()
 
     async def broadcast_stock_update(self, symbol: str, data: dict):
-        try:
-            for websocket in self.main_view_subscribers:
-                await websocket.send_json({"type": "stock_update", "symbol": symbol, "data": data})
-            for websocket in self.stock_subscribers[symbol]:
-                await websocket.send_json({"type": "stock_update", "symbol": symbol, "data": data})
-        except Exception as e:
-            print(f"Error broadcasting stock update: {e}")
+        message = {"type": "stock_update", "symbol": symbol, "data": data}
+        if self.main_view_subscribers or symbol in self.stock_subscribers:
+            await self._broadcast(self.main_view_subscribers, message)
+            await self._broadcast(self.stock_subscribers[symbol], message)
 
     async def broadcast_index_update(self, index: str, data: dict):
-        try:
-            for websocket in self.main_view_subscribers:
-                await websocket.send_json({"type": "index_update", "index": index, "data": data})
-            for websocket in self.index_subscribers[index]:
-                await websocket.send_json({"type": "index_update", "index": index, "data": data})
-        except Exception as e:
-            print(f"Error broadcasting index update: {e}")
+        message = {"type": "index_update", "index": index, "data": data}
+        if self.main_view_subscribers or index in self.index_subscribers:
+            await self._broadcast(self.main_view_subscribers, message)
+            await self._broadcast(self.index_subscribers[index], message)
+
+    async def _broadcast(self, subscribers, message):
+        for websocket in list(subscribers):
+            try:
+                await websocket.send_json(message)
+            except Exception as e:
+                print(f"Error sending message to WebSocket: {e}")
+                subscribers.discard(websocket)
 
 stream_manager = StreamManager()
 
@@ -322,6 +335,7 @@ def on_stock_message(message):
     try:
         data = json.loads(message['Content'])
         symbol = data['Symbol']
+        print(f"Received stock update for {symbol}")
         stream_manager.message_queue.put(('stock', {'symbol': symbol, 'data': data}))
     except json.JSONDecodeError:
         print(f"Failed to decode stock message: {message}")
@@ -332,6 +346,7 @@ def on_index_message(message):
     try:
         data = json.loads(message['Content'])
         index_id = data['IndexId']
+        print(f"Received index update for {index_id}")
         stream_manager.message_queue.put(('index', {'index': index_id, 'data': data}))
     except json.JSONDecodeError:
         print(f"Failed to decode index message: {message}")
@@ -344,10 +359,12 @@ def on_error(error):
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
+    print("WebSocket connection accepted")
     try:
         while True:
             try:
                 data = await websocket.receive_json()
+                print(f"Received WebSocket message: {data}")
                 if data['type'] == 'subscribe':
                     if data['category'] == 'main_view':
                         await stream_manager.subscribe_main_view(websocket)
@@ -362,11 +379,18 @@ async def websocket_endpoint(websocket: WebSocket):
                         await stream_manager.unsubscribe_stock(data['symbol'], websocket)
                     elif data['category'] == 'index':
                         await stream_manager.unsubscribe_index(data['symbol'], websocket)
+
+            except WebSocketDisconnect:
+                print("WebSocket disconnected")
+                break
             except json.JSONDecodeError:
                 print("Received invalid JSON")
             except Exception as e:
                 print(f"Error in websocket communication: {e}")
-    except WebSocketDisconnect:
+                if websocket.client_state == WebSocketState.DISCONNECTED:
+                    break
+    finally:
+        print("Cleaning up WebSocket connection")
         await stream_manager.unsubscribe_main_view(websocket)
         for symbol in list(stream_manager.stock_subscribers.keys()):
             await stream_manager.unsubscribe_stock(symbol, websocket)
