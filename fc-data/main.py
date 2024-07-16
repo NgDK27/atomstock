@@ -16,6 +16,7 @@ from contextlib import asynccontextmanager
 from collections import defaultdict
 import threading
 from queue import Queue, Empty
+import time
 
 # Load environment variables
 project_root = Path(__file__).parent.parent.parent
@@ -32,123 +33,6 @@ redis_client = redis.Redis(host='localhost', port=6379, db=0)
 
 # Initialize the client
 client = fc_md_client.MarketDataClient(config)
-
-class StreamManager:
-    def __init__(self):
-        self.stock_stream = MarketDataStream(config, client)
-        self.index_stream = MarketDataStream(config, client)
-        self.main_view_subscribers = set()
-        self.stock_subscribers = defaultdict(set)
-        self.index_subscribers = defaultdict(set)
-        self.message_queue = Queue()
-        self.should_stop = threading.Event()
-        self.processing_thread = threading.Thread(target=self._process_messages)
-        self.processing_thread.start()
-
-    def _process_messages(self):
-        while not self.should_stop.is_set():
-            try:
-                message_type, data = self.message_queue.get(timeout=1)
-                if message_type == 'stock':
-                    asyncio.run(self.broadcast_stock_update(data['symbol'], data['data']))
-                elif message_type == 'index':
-                    asyncio.run(self.broadcast_index_update(data['index'], data['data']))
-            except Empty:
-                continue
-            except Exception as e:
-                print(f"Error processing message: {e}")
-
-    def stop(self):
-        self.should_stop.set()
-        self.processing_thread.join()
-
-    async def subscribe_main_view(self, websocket: WebSocket):
-        self.main_view_subscribers.add(websocket)
-        if len(self.main_view_subscribers) == 1:
-            self.stock_stream.swith_channel("X:ALL")
-            self.index_stream.swith_channel("MI:ALL")
-        print(f"Subscribed to main view. Total subscribers: {len(self.main_view_subscribers)}")
-
-    async def unsubscribe_main_view(self, websocket: WebSocket):
-        self.main_view_subscribers.discard(websocket)
-        if len(self.main_view_subscribers) == 0:
-            self._update_stream_channels()
-        print(f"Unsubscribed from main view. Total subscribers: {len(self.main_view_subscribers)}")
-
-    async def subscribe_stock(self, symbol: str, websocket: WebSocket):
-        self.stock_subscribers[symbol].add(websocket)
-        self._update_stock_stream()
-        print(f"Subscribed to stock: {symbol}. Total subscribers: {len(self.stock_subscribers[symbol])}")
-
-    async def unsubscribe_stock(self, symbol: str, websocket: WebSocket):
-        self.stock_subscribers[symbol].discard(websocket)
-        if len(self.stock_subscribers[symbol]) == 0:
-            del self.stock_subscribers[symbol]
-        self._update_stock_stream()
-        print(f"Unsubscribed from stock: {symbol}")
-
-    async def subscribe_index(self, index: str, websocket: WebSocket):
-        self.index_subscribers[index].add(websocket)
-        self._update_index_stream()
-        print(f"Subscribed to index: {index}. Total subscribers: {len(self.index_subscribers[index])}")
-
-    async def unsubscribe_index(self, index: str, websocket: WebSocket):
-        self.index_subscribers[index].discard(websocket)
-        if len(self.index_subscribers[index]) == 0:
-            del self.index_subscribers[index]
-        self._update_index_stream()
-        print(f"Unsubscribed from index: {index}")
-
-    def _update_stock_stream(self):
-        symbols = list(self.stock_subscribers.keys())
-        channel = f"X:{'-'.join(symbols)}" if symbols else "X:NONE"
-        print(f"Updating stock stream: {channel}")
-        self.stock_stream.swith_channel(channel)
-
-    def _update_index_stream(self):
-        indices = list(self.index_subscribers.keys())
-        channel = f"MI:{'-'.join(indices)}" if indices else "MI:NONE"
-        print(f"Updating index stream: {channel}")
-        self.index_stream.swith_channel(channel)
-
-    def _update_stream_channels(self):
-        self._update_stock_stream()
-        self._update_index_stream()
-
-    async def broadcast_stock_update(self, symbol: str, data: dict):
-        message = {"type": "stock_update", "symbol": symbol, "data": data}
-        if self.main_view_subscribers or symbol in self.stock_subscribers:
-            await self._broadcast(self.main_view_subscribers, message)
-            await self._broadcast(self.stock_subscribers[symbol], message)
-
-    async def broadcast_index_update(self, index: str, data: dict):
-        message = {"type": "index_update", "index": index, "data": data}
-        if self.main_view_subscribers or index in self.index_subscribers:
-            await self._broadcast(self.main_view_subscribers, message)
-            await self._broadcast(self.index_subscribers[index], message)
-
-    async def _broadcast(self, subscribers, message):
-        for websocket in list(subscribers):
-            try:
-                await websocket.send_json(message)
-            except Exception as e:
-                print(f"Error sending message to WebSocket: {e}")
-                subscribers.discard(websocket)
-
-stream_manager = StreamManager()
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Startup
-    stream_manager.stock_stream.start(on_stock_message, on_error, "X:ALL")
-    stream_manager.index_stream.start(on_index_message, on_error, "MI:ALL")
-    yield
-    # Shutdown
-    stream_manager.stock_stream.stop()
-    stream_manager.index_stream.stop()
-    stream_manager.stop()
-
-app = FastAPI(lifespan=lifespan)
 
 def get_symbols():
     stock_symbols = []
@@ -186,157 +70,205 @@ def get_symbols():
 
     return stock_symbols, index_symbols
 
-stocks, indexes = get_symbols()
+class StreamManager:
+    def __init__(self):
+        self.stock_stream = None
+        self.index_stream = None
+        self.main_view_subscribers = set()
+        self.stock_subscribers = defaultdict(set)
+        self.index_subscribers = defaultdict(set)
+        self.message_queue = Queue()
+        self.should_stop = threading.Event()
+        self.processing_thread = threading.Thread(target=self._process_messages)
+        self.processing_thread.start()
+        
+        self.stocks, self.indexes = get_symbols()
+        self.all_stock_data = {symbol: {} for symbol, _, _ in self.stocks}
+        self.all_index_data = {index: {} for index, _ in self.indexes}
+        self.stock_symbols = set(symbol for symbol, _, _ in self.stocks)
+        self.index_symbols = set(index for index, _ in self.indexes)
+        self.last_categorized_data = None
 
-class StockPriceRequest(BaseModel):
-    symbol: str
-    range: str
+    def start_streams(self):
+        self.stock_stream = MarketDataStream(config, client)
+        self.index_stream = MarketDataStream(config, client)
+        self.stock_stream.start(on_stock_message, on_error, "X:ALL")
+        self.index_stream.start(on_index_message, on_error, "MI:ALL")
 
-def get_cache_key(symbol: str, start_date: datetime, end_date: datetime):
-    return f"stock_data:{symbol}_{start_date.isoformat()}_{end_date.isoformat()}"
+    def stop_streams(self):
+        if self.stock_stream:
+            self.stock_stream.swith_channel("X:NONE")
+        if self.index_stream:
+            self.index_stream.swith_channel("MI:NONE")
+        # Allow some time for the streams to process the channel switch
+        time.sleep(1)
+        self.stock_stream = None
+        self.index_stream = None
 
-def get_date_range(range: str):
-    end_date = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-    if range == '1d':
-        start_date = end_date
-    elif range == '1w':
-        start_date = end_date - timedelta(days=7)
-    elif range == '1m':
-        start_date = end_date - timedelta(days=30)
-    elif range == '3m':
-        start_date = end_date - timedelta(days=3*30)
-    elif range == '6m':
-        start_date = end_date - timedelta(days=6*30)
-    elif range == '1y':
-        start_date = end_date - timedelta(days=365)
-    elif range == '5y':
-        start_date = end_date - timedelta(days=5*365)
-    else:
-        raise ValueError("Invalid range. Use '1d', '1w', '1m', '3m', '6m', 1y', or '5y'.")
-    return start_date, end_date
+    def _process_messages(self):
+        while not self.should_stop.is_set():
+            try:
+                message_type, data = self.message_queue.get(timeout=1)
+                if message_type == 'stock':
+                    asyncio.run(self.broadcast_stock_update(data['symbol'], data['data']))
+                elif message_type == 'index':
+                    asyncio.run(self.broadcast_index_update(data['index'], data['data']))
+            except Empty:
+                continue
+            except Exception as e:
+                print(f"Error processing message: {e}")
 
-async def fetch_intraday_data(symbol: str, start_date: datetime, end_date: datetime, range: str):
-    response = client.intraday_ohlc(
-        config,
-        model.intraday_ohlc(
-            symbol,
-            start_date.strftime('%d/%m/%Y'),
-            end_date.strftime('%d/%m/%Y'),
-            pageIndex=1,
-            pageSize=1000,
-            ascending=True,
-            resolution=1
-        )
-    )
+    def stop(self):
+        self.should_stop.set()
+        self.processing_thread.join()
+        self.stop_streams()
 
-    while response['status'] != 'Success' and range =='1d':
-        start_date -= timedelta(days=1)
-        end_date -= timedelta(days=1)
-        response = client.intraday_ohlc(
-            config,
-            model.intraday_ohlc(
-                symbol,
-                start_date.strftime('%d/%m/%Y'),
-                end_date.strftime('%d/%m/%Y'),
-                pageIndex=1,
-                pageSize=1000,
-                ascending=True,
-                resolution=1
-            )
-        )
+    async def subscribe_main_view(self, websocket: WebSocket):
+        self.main_view_subscribers.add(websocket)
+        if len(self.main_view_subscribers) == 1:
+            self.stock_stream.swith_channel("X:ALL")
+            self.index_stream.swith_channel("MI:ALL")
+        await self.send_baseline_data(websocket)
+        if self.last_categorized_data:
+            await websocket.send_json({"type": "main_view_update", "categorized_stocks": self.last_categorized_data})
+        print(f"Subscribed to main view. Total subscribers: {len(self.main_view_subscribers)}")
 
-    return [{'TradingDate': item['TradingDate'], 'Time': item['Time'], 'ClosePrice': item['Close']} for item in response['data']]
+    async def send_baseline_data(self, websocket: WebSocket):
+        baseline_data = {
+            "type": "baseline_data",
+            "stocks": [{"symbol": symbol, "name": name, "market": market} for symbol, name, market in self.stocks],
+            "indexes": [{"symbol": symbol, "market": market} for symbol, market in self.indexes]
+        }
+        await websocket.send_json(baseline_data)
 
-async def fetch_daily_data(symbol: str, start_date: datetime, end_date: datetime, is_index: bool):
-    if not is_index:
-        response = client.daily_stock_price(
-            config,
-            model.daily_stock_price(
-                symbol,
-                fromDate=start_date.strftime('%d/%m/%Y'),
-                toDate=end_date.strftime('%d/%m/%Y'),
-                pageIndex=1,
-                pageSize=1000
-            )
-        )
-    else:
-        response = client.daily_index(
-            config,
-            model.daily_index(
-                '',
-                symbol,
-                fromDate=start_date.strftime('%d/%m/%Y'),
-                toDate=end_date.strftime('%d/%m/%Y'),
-                pageIndex=1,
-                pageSize=1000
-            )
-        )
+    async def unsubscribe_main_view(self, websocket: WebSocket):
+        self.main_view_subscribers.discard(websocket)
+        if len(self.main_view_subscribers) == 0:
+            self._update_stream_channels()
+        print(f"Unsubscribed from main view. Total subscribers: {len(self.main_view_subscribers)}")
 
-    if response['status'] != 'Success':
-        return []
+    async def subscribe_stock(self, symbol: str, websocket: WebSocket):
+        if symbol not in self.stock_symbols:
+            return
+        self.stock_subscribers[symbol].add(websocket)
+        self._update_stock_stream()
+        if symbol in self.all_stock_data and self.all_stock_data[symbol]:
+            await websocket.send_json({"type": "stock_update", "symbol": symbol, "data": self.all_stock_data[symbol]})
+        print(f"Subscribed to stock: {symbol}. Total subscribers: {len(self.stock_subscribers[symbol])}")
 
-    if is_index:
-        return [{'TradingDate': item['TradingDate'], 'IndexValue': item['IndexValue']} for item in response['data']]
-    else:
-        return [{'TradingDate': item['TradingDate'], 'ClosePrice': item['ClosePrice']} for item in response['data']]
+    async def unsubscribe_stock(self, symbol: str, websocket: WebSocket):
+        self.stock_subscribers[symbol].discard(websocket)
+        if len(self.stock_subscribers[symbol]) == 0:
+            del self.stock_subscribers[symbol]
+        self._update_stock_stream()
+        print(f"Unsubscribed from stock: {symbol}")
 
-async def fetch_stock_prices(symbol: str, start_date: datetime, end_date: datetime, range: str):
-    cache_key = get_cache_key(symbol, start_date, end_date)
-    cache_data = redis_client.get(cache_key)
+    async def subscribe_index(self, index: str, websocket: WebSocket):
+        if index not in self.index_symbols:
+            return
+        self.index_subscribers[index].add(websocket)
+        self._update_index_stream()
+        if index in self.all_index_data and self.all_index_data[index]:
+            await websocket.send_json({"type": "index_update", "index": index, "data": self.all_index_data[index]})
+        print(f"Subscribed to index: {index}. Total subscribers: {len(self.index_subscribers[index])}")
 
-    if cache_data:
-        return json.loads(cache_data)
+    async def unsubscribe_index(self, index: str, websocket: WebSocket):
+        self.index_subscribers[index].discard(websocket)
+        if len(self.index_subscribers[index]) == 0:
+            del self.index_subscribers[index]
+        self._update_index_stream()
+        print(f"Unsubscribed from index: {index}")
 
-    is_index = symbol in [index[0] for index in indexes]
-    all_data = []
+    def _update_stock_stream(self):
+        symbols = list(self.stock_subscribers.keys())
+        channel = f"X:{'-'.join(symbols)}" if symbols else "X:NONE"
+        print(f"Updating stock stream: {channel}")
+        self.stock_stream.swith_channel(channel)
 
-    if range in ['1d', '1w']:
-        all_data = await fetch_intraday_data(symbol, start_date, end_date, range)
-    else:
-        current_start = start_date
-        tasks = []
-        while current_start < end_date:
-            current_end = min(current_start + timedelta(days=30), end_date)
-            tasks.append(fetch_daily_data(symbol, current_start, current_end, is_index))
-            current_start = current_end + timedelta(days=1)
+    def _update_index_stream(self):
+        indices = list(self.index_subscribers.keys())
+        channel = f"MI:{'-'.join(indices)}" if indices else "MI:NONE"
+        print(f"Updating index stream: {channel}")
+        self.index_stream.swith_channel(channel)
 
-        chunk_results = await asyncio.gather(*tasks)
-        for chunk in chunk_results:
-            all_data.extend(chunk)
+    def _update_stream_channels(self):
+        self._update_stock_stream()
+        self._update_index_stream()
 
-    redis_client.setex(cache_key, 60*60*24, json.dumps(all_data))
+    def update_stock_data(self, symbol: str, data: dict):
+        if symbol not in self.stock_symbols:
+            return None
+        self.all_stock_data[symbol] = data
+        self.last_categorized_data = self.categorize_stocks()
+        return self.last_categorized_data
 
-    return all_data
+    def update_index_data(self, index: str, data: dict):
+        if index not in self.index_symbols:
+            return
+        self.all_index_data[index] = data
 
-@app.get("/historical_prices/")
-async def get_stock_prices(request: StockPriceRequest):
-    try:
-        start_date, end_date = get_date_range(request.range)
-        data = await fetch_stock_prices(request.symbol, start_date, end_date, request.range)
-        if request.symbol in [index[0] for index in indexes]:
-            index_info = next((index for index in indexes if index[0] == request.symbol), None)
-            name = request.symbol
-            market = index_info[1]
-        else:
-            stock_info = next((stock for stock in stocks if stock[0] == request.symbol), None)
-            name = stock_info[1]
-            market = stock_info[2]
-        return {"symbol": request.symbol, "name": name, "market": market, "data": data}
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+    def categorize_stocks(self):
+        stocks = [
+            {**data, "symbol": symbol, "name": name, "market": market}
+            for (symbol, name, market), data in zip(self.stocks, self.all_stock_data.values())
+            if data  # Only include stocks with actual data
+        ]
+        
+        top_increase = sorted(stocks, key=lambda x: x.get('RatioChange', 0), reverse=True)[:10]
+        top_decrease = sorted(stocks, key=lambda x: x.get('RatioChange', 0))[:10]
+        top_volume = sorted(stocks, key=lambda x: x.get('TotalVol', 0), reverse=True)[:10]
+        
+        return {
+            "top_increase": top_increase,
+            "top_decrease": top_decrease,
+            "top_volume": top_volume
+        }
 
-@app.get("/market/")
-def get_market():
-    return {"stocks": stocks, "indexes": indexes}
+    async def broadcast_stock_update(self, symbol: str, data: dict):
+        categorized_data = self.update_stock_data(symbol, data)
+        if categorized_data and self.main_view_subscribers:
+            message = {"type": "main_view_update", "categorized_stocks": categorized_data}
+            await self._broadcast(self.main_view_subscribers, message)
+        
+        if symbol in self.stock_subscribers:
+            message = {"type": "stock_update", "symbol": symbol, "data": data}
+            await self._broadcast(self.stock_subscribers[symbol], message)
+
+    async def broadcast_index_update(self, index: str, data: dict):
+        self.update_index_data(index, data)
+        if self.main_view_subscribers:
+            message = {"type": "index_update", "index": index, "data": data}
+            await self._broadcast(self.main_view_subscribers, message)
+        
+        if index in self.index_subscribers:
+            await self._broadcast(self.index_subscribers[index], message)
+
+    async def _broadcast(self, subscribers, message):
+        for websocket in list(subscribers):
+            try:
+                await websocket.send_json(message)
+            except Exception as e:
+                print(f"Error sending message to WebSocket: {e}")
+                subscribers.discard(websocket)
+
+stream_manager = StreamManager()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    stream_manager.start_streams()
+    yield
+    # Shutdown
+    stream_manager.stop()
+
+app = FastAPI(lifespan=lifespan)
 
 def on_stock_message(message):
     try:
         data = json.loads(message['Content'])
         symbol = data['Symbol']
-        print(f"Received stock update for {symbol}")
-        stream_manager.message_queue.put(('stock', {'symbol': symbol, 'data': data}))
+        if symbol in stream_manager.stock_symbols:
+            stream_manager.message_queue.put(('stock', {'symbol': symbol, 'data': data}))
     except json.JSONDecodeError:
         print(f"Failed to decode stock message: {message}")
     except Exception as e:
@@ -346,8 +278,8 @@ def on_index_message(message):
     try:
         data = json.loads(message['Content'])
         index_id = data['IndexId']
-        print(f"Received index update for {index_id}")
-        stream_manager.message_queue.put(('index', {'index': index_id, 'data': data}))
+        if index_id in stream_manager.index_symbols:
+            stream_manager.message_queue.put(('index', {'index': index_id, 'data': data}))
     except json.JSONDecodeError:
         print(f"Failed to decode index message: {message}")
     except Exception as e:
