@@ -83,11 +83,17 @@ class StreamManager:
         self.processing_thread.start()
         
         self.stocks, self.indexes = get_symbols()
-        self.all_stock_data = {symbol: {} for symbol, _, _ in self.stocks}
-        self.all_index_data = {index: {} for index, _ in self.indexes}
+        self.all_stock_data = {}
+        self.all_index_data = {}
         self.stock_symbols = set(symbol for symbol, _, _ in self.stocks)
         self.index_symbols = set(index for index, _ in self.indexes)
         self.last_categorized_data = None
+        self.main_view_update_needed = False
+        self.websocket_subscriptions = defaultdict(set)
+        self.main_view_stocks = set()
+        self.last_sent_categorized_data = {}
+        self.current_stock_subscription = None
+        self.current_index_subscription = None
 
     def start_streams(self):
         self.stock_stream = MarketDataStream(config, client)
@@ -100,7 +106,6 @@ class StreamManager:
             self.stock_stream.swith_channel("X:NONE")
         if self.index_stream:
             self.index_stream.swith_channel("MI:NONE")
-        # Allow some time for the streams to process the channel switch
         time.sleep(1)
         self.stock_stream = None
         self.index_stream = None
@@ -113,6 +118,9 @@ class StreamManager:
                     asyncio.run(self.broadcast_stock_update(data['symbol'], data['data']))
                 elif message_type == 'index':
                     asyncio.run(self.broadcast_index_update(data['index'], data['data']))
+                
+                if self.main_view_update_needed:
+                    asyncio.run(self.broadcast_main_view_update())
             except Empty:
                 continue
             except Exception as e:
@@ -124,99 +132,103 @@ class StreamManager:
         self.stop_streams()
 
     async def subscribe_main_view(self, websocket: WebSocket):
+        await self.unsubscribe_all(websocket)
         self.main_view_subscribers.add(websocket)
-        if len(self.main_view_subscribers) == 1:
-            self.stock_stream.swith_channel("X:ALL")
-            self.index_stream.swith_channel("MI:ALL")
-        await self.send_baseline_data(websocket)
+        self.websocket_subscriptions[websocket].add('main_view')
+        await self.update_main_view_channels()
         if self.last_categorized_data:
             await websocket.send_json({"type": "main_view_update", "categorized_stocks": self.last_categorized_data})
+        for index, data in self.all_index_data.items():
+            await websocket.send_json({"type": "index_update", "index": index, "data": data})
         print(f"Subscribed to main view. Total subscribers: {len(self.main_view_subscribers)}")
 
-    async def send_baseline_data(self, websocket: WebSocket):
-        baseline_data = {
-            "type": "baseline_data",
-            "stocks": [{"symbol": symbol, "name": name, "market": market} for symbol, name, market in self.stocks],
-            "indexes": [{"symbol": symbol, "market": market} for symbol, market in self.indexes]
-        }
-        await websocket.send_json(baseline_data)
-
-    async def unsubscribe_main_view(self, websocket: WebSocket):
-        self.main_view_subscribers.discard(websocket)
-        if len(self.main_view_subscribers) == 0:
-            self._update_stream_channels()
-        print(f"Unsubscribed from main view. Total subscribers: {len(self.main_view_subscribers)}")
 
     async def subscribe_stock(self, symbol: str, websocket: WebSocket):
         if symbol not in self.stock_symbols:
             return
-        self.stock_subscribers[symbol].add(websocket)
-        self._update_stock_stream()
-        if symbol in self.all_stock_data and self.all_stock_data[symbol]:
+        await self.unsubscribe_all(websocket)
+        self.current_stock_subscription = symbol
+        self.stock_subscribers[symbol] = {websocket}
+        self.websocket_subscriptions[websocket].add(f'stock:{symbol}')
+        await self._update_stock_stream()
+        if symbol in self.all_stock_data:
             await websocket.send_json({"type": "stock_update", "symbol": symbol, "data": self.all_stock_data[symbol]})
         print(f"Subscribed to stock: {symbol}. Total subscribers: {len(self.stock_subscribers[symbol])}")
-
-    async def unsubscribe_stock(self, symbol: str, websocket: WebSocket):
-        self.stock_subscribers[symbol].discard(websocket)
-        if len(self.stock_subscribers[symbol]) == 0:
-            del self.stock_subscribers[symbol]
-        self._update_stock_stream()
-        print(f"Unsubscribed from stock: {symbol}")
 
     async def subscribe_index(self, index: str, websocket: WebSocket):
         if index not in self.index_symbols:
             return
-        self.index_subscribers[index].add(websocket)
-        self._update_index_stream()
-        if index in self.all_index_data and self.all_index_data[index]:
+        await self.unsubscribe_all(websocket)
+        self.current_index_subscription = index
+        self.index_subscribers[index] = {websocket}
+        self.websocket_subscriptions[websocket].add(f'index:{index}')
+        await self._update_index_stream()
+        if index in self.all_index_data:
             await websocket.send_json({"type": "index_update", "index": index, "data": self.all_index_data[index]})
         print(f"Subscribed to index: {index}. Total subscribers: {len(self.index_subscribers[index])}")
 
-    async def unsubscribe_index(self, index: str, websocket: WebSocket):
-        self.index_subscribers[index].discard(websocket)
-        if len(self.index_subscribers[index]) == 0:
-            del self.index_subscribers[index]
-        self._update_index_stream()
-        print(f"Unsubscribed from index: {index}")
+    async def update_main_view_channels(self):
+        if not self.last_categorized_data:
+            return
+        new_main_view_stocks = set()
+        for category in ['top_increase', 'top_decrease', 'top_volume']:
+            new_main_view_stocks.update(stock['symbol'] for stock in self.last_categorized_data[category])
+        
+        if new_main_view_stocks != self.main_view_stocks:
+            self.main_view_stocks = new_main_view_stocks
+            await self._update_stock_stream()
 
-    def _update_stock_stream(self):
-        symbols = list(self.stock_subscribers.keys())
-        channel = f"X:{'-'.join(symbols)}" if symbols else "X:NONE"
+    async def _update_stock_stream(self):
+        all_symbols = set()
+        if self.main_view_subscribers:
+            all_symbols.update(self.main_view_stocks)
+        if self.current_stock_subscription:
+            all_symbols.add(self.current_stock_subscription)
+        channel = f"X:{'-'.join(sorted(all_symbols))}" if all_symbols else "X:NONE"
         print(f"Updating stock stream: {channel}")
         self.stock_stream.swith_channel(channel)
 
-    def _update_index_stream(self):
-        indices = list(self.index_subscribers.keys())
-        channel = f"MI:{'-'.join(indices)}" if indices else "MI:NONE"
+    async def _update_index_stream(self):
+        channel = f"MI:{self.current_index_subscription}" if self.current_index_subscription else "MI:NONE"
         print(f"Updating index stream: {channel}")
         self.index_stream.swith_channel(channel)
-
-    def _update_stream_channels(self):
-        self._update_stock_stream()
-        self._update_index_stream()
 
     def update_stock_data(self, symbol: str, data: dict):
         if symbol not in self.stock_symbols:
             return None
-        self.all_stock_data[symbol] = data
-        self.last_categorized_data = self.categorize_stocks()
-        return self.last_categorized_data
+        if self.all_stock_data.get(symbol) != data:
+            self.all_stock_data[symbol] = data
+            new_categorized_data = self.categorize_stocks()
+            if new_categorized_data != self.last_categorized_data:
+                self.last_categorized_data = new_categorized_data
+                self.main_view_update_needed = True
+            return True
+        return False
 
     def update_index_data(self, index: str, data: dict):
         if index not in self.index_symbols:
-            return
-        self.all_index_data[index] = data
+            return False
+        if self.all_index_data.get(index) != data:
+            self.all_index_data[index] = data
+            return True
+        return False
 
     def categorize_stocks(self):
-        stocks = [
-            {**data, "symbol": symbol, "name": name, "market": market}
-            for (symbol, name, market), data in zip(self.stocks, self.all_stock_data.values())
-            if data  # Only include stocks with actual data
-        ]
+        stocks = []
+        for symbol, name, market in self.stocks:
+            if symbol in self.all_stock_data:
+                stock_data = self.all_stock_data[symbol]
+                if stock_data.get('RatioChange', 0) != -100.0:
+                    stocks.append({
+                        "symbol": symbol,
+                        "name": name,
+                        "market": market,
+                        **stock_data  # This includes all data from the stock
+                    })
         
-        top_increase = sorted(stocks, key=lambda x: x.get('RatioChange', 0), reverse=True)[:10]
-        top_decrease = sorted(stocks, key=lambda x: x.get('RatioChange', 0))[:10]
-        top_volume = sorted(stocks, key=lambda x: x.get('TotalVol', 0), reverse=True)[:10]
+        top_increase = sorted(stocks, key=lambda x: x.get('RatioChange', 0), reverse=True)[:3]
+        top_decrease = sorted(stocks, key=lambda x: x.get('RatioChange', 0))[:3]
+        top_volume = sorted(stocks, key=lambda x: x.get('TotalVol', 0), reverse=True)[:3]
         
         return {
             "top_increase": top_increase,
@@ -225,23 +237,31 @@ class StreamManager:
         }
 
     async def broadcast_stock_update(self, symbol: str, data: dict):
-        categorized_data = self.update_stock_data(symbol, data)
-        if categorized_data and self.main_view_subscribers:
-            message = {"type": "main_view_update", "categorized_stocks": categorized_data}
-            await self._broadcast(self.main_view_subscribers, message)
-        
-        if symbol in self.stock_subscribers:
-            message = {"type": "stock_update", "symbol": symbol, "data": data}
-            await self._broadcast(self.stock_subscribers[symbol], message)
+        if self.update_stock_data(symbol, data):
+            if symbol in self.stock_subscribers:
+                message = {"type": "stock_update", "symbol": symbol, "data": data}
+                await self._broadcast(self.stock_subscribers[symbol], message)
+            if symbol in self.main_view_stocks:
+                await self.broadcast_main_view_update()
 
     async def broadcast_index_update(self, index: str, data: dict):
-        self.update_index_data(index, data)
-        if self.main_view_subscribers:
+        if self.update_index_data(index, data):
             message = {"type": "index_update", "index": index, "data": data}
-            await self._broadcast(self.main_view_subscribers, message)
-        
-        if index in self.index_subscribers:
-            await self._broadcast(self.index_subscribers[index], message)
+            if self.main_view_subscribers:
+                await self._broadcast(self.main_view_subscribers, message)
+            if index in self.index_subscribers:
+                await self._broadcast(self.index_subscribers[index], message)
+
+    async def broadcast_main_view_update(self):
+        if self.main_view_subscribers and self.main_view_update_needed:
+            categorized_data = self.categorize_stocks()
+            message = {"type": "main_view_update", "categorized_stocks": categorized_data}
+            if message != self.last_sent_categorized_data:
+                await self._broadcast(self.main_view_subscribers, message)
+                self.last_sent_categorized_data = message
+                self.last_categorized_data = categorized_data
+            self.main_view_update_needed = False
+            await self.update_main_view_channels()
 
     async def _broadcast(self, subscribers, message):
         for websocket in list(subscribers):
@@ -249,8 +269,30 @@ class StreamManager:
                 await websocket.send_json(message)
             except Exception as e:
                 print(f"Error sending message to WebSocket: {e}")
-                subscribers.discard(websocket)
+                await self.unsubscribe_all(websocket)
 
+    async def unsubscribe_all(self, websocket: WebSocket):
+        subscriptions = self.websocket_subscriptions.pop(websocket, set())
+        for subscription in subscriptions:
+            if subscription == 'main_view':
+                self.main_view_subscribers.discard(websocket)
+            elif subscription.startswith('stock:'):
+                _, symbol = subscription.split(':')
+                self.stock_subscribers[symbol].discard(websocket)
+                if len(self.stock_subscribers[symbol]) == 0:
+                    del self.stock_subscribers[symbol]
+            elif subscription.startswith('index:'):
+                _, index = subscription.split(':')
+                self.index_subscribers[index].discard(websocket)
+                if len(self.index_subscribers[index]) == 0:
+                    del self.index_subscribers[index]
+        
+        self.current_stock_subscription = None
+        self.current_index_subscription = None
+        await self._update_stock_stream()
+        await self._update_index_stream()
+        print(f"Unsubscribed from all for websocket")
+        
 stream_manager = StreamManager()
 
 @asynccontextmanager
@@ -305,12 +347,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     elif data['category'] == 'index':
                         await stream_manager.subscribe_index(data['symbol'], websocket)
                 elif data['type'] == 'unsubscribe':
-                    if data['category'] == 'main_view':
-                        await stream_manager.unsubscribe_main_view(websocket)
-                    elif data['category'] == 'stock':
-                        await stream_manager.unsubscribe_stock(data['symbol'], websocket)
-                    elif data['category'] == 'index':
-                        await stream_manager.unsubscribe_index(data['symbol'], websocket)
+                    await stream_manager.unsubscribe_all(websocket)
 
             except WebSocketDisconnect:
                 print("WebSocket disconnected")
@@ -323,11 +360,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     break
     finally:
         print("Cleaning up WebSocket connection")
-        await stream_manager.unsubscribe_main_view(websocket)
-        for symbol in list(stream_manager.stock_subscribers.keys()):
-            await stream_manager.unsubscribe_stock(symbol, websocket)
-        for index in list(stream_manager.index_subscribers.keys()):
-            await stream_manager.unsubscribe_index(index, websocket)
+        await stream_manager.unsubscribe_all(websocket)
 
 if __name__ == "__main__":
     import uvicorn
