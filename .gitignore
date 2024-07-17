@@ -42,8 +42,11 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-
 docs
 fc-data/dist
 .env
 server/.env
+
+# FVM Version Cache
+.fvm/
+/.fvmrc

@@ -42,7 +42,7 @@ class _AiSelectState extends ConsumerState<AiSelect> {
         child: Container(
           decoration: BoxDecoration(
             gradient: OpGradient.pageGradient(context,
-                beginColor: OpDynamicColor.aiHarmonized(context)),
+                beginColor: OpDynamicColor.aiHarmonized(context),),
           ),
           child: SafeArea(
             child: Column(
@@ -71,7 +71,7 @@ class _AiSelectState extends ConsumerState<AiSelect> {
                           setState(() {
                             _current = index;
                           });
-                        }),
+                        },),
                   ),
                 ),
                 const SizedBox(height: OpSpacing.sm),
@@ -82,15 +82,15 @@ class _AiSelectState extends ConsumerState<AiSelect> {
                         width: 4.0,
                         height: 4.0,
                         margin: const EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 4.0),
+                            vertical: 8.0, horizontal: 4.0,),
                         decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: _current == entry.key
                                 ? OpDynamicColor.onSurface(context)
                                 : OpDynamicColor.onSurfaceVariant(context)
-                                    .withOpacity(OpOpacity.tertiary)),
+                                    .withOpacity(OpOpacity.tertiary),),
                       );
-                    }).toList()),
+                    }).toList(),),
                 const SizedBox(height: OpSpacing.sm),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: OpSpacing.md),
@@ -102,10 +102,10 @@ class _AiSelectState extends ConsumerState<AiSelect> {
                     AiSelectCardType.comingSoon =>
                       const OpNeutralTextButton(text: "Coming soon"),
                   },
-                )
+                ),
               ],
             ),
           ),
-        ));
+        ),);
   }
 }

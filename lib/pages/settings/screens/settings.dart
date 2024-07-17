@@ -22,11 +22,11 @@ class Settings extends ConsumerWidget {
 
                         SizedBox(height: OpSpacing.md),
 
-                      ]
+                      ],
                   ),
                   childCount: 15,
                 ),
               ),
-            )
-          ]);
+            ),
+          ],);
 }

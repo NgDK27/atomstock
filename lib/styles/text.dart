@@ -19,7 +19,7 @@ class OpTextStyle {
 
   static TextStyle spacedOut([TextStyle? style]) {
     return (style ?? const TextStyle()).copyWith(
-      letterSpacing: 1
+      letterSpacing: 1,
     );
   }
 
@@ -50,12 +50,12 @@ class OpTextStyle {
   static TextStyle? titleSmall(BuildContext context) => _getStyle(
     context,
     material: (data) => data.textTheme.titleSmall,
-    cupertino: (data) => data.textTheme.textStyle.bold()
+    cupertino: (data) => data.textTheme.textStyle.bold(),
   );
 
   static TextStyle? bodyLarge(BuildContext context) => _getStyle(
     context,
-    material: (data) => data.textTheme.bodyLarge.bold(),
+    material: (data) => data.textTheme.bodyLarge,
     cupertino: (data) => data.textTheme.textStyle.bold(),
   );
 
@@ -88,6 +88,7 @@ class OpTextStyle {
     cupertino: (data) => data.textTheme.tabLabelTextStyle.copyWith(
       fontWeight: FontWeight.w600,
       fontSize: (data.textTheme.tabLabelTextStyle.fontSize ?? 10) * 1.3,
+      letterSpacing: 0.8,
     ),
   );
 

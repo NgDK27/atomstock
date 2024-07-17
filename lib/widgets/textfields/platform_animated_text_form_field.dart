@@ -38,7 +38,7 @@ class _AnimatedPlatformTextFormField extends HookWidget {
       }
       focusNode.addListener(listener);
       return () => focusNode.removeListener(listener);
-    }, [focusNode]);
+    }, [focusNode],);
 
     return AnimatedBuilder(
       animation: animationController,

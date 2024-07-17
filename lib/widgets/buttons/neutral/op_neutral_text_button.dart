@@ -11,7 +11,7 @@ class OpNeutralTextButton extends OpButton {
       {super.key,
       required super.text,
       super.onPressed,
-      this.leftAligned = false});
+      this.leftAligned = false,});
 
   @override
   Color getCupertinoColor(BuildContext context) {
@@ -32,7 +32,7 @@ class OpNeutralTextButton extends OpButton {
   getTextColor(BuildContext context) {
     return platformThemeData(context,
         material: (ThemeData data) => data.colorScheme.onSurface,
-        cupertino: (CupertinoThemeData data) => OpLightDarkColor.onSurface);
+        cupertino: (CupertinoThemeData data) => OpLightDarkColor.onSurface,);
   }
 
   @override

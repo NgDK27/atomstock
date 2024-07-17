@@ -18,6 +18,6 @@ class SignInLanding extends ConsumerWidget {
         switchAuthenticationFlowButtonText: 'Get started',
         navigateSwitchAuthenticationFlow: () {
           context.goNamed(OpRoutes.onboarding.name);
-        });
+        },);
   }
 }

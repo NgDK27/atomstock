@@ -14,5 +14,5 @@ final StoryModel onboardingStories = StoryModel([
   const OnboardingTrading(),
   const OnboardingMarket(),
   const OnboardingSecurity(),
-  const OnboardingPortfolio()
+  const OnboardingPortfolio(),
 ]);

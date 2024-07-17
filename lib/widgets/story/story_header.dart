@@ -26,7 +26,7 @@ class _StoryHeaderState extends ConsumerState<StoryHeader> {
           decoration: BoxDecoration(
               color: OpColor.aqua60.withOpacity(OpOpacity.tertiary),
               borderRadius:
-                  const BorderRadius.all(Radius.circular(OpRadius.xs))),
+                  const BorderRadius.all(Radius.circular(OpRadius.xs)),),
           child: Padding(
             padding: const EdgeInsets.all(4), // Adjust this value as needed
             child: Image.asset('assets/images/app_icon.png'),
@@ -39,10 +39,10 @@ class _StoryHeaderState extends ConsumerState<StoryHeader> {
               material: (ThemeData data) => data.textTheme.titleMedium
                   ?.copyWith(
                       color: OpColor.mono100.tintWithPrimary(context),
-                      fontVariations: [const FontVariation.weight(600)]),
+                      fontVariations: [const FontVariation.weight(600)],),
               cupertino: (CupertinoThemeData data) => data.textTheme.textStyle
-                  .copyWith(fontVariations: [const FontVariation.weight(600)])),
-        )
+                  .copyWith(fontVariations: [const FontVariation.weight(600)]),),
+        ),
       ],
     );
   }

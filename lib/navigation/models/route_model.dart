@@ -11,7 +11,7 @@ class RouteModel {
     required this.path,
     required this.name,
     this.builder,
-    this.pageBuilder
+    this.pageBuilder,
   });
 
   GoRoute route({List<RouteBase> routes = const []}) => GoRoute(

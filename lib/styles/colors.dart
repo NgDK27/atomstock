@@ -7,7 +7,7 @@ import 'package:oppenhomies/styles/opacities.dart';
 extension OpHarmonizedColors on Color {
   Color harmonized(BuildContext context) => platformThemeData(context,
       material: (ThemeData data) => harmonizeWith(data.colorScheme.primary),
-      cupertino: (CupertinoThemeData data) => this);
+      cupertino: (CupertinoThemeData data) => this,);
 }
 
 class OpDynamicColor {
@@ -16,38 +16,38 @@ class OpDynamicColor {
   static Color primary(context) {
     return platformThemeData(context,
         material: (ThemeData data) => data.colorScheme.primary,
-        cupertino: (_) => OpLightDarkColor.primary);
+        cupertino: (_) => OpLightDarkColor.primary,);
   }
 
   static Color primaryVariant(context) {
     return platformThemeData(context,
         material: (ThemeData data) => data.colorScheme.primaryFixedDim,
-        cupertino: (_) => OpLightDarkColor.primaryQuarternary);
+        cupertino: (_) => OpLightDarkColor.primaryQuarternary,);
   }
 
 
   static Color surfaceContainerHigh(context) {
     return platformThemeData(context,
         material: (ThemeData data) => data.colorScheme.surfaceContainerHigh,
-        cupertino: (_) => OpLightDarkColor.containerNeutralLv2);
+        cupertino: (_) => OpLightDarkColor.containerNeutralLv2,);
   }
 
   static Color primaryContainer(context) {
     return platformThemeData(context,
         material: (ThemeData data) => data.colorScheme.primaryContainer,
-        cupertino: (_) => OpLightDarkColor.primaryContainer);
+        cupertino: (_) => OpLightDarkColor.primaryContainer,);
   }
 
   static Color onPrimaryContainer(context) {
     return platformThemeData(context,
         material: (ThemeData data) => data.colorScheme.onPrimaryContainer,
-        cupertino: (_) => OpLightDarkColor.onSurface);
+        cupertino: (_) => OpLightDarkColor.onSurface,);
   }
 
   static Color surface(context) {
     return platformThemeData(context,
         material: (ThemeData data) => data.colorScheme.surface,
-        cupertino: (_) => OpLightDarkColor.surface);
+        cupertino: (_) => OpLightDarkColor.surface,);
   }
 
   static Color onSurface(context) {
@@ -55,14 +55,14 @@ class OpDynamicColor {
         material: (ThemeData data) => data.colorScheme.onSurface,
         cupertino: (CupertinoThemeData data) =>
             data.textTheme.textStyle.color ??
-            OpDynamicColor.onSurface(context));
+            OpDynamicColor.onSurface(context),);
   }
 
   static Color onSurfaceVariant(context) {
     return platformThemeData(context,
         material: (ThemeData data) => data.colorScheme.onSurfaceVariant,
         cupertino: (CupertinoThemeData data) =>
-            OpLightDarkColor.onSurfaceVariant).withOpacity(OpOpacity.secondary);
+            OpLightDarkColor.onSurfaceVariant,).withOpacity(OpOpacity.secondary);
   }
 
   static Color outlineVariant(context) {
@@ -70,28 +70,28 @@ class OpDynamicColor {
         material: (ThemeData data) => data.colorScheme.outlineVariant,
         cupertino: (CupertinoThemeData data) => OpLightDarkColor
             .onSurfaceVariantStrokes
-            .withOpacity(OpOpacity.secondary));
+            .withOpacity(OpOpacity.secondary),);
   }
 
   static Color aiHarmonized(context) {
     return platformThemeData(context,
         material: (ThemeData data) =>
             OpLightDarkColor.ai.harmonizeWith(data.colorScheme.primary),
-        cupertino: (CupertinoThemeData data) => OpLightDarkColor.ai);
+        cupertino: (CupertinoThemeData data) => OpLightDarkColor.ai,);
   }
 
   static Color aquaHarmonized(context) {
     return platformThemeData(context,
         material: (ThemeData data) =>
             OpLightDarkColor.primary.harmonizeWith(data.colorScheme.primary),
-        cupertino: (CupertinoThemeData data) => OpLightDarkColor.primary);
+        cupertino: (CupertinoThemeData data) => OpLightDarkColor.primary,);
   }
 
   static Color cherryHarmonized(context) {
     return platformThemeData(context,
         material: (ThemeData data) =>
             OpLightDarkColor.stockFall.harmonizeWith(data.colorScheme.primary),
-        cupertino: (CupertinoThemeData data) => OpLightDarkColor.stockFall);
+        cupertino: (CupertinoThemeData data) => OpLightDarkColor.stockFall,);
   }
 }
 
@@ -245,17 +245,17 @@ class OpLightDarkColor {
   static const Color _onSurfaceVariantStrokesLight = OpColor.mono95;
   static const Color _onSurfaceVariantStrokesDark = OpColor.mono50;
   static Color get onSurfaceVariantStrokes => _getDynamicColor(
-      _onSurfaceVariantStrokesLight, _onSurfaceVariantStrokesDark);
+      _onSurfaceVariantStrokesLight, _onSurfaceVariantStrokesDark,);
 
   static const Color _onSurfaceNeutralContainerLight = _onSurfaceLight;
   static const Color _onSurfaceNeutralContainerDark = _onSurfaceDark;
   static Color get onSurfaceNeutralContainer => _getDynamicColor(
-      _onSurfaceNeutralContainerLight, _onSurfaceNeutralContainerDark);
+      _onSurfaceNeutralContainerLight, _onSurfaceNeutralContainerDark,);
 
   static const Color _onSurfacePrimaryContainerLight = OpColor.aqua140;
   static const Color _onSurfacePrimaryContainerDark = OpColor.aqua60;
   static Color get onSurfacePrimaryContainer => _getDynamicColor(
-      _onSurfacePrimaryContainerLight, _onSurfacePrimaryContainerDark);
+      _onSurfacePrimaryContainerLight, _onSurfacePrimaryContainerDark,);
 
   // Containers
   static const Color _containerNeutralLv1Light = OpColor.mono98;

@@ -9,7 +9,7 @@ class OpPlatformEdgeToEdgeScaffold extends ConsumerWidget {
   final Widget child;
 
   const OpPlatformEdgeToEdgeScaffold(
-      {super.key, this.leadingNavigation, required this.child});
+      {super.key, this.leadingNavigation, required this.child,});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -33,6 +33,6 @@ class OpPlatformEdgeToEdgeScaffold extends ConsumerWidget {
               ),
               child: child!,
             ),
-        child: child);
+        child: child,);
   }
 }
