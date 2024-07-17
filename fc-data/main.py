@@ -75,6 +75,8 @@ def get_symbols():
 
     return stock_symbols, index_symbols
 
+stocks, indexes = get_symbols()
+
 class StreamManager:
     def __init__(self):
         self.stock_stream = None
@@ -89,7 +91,7 @@ class StreamManager:
         self.lock = threading.Lock()
         self.websocket_queues = {}
         
-        self.stocks, self.indexes = get_symbols()
+        self.stocks, self.indexes = stocks, indexes
         self.all_stock_data = {}
         self.all_index_data = {}
         self.stock_symbols = set(symbol for symbol, _, _ in self.stocks)
@@ -231,7 +233,7 @@ class StreamManager:
                         "symbol": symbol,
                         "name": name,
                         "market": market,
-                        **stock_data  # This includes all data from the stock
+                        **stock_data  
                     })
         
         top_increase = sorted(stocks, key=lambda x: x.get('RatioChange', 0), reverse=True)[:3]
@@ -310,7 +312,47 @@ class StreamManager:
         await self._update_stock_stream()
         await self._update_index_stream()
         print(f"Unsubscribed from all for websocket")
+
+    def get_categorized_stocks(self, category: str, limit: int = 30):
+        stocks = []
+        for symbol, name, market in self.stocks:
+            if symbol in self.all_stock_data:
+                stock_data = self.all_stock_data[symbol]
+                if stock_data.get('RatioChange', 0) != -100.0:
+                    stocks.append({
+                        "symbol": symbol,
+                        "name": name,
+                        "market": market,
+                        **stock_data
+                    })
         
+        if category == 'top_increase':
+            return sorted(stocks, key=lambda x: x.get('RatioChange', 0), reverse=True)[:limit]
+        elif category == 'top_decrease':
+            return sorted(stocks, key=lambda x: x.get('RatioChange', 0))[:limit]
+        elif category == 'top_volume':
+            return sorted(stocks, key=lambda x: x.get('TotalVol', 0), reverse=True)[:limit]
+        else:
+            raise ValueError("Invalid category")
+
+    def search_stocks(self, query: str):
+        results = []
+        for symbol, name, market in self.stocks:
+            if query.lower() in symbol.lower() or query.lower() in name.lower():
+                stock_data = self.all_stock_data.get(symbol, {})
+                results.append({
+                    "symbol": symbol,
+                    "name": name,
+                    "market": market,
+                    **stock_data
+                })
+        return results
+
+    async def subscribe_category(self, category: str, websocket: WebSocket):
+        self.websocket_subscriptions[websocket].add(f'category:{category}')
+        stocks = self.get_categorized_stocks(category)
+        await websocket.send_json({"type": "category_update", "category": category, "stocks": stocks})
+            
 stream_manager = StreamManager()
 
 @asynccontextmanager
@@ -364,6 +406,8 @@ async def websocket_endpoint(websocket: WebSocket):
                         await stream_manager.subscribe_stock(data['symbol'], websocket)
                     elif data['category'] == 'index':
                         await stream_manager.subscribe_index(data['symbol'], websocket)
+                    elif data['category'] in ['top_increase', 'top_decrease', 'top_volume']:
+                        await stream_manager.subscribe_category(data['category'], websocket)
                 elif data['type'] == 'unsubscribe':
                     await stream_manager.unsubscribe_all(websocket)
             except WebSocketDisconnect:
@@ -378,6 +422,209 @@ async def websocket_endpoint(websocket: WebSocket):
     finally:
         print("Cleaning up WebSocket connection")
         await stream_manager.unsubscribe_all(websocket)
+
+class StockPriceRequest(BaseModel):
+    symbol: str
+    range: str
+
+def get_cache_key(symbol: str, start_date: datetime, end_date: datetime):
+    return f"stock_data:{symbol}_{start_date.isoformat()}_{end_date.isoformat()}"
+
+def get_date_range(range: str):
+    end_date = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    if range == '1d':
+        start_date = end_date
+    elif range == '1w':
+        start_date = end_date - timedelta(days=7)
+    elif range == '1m':
+        start_date = end_date - timedelta(days=30)
+    elif range == '3m':
+        start_date = end_date - timedelta(days=3*30)
+    elif range == '6m':
+        start_date = end_date - timedelta(days=6*30)
+    elif range == '1y':
+        start_date = end_date - timedelta(days=365)
+    elif range == '5y':
+        start_date = end_date - timedelta(days=5*365)
+    else:
+        raise ValueError("Invalid range. Use '1d', '1w', '1m', '3m', '6m', 1y', or '5y'.")
+    return start_date, end_date
+
+async def fetch_intraday_data(symbol: str, start_date: datetime, end_date: datetime, range: str):
+    response = client.intraday_ohlc(
+        config,
+        model.intraday_ohlc(
+            symbol,
+            start_date.strftime('%d/%m/%Y'),
+            end_date.strftime('%d/%m/%Y'),
+            pageIndex=1,
+            pageSize=1000,
+            ascending=True,
+            resolution=1
+        )
+    )
+
+    while response['status'] != 'Success' and range =='1d':
+        start_date -= timedelta(days=1)
+        end_date -= timedelta(days=1)
+        response = client.intraday_ohlc(
+            config,
+            model.intraday_ohlc(
+                symbol,
+                start_date.strftime('%d/%m/%Y'),
+                end_date.strftime('%d/%m/%Y'),
+                pageIndex=1,
+                pageSize=1000,
+                ascending=True,
+                resolution=1
+            )
+        )
+
+    return [{'TradingDate': item['TradingDate'], 'Time': item['Time'], 'ClosePrice': item['Close']} for item in response['data']]
+
+async def fetch_daily_data(symbol: str, start_date: datetime, end_date: datetime, is_index: bool):
+    if not is_index:
+        response = client.daily_stock_price(
+            config,
+            model.daily_stock_price(
+                symbol,
+                fromDate=start_date.strftime('%d/%m/%Y'),
+                toDate=end_date.strftime('%d/%m/%Y'),
+                pageIndex=1,
+                pageSize=1000
+            )
+        )
+    else:
+        response = client.daily_index(
+            config,
+            model.daily_index(
+                '',
+                symbol,
+                fromDate=start_date.strftime('%d/%m/%Y'),
+                toDate=end_date.strftime('%d/%m/%Y'),
+                pageIndex=1,
+                pageSize=1000
+            )
+        )
+
+    if response['status'] != 'Success':
+        return []
+
+    if is_index:
+        return [{'TradingDate': item['TradingDate'], 'IndexValue': item['IndexValue']} for item in response['data']]
+    else:
+        return [{'TradingDate': item['TradingDate'], 'ClosePrice': item['ClosePrice']} for item in response['data']]
+
+async def fetch_stock_prices(symbol: str, start_date: datetime, end_date: datetime, range: str):
+    cache_key = get_cache_key(symbol, start_date, end_date)
+    cache_data = redis_client.get(cache_key)
+
+    if cache_data:
+        return json.loads(cache_data)
+
+    is_index = symbol in [index[0] for index in indexes]
+    all_data = []
+
+    if range in ['1d', '1w']:
+        all_data = await fetch_intraday_data(symbol, start_date, end_date, range)
+    else:
+        current_start = start_date
+        tasks = []
+        while current_start < end_date:
+            current_end = min(current_start + timedelta(days=30), end_date)
+            tasks.append(fetch_daily_data(symbol, current_start, current_end, is_index))
+            current_start = current_end + timedelta(days=1)
+
+        chunk_results = await asyncio.gather(*tasks)
+        for chunk in chunk_results:
+            all_data.extend(chunk)
+
+    redis_client.setex(cache_key, 60*60*24, json.dumps(all_data))
+
+    return all_data
+
+@app.get("/historical_prices/")
+async def get_stock_prices(request: StockPriceRequest):
+    try:
+        start_date, end_date = get_date_range(request.range)
+        data = await fetch_stock_prices(request.symbol, start_date, end_date, request.range)
+        if request.symbol in [index[0] for index in indexes]:
+            index_info = next((index for index in indexes if index[0] == request.symbol), None)
+            name = request.symbol
+            market = index_info[1]
+        else:
+            stock_info = next((stock for stock in stocks if stock[0] == request.symbol), None)
+            name = stock_info[1]
+            market = stock_info[2]
+        return {"symbol": request.symbol, "name": name, "market": market, "data": data}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+
+
+
+@app.get("/api/main_market")
+async def get_main_market():
+    try:
+        return {
+            "top_increase": stream_manager.get_categorized_stocks("top_increase", 3),
+            "top_decrease": stream_manager.get_categorized_stocks("top_decrease", 3),
+            "top_volume": stream_manager.get_categorized_stocks("top_volume", 3)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/category/{category}")
+async def get_category_stocks(category: str, limit: int = 30):
+    try:
+        return stream_manager.get_categorized_stocks(category, limit)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/search")
+async def search_stocks(query: str = ""):
+    try:
+        return stream_manager.search_stocks(query)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/stock/{symbol}")
+async def get_stock_details(symbol: str, range: str = "1d"):
+    try:
+        is_index = symbol in [index[0] for index in indexes]
+        
+        if is_index:
+            info = next((index for index in indexes if index[0] == symbol), None)
+            if not info:
+                raise HTTPException(status_code=404, detail="Index not found")
+            name = symbol
+            market = info[1]
+            current_data = stream_manager.all_index_data.get(symbol, {})
+        else:
+            info = next((stock for stock in stocks if stock[0] == symbol), None)
+            if not info:
+                raise HTTPException(status_code=404, detail="Stock not found")
+            name = info[1]
+            market = info[2]
+            current_data = stream_manager.all_stock_data.get(symbol, {})
+
+        start_date, end_date = get_date_range(range)
+        historical_data = await fetch_stock_prices(symbol, start_date, end_date, range)
+
+        return {
+            "symbol": symbol,
+            "name": name,
+            "market": market,
+            "current_data": current_data,
+            "historical_data": historical_data
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 
 if __name__ == "__main__":
     import uvicorn
