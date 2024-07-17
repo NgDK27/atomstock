@@ -81,6 +81,8 @@ class StreamManager:
         self.should_stop = threading.Event()
         self.processing_thread = threading.Thread(target=self._process_messages)
         self.processing_thread.start()
+        self.lock = threading.Lock()
+        self.websocket_queues = {}
         
         self.stocks, self.indexes = get_symbols()
         self.all_stock_data = {}
@@ -94,6 +96,7 @@ class StreamManager:
         self.last_sent_categorized_data = {}
         self.current_stock_subscription = None
         self.current_index_subscription = None
+
 
     def start_streams(self):
         self.stock_stream = MarketDataStream(config, client)
@@ -237,36 +240,46 @@ class StreamManager:
         }
 
     async def broadcast_stock_update(self, symbol: str, data: dict):
-        if self.update_stock_data(symbol, data):
-            if symbol in self.stock_subscribers:
-                message = {"type": "stock_update", "symbol": symbol, "data": data}
-                await self._broadcast(self.stock_subscribers[symbol], message)
-            if symbol in self.main_view_stocks:
-                await self.broadcast_main_view_update()
+        with self.lock:
+            if self.update_stock_data(symbol, data):
+                if symbol in self.stock_subscribers:
+                    message = {"type": "stock_update", "symbol": symbol, "data": data}
+                    await self._broadcast(self.stock_subscribers[symbol], message)
+                if symbol in self.main_view_stocks or self.main_view_subscribers:
+                    await self.broadcast_main_view_update()
 
     async def broadcast_index_update(self, index: str, data: dict):
-        if self.update_index_data(index, data):
-            message = {"type": "index_update", "index": index, "data": data}
-            if self.main_view_subscribers:
-                await self._broadcast(self.main_view_subscribers, message)
-            if index in self.index_subscribers:
-                await self._broadcast(self.index_subscribers[index], message)
+        with self.lock:
+            if self.update_index_data(index, data):
+                message = {"type": "index_update", "index": index, "data": data}
+                if self.main_view_subscribers:
+                    await self._broadcast(self.main_view_subscribers, message)
+                if index in self.index_subscribers:
+                    await self._broadcast(self.index_subscribers[index], message)
 
     async def broadcast_main_view_update(self):
-        if self.main_view_subscribers and self.main_view_update_needed:
+        if self.main_view_subscribers:
             categorized_data = self.categorize_stocks()
             message = {"type": "main_view_update", "categorized_stocks": categorized_data}
             if message != self.last_sent_categorized_data:
                 await self._broadcast(self.main_view_subscribers, message)
                 self.last_sent_categorized_data = message
-                self.last_categorized_data = categorized_data
-            self.main_view_update_needed = False
-            await self.update_main_view_channels()
+            
+            # Send individual stock updates for all stocks in the main view
+            for category in categorized_data.values():
+                for stock in category:
+                    stock_message = {"type": "stock_update", "symbol": stock['symbol'], "data": self.all_stock_data[stock['symbol']]}
+                    await self._broadcast(self.main_view_subscribers, stock_message)
+            
+            # Send all index updates
+            for index, data in self.all_index_data.items():
+                index_message = {"type": "index_update", "index": index, "data": data}
+                await self._broadcast(self.main_view_subscribers, index_message)
 
     async def _broadcast(self, subscribers, message):
         for websocket in list(subscribers):
             try:
-                await websocket.send_json(message)
+                await asyncio.shield(websocket.send_json(message))
             except Exception as e:
                 print(f"Error sending message to WebSocket: {e}")
                 await self.unsubscribe_all(websocket)
@@ -348,7 +361,6 @@ async def websocket_endpoint(websocket: WebSocket):
                         await stream_manager.subscribe_index(data['symbol'], websocket)
                 elif data['type'] == 'unsubscribe':
                     await stream_manager.unsubscribe_all(websocket)
-
             except WebSocketDisconnect:
                 print("WebSocket disconnected")
                 break
