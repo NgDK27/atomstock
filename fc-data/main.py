@@ -18,6 +18,11 @@ import threading
 from queue import Queue, Empty
 import time
 
+import sys
+
+if sys.platform.startswith('win'):
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
 # Load environment variables
 project_root = Path(__file__).parent.parent.parent
 dotenv_path = project_root / 'oppenhomies/server/.env'
