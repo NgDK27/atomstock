@@ -31,13 +31,17 @@ class StockDetails extends HookConsumerWidget {
     );
 
     // TABS
-    final selectedTab =
-        useState<DetailsTabDestinations?>(DetailsTabDestinations.overview);
 
-    // Android
-    final tabController = useTabController(initialLength: 3, keys: DetailsTabDestinations.values);
+    // Android + iOS
+    final tabController = useTabController(
+      initialLength: DetailsTabDestinations.values.length,
+      keys: DetailsTabDestinations.values,
+      vsync: useSingleTickerProvider(),
+    );
 
     // iOS
+    final cupertinoSelectedTab =
+        useState<DetailsTabDestinations?>(DetailsTabDestinations.overview);
     final segmentedControlHeight = useState<double>(0);
     final segmentedControlKey = useMemoized(() => GlobalKey());
 
@@ -54,6 +58,24 @@ class StockDetails extends HookConsumerWidget {
         return null;
       },
       [],
+    );
+
+    // iOS - Determine current tab
+    useEffect(
+      () {
+        void listener() {
+          final currentIndex = tabController.index;
+          final targetIndex = tabController.animation!.value.round();
+          if (currentIndex != targetIndex) {
+            cupertinoSelectedTab.value =
+                DetailsTabDestinations.values[targetIndex];
+          }
+        }
+
+        tabController.animation!.addListener(listener);
+        return () => tabController.animation!.removeListener(listener);
+      },
+      [tabController],
     );
 
     // UI
@@ -93,17 +115,26 @@ class StockDetails extends HookConsumerWidget {
           //endregion
 
           //region Body UI
-          CustomScrollView(
-            slivers: [
-              SliverPadding(
-                padding: EdgeInsets.only(
-                  top: isCupertino(context) ? segmentedControlHeight.value : 0,
-                ),
-                sliver: StockDetailsOverview(stock: stock),
+          SafeArea(
+            child: Padding(
+              padding: EdgeInsets.only(
+                top: isCupertino(context) ? segmentedControlHeight.value : 0,
               ),
-            ],
+              child: TabBarView(
+                controller: tabController,
+                children: DetailsTabDestinations.values.map((tab) {
+                  switch (tab) {
+                    case DetailsTabDestinations.overview:
+                      return StockDetailsOverview(stock: stock);
+                    case DetailsTabDestinations.automations:
+                    case DetailsTabDestinations.ai:
+                      return const Placeholder();
+                  }
+                }).toList(),
+              ),
+            ),
           ),
-          //endregion
+          // endregion
 
           //region iOS Tab (Segmented Controls)
           PlatformWidget(
@@ -130,9 +161,12 @@ class StockDetails extends HookConsumerWidget {
                         vertical: OpSpacing.sm,
                       ),
                       child: CupertinoSlidingSegmentedControl(
-                        groupValue: selectedTab.value,
+                        groupValue: cupertinoSelectedTab.value,
                         onValueChanged: (value) {
-                          selectedTab.value = value;
+                          cupertinoSelectedTab.value = value;
+                          tabController.index = DetailsTabDestinations.values
+                              .indexOf(
+                                  value ?? DetailsTabDestinations.overview);
                         },
                         children: {
                           for (final tab in DetailsTabDestinations.values)

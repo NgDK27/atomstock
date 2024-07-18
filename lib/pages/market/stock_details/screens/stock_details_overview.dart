@@ -24,9 +24,8 @@ class StockDetailsOverview extends HookWidget {
         StockColoring.determineStockColor(context, stock.priceChange);
     const mockTimeFrame = 'Yesterday';
 
-    return SliverSafeArea(
-      sliver: SliverList(
-        delegate: SliverChildListDelegate([
+    return  ListView(
+        children: [
           Padding(
             padding: EdgeInsets.symmetric(
               horizontal: OpSpacing.md,
@@ -114,8 +113,8 @@ class StockDetailsOverview extends HookWidget {
               ],
             ),
           ),
-        ]),
-      ),
+        ],
+
     );
   }
 
