@@ -1,10 +1,12 @@
 import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:oppenhomies/domain/models/stock/stock_model.dart';
+import 'package:oppenhomies/pages/market/stock_details/models/stock_details_tab_destinations.dart';
 import 'package:oppenhomies/pages/market/stock_details/screens/stock_details_overview.dart';
 import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/spacings.dart';
@@ -12,23 +14,15 @@ import 'package:oppenhomies/styles/text.dart';
 import 'package:oppenhomies/widgets/gradients/gradient.dart';
 import 'package:oppenhomies/widgets/helpers/stock_formatter.dart';
 
-enum DetailsTabDestinations {
-  overview('Overview'),
-  automations('Automations'),
-  ai('AI');
-
-  final String label;
-
-  const DetailsTabDestinations(this.label);
-}
-
 class StockDetails extends HookConsumerWidget {
   const StockDetails({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tabController = useTabController(initialLength: 3);
+    // Stock
     final stock = StockModel.detailedSample();
+
+    // Coloring based on change
     final accentColor =
         StockColoring.determineStockColor(context, stock.priceChange);
     final accentColorScheme = ColorScheme.fromSeed(
@@ -36,9 +30,18 @@ class StockDetails extends HookConsumerWidget {
       brightness: WidgetsBinding.instance.platformDispatcher.platformBrightness,
     );
 
+    // TABS
+    final selectedTab =
+        useState<DetailsTabDestinations?>(DetailsTabDestinations.overview);
+
+    // Android
+    final tabController = useTabController(initialLength: 3, keys: DetailsTabDestinations.values);
+
+    // iOS
     final segmentedControlHeight = useState<double>(0);
     final segmentedControlKey = useMemoized(() => GlobalKey());
 
+    // iOS - Determine Tab (Segmented Controls) height to use as padding
     useEffect(
       () {
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -53,6 +56,7 @@ class StockDetails extends HookConsumerWidget {
       [],
     );
 
+    // UI
     return PlatformScaffold(
       material: (_, __) =>
           MaterialScaffoldData(backgroundColor: accentColorScheme.surface),
@@ -61,7 +65,9 @@ class StockDetails extends HookConsumerWidget {
         material: (_, __) => MaterialAppBarData(
           centerTitle: true,
           backgroundColor: accentColorScheme.surface,
-          bottom: TabBar(
+          bottom:
+              // region Android Tab
+              TabBar(
             indicatorColor: accentColorScheme.primary,
             labelColor: accentColorScheme.primary,
             controller: tabController,
@@ -69,10 +75,12 @@ class StockDetails extends HookConsumerWidget {
                 .map((tab) => Tab(text: tab.label))
                 .toList(),
           ),
+          // endregion
         ),
       ),
       body: Stack(
         children: [
+          //region Background Gradient
           Container(
             decoration: BoxDecoration(
               gradient: OpGradient.pageGradient(
@@ -82,6 +90,9 @@ class StockDetails extends HookConsumerWidget {
               ),
             ),
           ),
+          //endregion
+
+          //region Body UI
           CustomScrollView(
             slivers: [
               SliverPadding(
@@ -92,6 +103,9 @@ class StockDetails extends HookConsumerWidget {
               ),
             ],
           ),
+          //endregion
+
+          //region iOS Tab (Segmented Controls)
           PlatformWidget(
             cupertino: (_, __) => SafeArea(
               bottom: false,
@@ -112,9 +126,14 @@ class StockDetails extends HookConsumerWidget {
                     ),
                     child: Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: OpSpacing.md, vertical: OpSpacing.sm),
+                        horizontal: OpSpacing.md,
+                        vertical: OpSpacing.sm,
+                      ),
                       child: CupertinoSlidingSegmentedControl(
-                        onValueChanged: (value) {},
+                        groupValue: selectedTab.value,
+                        onValueChanged: (value) {
+                          selectedTab.value = value;
+                        },
                         children: {
                           for (final tab in DetailsTabDestinations.values)
                             tab: Text(
@@ -132,6 +151,7 @@ class StockDetails extends HookConsumerWidget {
               ),
             ),
           ),
+          //endregion
         ],
       ),
     );
