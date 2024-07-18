@@ -46,7 +46,9 @@ docs
 fc-data/dist
 .env
 server/.env
+venv
 
 # FVM Version Cache
 .fvm/
 /.fvmrc
+/server/cmd/dump.rdb

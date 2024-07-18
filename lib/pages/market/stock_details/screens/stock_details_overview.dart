@@ -25,7 +25,6 @@ class StockDetailsOverview extends HookWidget {
     const mockTimeFrame = 'Yesterday';
 
     return SliverSafeArea(
-      top: false,
       sliver: SliverList(
         delegate: SliverChildListDelegate([
           Padding(
