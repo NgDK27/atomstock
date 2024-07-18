@@ -75,7 +75,7 @@ def get_symbols():
 
     return stock_symbols, index_symbols
 
-stocks, indexes = get_symbols()
+# stocks, indexes = get_symbols()
 
 class StreamManager:
     def __init__(self):
@@ -91,7 +91,7 @@ class StreamManager:
         self.lock = threading.Lock()
         self.websocket_queues = {}
         
-        self.stocks, self.indexes = stocks, indexes
+        self.stocks, self.indexes = get_symbols()
         self.all_stock_data = {}
         self.all_index_data = {}
         self.stock_symbols = set(symbol for symbol, _, _ in self.stocks)
@@ -194,7 +194,7 @@ class StreamManager:
             all_symbols.update(self.main_view_stocks)
         if self.current_stock_subscription:
             all_symbols.add(self.current_stock_subscription)
-        channel = f"X:{'-'.join(sorted(all_symbols))}" if all_symbols else "X:NONE"
+        channel = f"X:{'-'.join(all_symbols)}" if all_symbols else "X:NONE"
         print(f"Updating stock stream: {channel}")
         self.stock_stream.swith_channel(channel)
 
@@ -522,7 +522,7 @@ async def fetch_stock_prices(symbol: str, start_date: datetime, end_date: dateti
     if cache_data:
         return json.loads(cache_data)
 
-    is_index = symbol in [index[0] for index in indexes]
+    is_index = symbol in [index[0] for index in stream_manager.indexes]
     all_data = []
 
     if range in ['1d', '1w']:
@@ -542,25 +542,6 @@ async def fetch_stock_prices(symbol: str, start_date: datetime, end_date: dateti
     redis_client.setex(cache_key, 60*60*24, json.dumps(all_data))
 
     return all_data
-
-@app.get("/historical_prices/")
-async def get_stock_prices(request: StockPriceRequest):
-    try:
-        start_date, end_date = get_date_range(request.range)
-        data = await fetch_stock_prices(request.symbol, start_date, end_date, request.range)
-        if request.symbol in [index[0] for index in indexes]:
-            index_info = next((index for index in indexes if index[0] == request.symbol), None)
-            name = request.symbol
-            market = index_info[1]
-        else:
-            stock_info = next((stock for stock in stocks if stock[0] == request.symbol), None)
-            name = stock_info[1]
-            market = stock_info[2]
-        return {"symbol": request.symbol, "name": name, "market": market, "data": data}
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 
 
 
@@ -594,17 +575,17 @@ async def search_stocks(query: str = ""):
 @app.get("/api/stock/{symbol}")
 async def get_stock_details(symbol: str, range: str = "1d"):
     try:
-        is_index = symbol in [index[0] for index in indexes]
+        is_index = symbol in [index[0] for index in stream_manager.indexes]
         
         if is_index:
-            info = next((index for index in indexes if index[0] == symbol), None)
+            info = next((index for index in stream_manager.indexes if index[0] == symbol), None)
             if not info:
                 raise HTTPException(status_code=404, detail="Index not found")
             name = symbol
             market = info[1]
             current_data = stream_manager.all_index_data.get(symbol, {})
         else:
-            info = next((stock for stock in stocks if stock[0] == symbol), None)
+            info = next((stock for stock in stream_manager.stocks if stock[0] == symbol), None)
             if not info:
                 raise HTTPException(status_code=404, detail="Stock not found")
             name = info[1]
