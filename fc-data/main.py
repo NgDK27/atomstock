@@ -123,7 +123,7 @@ class StreamManager:
     def _process_messages(self):
         while not self.should_stop.is_set():
             try:
-                message_type, data = self.message_queue.get(timeout=1)
+                message_type, data = self.message_queue.get(timeout=0.01)
                 if message_type == 'stock':
                     asyncio.run(self.broadcast_stock_update(data['symbol'], data['data']))
                 elif message_type == 'index':
@@ -142,12 +142,16 @@ class StreamManager:
         self.stop_streams()
 
     async def subscribe_main_view(self, websocket: WebSocket):
+
         await self.unsubscribe_all(websocket)
+        if self.stock_stream or self.index_stream:
+            self.stop_streams()
+        self.start_streams()
         self.main_view_subscribers.add(websocket)
         self.websocket_subscriptions[websocket].add('main_view')
         await self.update_main_view_channels()
-        if self.last_categorized_data:
-            await websocket.send_json({"type": "main_view_update", "categorized_stocks": self.last_categorized_data})
+        
+        await websocket.send_json({"type": "main_view_update", "categorized_stocks": self.categorize_stocks()})
         for index, data in self.all_index_data.items():
             await websocket.send_json({"type": "index_update", "index": index, "data": data})
         print(f"Subscribed to main view. Total subscribers: {len(self.main_view_subscribers)}")
@@ -268,9 +272,9 @@ class StreamManager:
         if self.main_view_subscribers:
             categorized_data = self.categorize_stocks()
             message = {"type": "main_view_update", "categorized_stocks": categorized_data}
-            if message != self.last_sent_categorized_data:
+            if categorized_data != self.last_categorized_data:
                 await self._broadcast(self.main_view_subscribers, message)
-                self.last_sent_categorized_data = message
+                self.last_categorized_data = categorized_data
             
             # Send individual stock updates for all stocks in the main view
             for category in categorized_data.values():
