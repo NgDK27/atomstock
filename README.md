@@ -1,16 +1,50 @@
-# oppenhomies
+**Disclaimer**
 
-A new Flutter project.
+Currently nothing works yet
 
-## Getting Started
+**Prerequisite**
 
-This project is a starting point for a Flutter application.
+Install postgres (psql), redis, golang, python, kafka (ongoing)
 
-A few resources to get you started if this is your first Flutter project:
+Set up database (init.sql file on root)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+**Backend service**
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Create .env
+
+```commandline
+cd server 
+go mod tidy
+go run cmd/main.go
+```
+
+**Python server**
+
+Create dist folder, put a tar.gz file in
+
+Create virtual env
+
+Example:
+
+```commandline
+HOST=localhost
+PORT=5432
+USER=postgres
+DB_NAME=capstone
+PASSWORD=
+
+userPoolID=
+clientID=
+clientSecret=
+```
+
+
+```commandline
+cd fc-data
+pip install dist/ssi_fc_data-2.2.2.tar.gz
+pip install -r requirements.txt
+```
+
+Run insert_all_stocks.py (took a while)
+
+Run the main.py file
