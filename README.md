@@ -12,18 +12,6 @@ Set up database (init.sql file on root)
 
 Create .env
 
-```commandline
-cd server 
-go mod tidy
-go run cmd/main.go
-```
-
-**Python server**
-
-Create dist folder, put a tar.gz file in
-
-Create virtual env
-
 Example:
 
 ```commandline
@@ -37,6 +25,18 @@ userPoolID=
 clientID=
 clientSecret=
 ```
+
+```commandline
+cd server 
+go mod tidy
+go run cmd/main.go
+```
+
+**Python server**
+
+Create dist folder, put a tar.gz file in
+
+Create virtual env
 
 
 ```commandline
