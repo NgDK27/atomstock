@@ -144,9 +144,9 @@ class StreamManager:
     async def subscribe_main_view(self, websocket: WebSocket):
 
         await self.unsubscribe_all(websocket)
-        if self.stock_stream or self.index_stream:
-            self.stop_streams()
-            self.start_streams()
+        # if self.stock_stream or self.index_stream:
+        #     self.stop_streams()
+        #     self.start_streams()
         self.main_view_subscribers.add(websocket)
         self.websocket_subscriptions[websocket].add('main_view')
         await self.update_main_view_channels()
@@ -317,26 +317,7 @@ class StreamManager:
         print(f"Unsubscribed from all for websocket")
 
     def get_categorized_stocks(self, category: str, limit: int = 30):
-        stocks = []
-        for symbol, name, market in self.stocks:
-            if symbol in self.all_stock_data:
-                stock_data = self.all_stock_data[symbol]
-                if stock_data.get('RatioChange', 0) != -100.0:
-                    stocks.append({
-                        "symbol": symbol,
-                        "name": name,
-                        "market": market,
-                        **stock_data
-                    })
-        
-        if category == 'top_increase':
-            return sorted(stocks, key=lambda x: x.get('RatioChange', 0), reverse=True)[:limit]
-        elif category == 'top_decrease':
-            return sorted(stocks, key=lambda x: x.get('RatioChange', 0))[:limit]
-        elif category == 'top_volume':
-            return sorted(stocks, key=lambda x: x.get('TotalVol', 0), reverse=True)[:limit]
-        else:
-            raise ValueError("Invalid category")
+        return self.last_categorized_data.get(category, [])[:limit]
 
     def search_stocks(self, query: str):
         results = []
@@ -556,11 +537,7 @@ async def fetch_stock_prices(symbol: str, start_date: datetime, end_date: dateti
 @app.get("/api/main_market")
 async def get_main_market():
     try:
-        return {
-            "top_increase": stream_manager.get_categorized_stocks("top_increase", 3),
-            "top_decrease": stream_manager.get_categorized_stocks("top_decrease", 3),
-            "top_volume": stream_manager.get_categorized_stocks("top_volume", 3)
-        }
+        return stream_manager.last_categorized_data
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
