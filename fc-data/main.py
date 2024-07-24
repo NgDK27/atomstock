@@ -123,7 +123,7 @@ class StreamManager:
     def _process_messages(self):
         while not self.should_stop.is_set():
             try:
-                message_type, data = self.message_queue.get(timeout=0.01)
+                message_type, data = self.message_queue.get(timeout=1)
                 if message_type == 'stock':
                     asyncio.run(self.broadcast_stock_update(data['symbol'], data['data']))
                 elif message_type == 'index':
@@ -146,7 +146,7 @@ class StreamManager:
         await self.unsubscribe_all(websocket)
         if self.stock_stream or self.index_stream:
             self.stop_streams()
-        self.start_streams()
+            self.start_streams()
         self.main_view_subscribers.add(websocket)
         self.websocket_subscriptions[websocket].add('main_view')
         await self.update_main_view_channels()
@@ -253,11 +253,12 @@ class StreamManager:
     async def broadcast_stock_update(self, symbol: str, data: dict):
         with self.lock:
             if self.update_stock_data(symbol, data):
+                message = {"type": "stock_update", "symbol": symbol, "data": data}
                 if symbol in self.stock_subscribers:
-                    message = {"type": "stock_update", "symbol": symbol, "data": data}
                     await self._broadcast(self.stock_subscribers[symbol], message)
-                if symbol in self.main_view_stocks or self.main_view_subscribers:
-                    await self.broadcast_main_view_update()
+                if self.main_view_subscribers:
+                    await self._broadcast(self.main_view_subscribers, message)
+                
 
     async def broadcast_index_update(self, index: str, data: dict):
         with self.lock:
@@ -279,13 +280,11 @@ class StreamManager:
             # Send individual stock updates for all stocks in the main view
             for category in categorized_data.values():
                 for stock in category:
-                    stock_message = {"type": "stock_update", "symbol": stock['symbol'], "data": self.all_stock_data[stock['symbol']]}
-                    await self._broadcast(self.main_view_subscribers, stock_message)
+                    await self.broadcast_stock_update(stock['symbol'], self.all_stock_data[stock['symbol']])
             
             # Send all index updates
             for index, data in self.all_index_data.items():
-                index_message = {"type": "index_update", "index": index, "data": data}
-                await self._broadcast(self.main_view_subscribers, index_message)
+                await self.broadcast_index_update(index, data)
 
     async def _broadcast(self, subscribers, message):
         for websocket in list(subscribers):
@@ -455,6 +454,7 @@ def get_date_range(range: str):
     return start_date, end_date
 
 async def fetch_intraday_data(symbol: str, start_date: datetime, end_date: datetime, range: str):
+    counter = 0
     response = client.intraday_ohlc(
         config,
         model.intraday_ohlc(
@@ -468,7 +468,8 @@ async def fetch_intraday_data(symbol: str, start_date: datetime, end_date: datet
         )
     )
 
-    while response['status'] != 'Success' and range =='1d':
+    while response['status'] != 'Success' and range =='1d' and counter < 3:
+        counter += 1
         start_date -= timedelta(days=1)
         end_date -= timedelta(days=1)
         response = client.intraday_ohlc(
@@ -484,8 +485,11 @@ async def fetch_intraday_data(symbol: str, start_date: datetime, end_date: datet
             )
         )
 
-    return [{'TradingDate': item['TradingDate'], 'Time': item['Time'], 'ClosePrice': item['Close']} for item in response['data']]
-
+    if response['status'] == 'Success':
+        return [{'TradingDate': item['TradingDate'], 'Time': item['Time'], 'ClosePrice': item['Close']} for item in response['data']] 
+    else: 
+        return []
+    
 async def fetch_daily_data(symbol: str, start_date: datetime, end_date: datetime, is_index: bool):
     if not is_index:
         response = client.daily_stock_price(
