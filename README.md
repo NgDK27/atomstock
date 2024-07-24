@@ -1,10 +1,10 @@
 **Disclaimer**
 
-Currently nothing works yet
+Almost done with stock market data
 
 **Prerequisite**
 
-Install postgres (psql), redis, golang, python, kafka (ongoing)
+Install postgres (psql), redis, golang, python
 
 Set up database (init.sql file on root)
 

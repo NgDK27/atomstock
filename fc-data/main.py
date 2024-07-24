@@ -152,6 +152,9 @@ class StreamManager:
         await self.update_main_view_channels()
         
         await websocket.send_json({"type": "main_view_update", "categorized_stocks": self.categorize_stocks()})
+
+
+        # Need to update to display all indexes being maintained
         for index, data in self.all_index_data.items():
             await websocket.send_json({"type": "index_update", "index": index, "data": data})
         print(f"Subscribed to main view. Total subscribers: {len(self.main_view_subscribers)}")
