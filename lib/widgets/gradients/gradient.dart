@@ -5,7 +5,7 @@ import 'package:oppenhomies/styles/opacities.dart';
 
 class OpGradient {
   static RadialGradient pageGradient(BuildContext context,
-      {double radius = 1.5, required Color beginColor, Alignment center = Alignment.topRight}) {
+      {double radius = 1.5, required Color beginColor, Alignment center = Alignment.topRight,}) {
     return RadialGradient(
       center: center,
       radius: radius,

@@ -91,7 +91,7 @@ class StockDetailsOverview extends HookWidget {
           //endregion
           Padding(
             padding: EdgeInsets.symmetric(
-                horizontal: OpSpacing.md, vertical: OpSpacing.lg),
+                horizontal: OpSpacing.md, vertical: OpSpacing.lg,),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -119,7 +119,7 @@ class StockDetailsOverview extends HookWidget {
   }
 
   Widget _buildHalfColumn(
-      List<MapEntry<String, double?>> entries, BuildContext context) {
+      List<MapEntry<String, double?>> entries, BuildContext context,) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [

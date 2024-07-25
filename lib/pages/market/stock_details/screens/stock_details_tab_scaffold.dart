@@ -166,7 +166,7 @@ class StockDetails extends HookConsumerWidget {
                           cupertinoSelectedTab.value = value;
                           tabController.index = DetailsTabDestinations.values
                               .indexOf(
-                                  value ?? DetailsTabDestinations.overview);
+                                  value ?? DetailsTabDestinations.overview,);
                         },
                         children: {
                           for (final tab in DetailsTabDestinations.values)
