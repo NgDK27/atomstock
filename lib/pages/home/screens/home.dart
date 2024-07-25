@@ -31,7 +31,7 @@ class Home extends ConsumerWidget {
                 CupertinoIconButtonData(padding: EdgeInsets.zero),
             icon: Icon(platformThemeData(context,
                 material: (_) => Icons.account_circle,
-                cupertino: (_) => CupertinoIcons.person_circle_fill)),
+                cupertino: (_) => CupertinoIcons.person_circle_fill,),),
             onPressed: () => navigateSettings(context),
           ),
           topBarTrailing: PlatformIconButton(
@@ -39,7 +39,7 @@ class Home extends ConsumerWidget {
                 CupertinoIconButtonData(padding: EdgeInsets.zero),
             icon: Icon(platformThemeData(context,
                 material: (_) => Icons.notifications,
-                cupertino: (_) => CupertinoIcons.bell_fill)),
+                cupertino: (_) => CupertinoIcons.bell_fill,),),
             onPressed: () => navigateNotifications(context),
           ),
           transitionBetweenRoutes: false,
@@ -56,10 +56,10 @@ class Home extends ConsumerWidget {
                           onPressed: () {},
                         ),
                         const SizedBox(height: OpSpacing.md),
-                      ]),
+                      ],),
                   childCount: 15,
                 ),
               ),
-            )
-          ]);
+            ),
+          ],);
 }

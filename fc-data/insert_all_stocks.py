@@ -3,7 +3,7 @@ import config
 import psycopg2
 import os
 import time
-from dotenv import load_dotenv
+from dotenv import load_dotenv, dotenv_values
 from pathlib import Path
 
 def get_project_root() -> Path:
@@ -13,7 +13,7 @@ project_root = get_project_root()
 
 # Construct the path to the .env file
 dotenv_path = project_root / 'oppenhomies/server/.env'
-load_dotenv(dotenv_path)
+load_dotenv('.env')
 
 DB_HOST = os.getenv('HOST')
 DB_NAME = os.getenv('DB_NAME')
@@ -28,6 +28,8 @@ def get_securities_list(market: str):
     secs = res['data']
     total = res['totalRecord']
     valid = 0
+
+    print(DB_HOST, DB_NAME, DB_USER, DB_PASSWORD)
     
     # Connect to the database
     conn = psycopg2.connect(
@@ -38,7 +40,7 @@ def get_securities_list(market: str):
     )
     
     cursor = conn.cursor()
-    
+
     cursor.execute("SELECT id FROM markets WHERE name = %s", (market,))
     market_id = cursor.fetchone()[0]
 

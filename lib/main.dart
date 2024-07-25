@@ -22,10 +22,10 @@ class OppenhomiesApp extends ConsumerWidget {
 
   // TODO: Remove once flutter_dynamic_colors is fixed
   (ColorScheme light, ColorScheme dark) _generateDynamicColourSchemes(
-      ColorScheme lightDynamic, ColorScheme darkDynamic) {
+      ColorScheme lightDynamic, ColorScheme darkDynamic,) {
     var lightBase = ColorScheme.fromSeed(seedColor: lightDynamic.primary);
     var darkBase = ColorScheme.fromSeed(
-        seedColor: darkDynamic.primary, brightness: Brightness.dark);
+        seedColor: darkDynamic.primary, brightness: Brightness.dark,);
     var lightAdditionalColours = _extractAdditionalColours(lightBase);
     var darkAdditionalColours = _extractAdditionalColours(darkBase);
     var lightScheme =
@@ -44,7 +44,7 @@ class OppenhomiesApp extends ConsumerWidget {
         scheme.surfaceContainerHighest,
       ];
   ColorScheme _insertAdditionalColours(
-          ColorScheme scheme, List<Color> additionalColours) =>
+          ColorScheme scheme, List<Color> additionalColours,) =>
       scheme.copyWith(
         surface: additionalColours[0],
         surfaceDim: additionalColours[1],
@@ -60,7 +60,7 @@ class OppenhomiesApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Edge-to-edge
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        systemNavigationBarColor: Colors.transparent));
+        systemNavigationBarColor: Colors.transparent,),);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
     return PlatformProvider(
@@ -86,9 +86,9 @@ class OppenhomiesApp extends ConsumerWidget {
         return PlatformTheme(
           themeMode: ThemeMode.system,
           materialLightTheme: ThemeData(
-              colorScheme: lightScheme, textTheme: opMaterialTextTheme),
+              colorScheme: lightScheme, textTheme: opMaterialTextTheme,),
           materialDarkTheme: ThemeData(
-              colorScheme: darkScheme, textTheme: opMaterialTextTheme),
+              colorScheme: darkScheme, textTheme: opMaterialTextTheme,),
           cupertinoLightTheme: opCupertinoLightTheme,
           cupertinoDarkTheme: opCupertinoDarkTheme,
           builder: (context) => PlatformApp.router(
@@ -103,7 +103,7 @@ class OppenhomiesApp extends ConsumerWidget {
             ],
           ),
         );
-      }),
+      },),
     );
   }
 }

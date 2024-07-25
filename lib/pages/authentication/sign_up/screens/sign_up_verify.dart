@@ -22,7 +22,7 @@ class SignUpVerify extends HookWidget {
       builder: (context) => PlatformAlertDialog(
         title: const Text('Change email address?'),
         content: const Text(
-            "After changing the email address, you'll get another verification code"),
+            "After changing the email address, you'll get another verification code",),
         actions: [
           PlatformDialogAction(
             onPressed: () => context.pop(),
@@ -43,7 +43,7 @@ class SignUpVerify extends HookWidget {
       builder: (context) => PlatformAlertDialog(
         title: const Text('Another verification code has been sent'),
         content: const Text(
-            "Make sure to check your 'spam' folder. If you still can't receive the email, please contact us for support"),
+            "Make sure to check your 'spam' folder. If you still can't receive the email, please contact us for support",),
         actions: [
           PlatformDialogAction(
             onPressed: () => context.pop(),
@@ -73,7 +73,7 @@ class SignUpVerify extends HookWidget {
               child: Text('Go into app', style: OpTextStyle.bold()),
             ),
           ],
-        ));
+        ),);
   }
 
   void navigateHome({required BuildContext context}) {
@@ -97,10 +97,10 @@ class SignUpVerify extends HookWidget {
                     children: [
                   const SizedBox(height: OpSpacing.sm),
                   Text("example@email.com",
-                      style: OpTextStyle.titleLarge(context)),
+                      style: OpTextStyle.titleLarge(context),),
                   const SizedBox(height: OpSpacing.md),
                   const Text(
-                      "We’ve sent a verification code to your email. Enter it here and you’re done!"),
+                      "We’ve sent a verification code to your email. Enter it here and you’re done!",),
                   const SizedBox(height: OpSpacing.xl),
                   PlatformTextField(
                     autofocus: true,
@@ -120,15 +120,15 @@ class SignUpVerify extends HookWidget {
                           counterText: "",
                           border: InputBorder.none,
                           hintStyle:
-                              TextStyle(inherit: true, letterSpacing: 15)),
+                              TextStyle(inherit: true, letterSpacing: 15),),
                     ),
                     cupertino: (_, __) => CupertinoTextFieldData(
                         placeholderStyle: TextStyle(
                             color: OpDynamicColor.onSurface(context)
                                 .withOpacity(OpOpacity.secondary),
-                            letterSpacing: 15)),
-                  )
-                ])))
+                            letterSpacing: 15,),),
+                  ),
+                ],),),),
       ],
       floatingBottomWidget: BottomBar(
         child: Row(
@@ -144,7 +144,7 @@ class SignUpVerify extends HookWidget {
                   ),
                   const SizedBox(height: OpSpacing.xs),
                   OpTonalPrimaryButton(
-                      text: "Resend", onPressed: () => handleResendEmail(context))
+                      text: "Resend", onPressed: () => handleResendEmail(context),),
                 ],
               ),
             ),
@@ -162,10 +162,10 @@ class SignUpVerify extends HookWidget {
                   ),
                   const SizedBox(height: OpSpacing.xs),
                   OpTonalPrimaryButton(
-                      text: "Change", onPressed: () => handleChangeEmail(context))
+                      text: "Change", onPressed: () => handleChangeEmail(context),),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

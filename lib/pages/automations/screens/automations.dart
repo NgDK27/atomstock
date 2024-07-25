@@ -20,10 +20,10 @@ class Automations extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         SizedBox(height: OpSpacing.md),
-                      ]),
+                      ],),
                   childCount: 15,
                 ),
               ),
-            )
-          ]);
+            ),
+          ],);
 }

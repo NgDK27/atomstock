@@ -6,18 +6,18 @@ class OpRouter {
   OpRouter._();
 
   static final router = GoRouter(
-    initialLocation: OpRoutes.market.path,
+    initialLocation: '/market/stock_details',
     routes: [
       OpRoutes.onboarding.route(
         routes: [
           OpRoutes.signInLanding.route(routes: [
-            OpRoutes.signIn.route(routes: [OpRoutes.resetPassword.route()])
-          ]),
+            OpRoutes.signIn.route(routes: [OpRoutes.resetPassword.route()]),
+          ],),
           OpRoutes.aiSelect.route(
             routes: [
               OpRoutes.signUpLanding.route(routes: [
-                OpRoutes.signUp.route(routes: [OpRoutes.signUpVerify.route()])
-              ]),
+                OpRoutes.signUp.route(routes: [OpRoutes.signUpVerify.route()]),
+              ],),
             ],
           ),
         ],

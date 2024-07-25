@@ -31,7 +31,7 @@ class Portfolio extends ConsumerWidget {
             icon: Icon(
               platformThemeData(context,
                   material: (_) => Icons.account_circle,
-                  cupertino: (_) => CupertinoIcons.person_circle_fill),
+                  cupertino: (_) => CupertinoIcons.person_circle_fill,),
             ),
             onPressed: () => navigateSettings(context),
           ),
@@ -40,7 +40,7 @@ class Portfolio extends ConsumerWidget {
                 CupertinoIconButtonData(padding: EdgeInsets.zero),
             icon: Icon(platformThemeData(context,
                 material: (_) => Icons.notifications,
-                cupertino: (_) => CupertinoIcons.bell_fill)),
+                cupertino: (_) => CupertinoIcons.bell_fill,),),
             onPressed: () => navigateNotifications(context),
           ),
           transitionBetweenRoutes: false,
@@ -53,10 +53,10 @@ class Portfolio extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         SizedBox(height: OpSpacing.md),
-                      ]),
+                      ],),
                   childCount: 15,
                 ),
               ),
-            )
-          ]);
+            ),
+          ],);
 }

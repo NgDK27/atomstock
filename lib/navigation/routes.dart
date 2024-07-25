@@ -10,6 +10,7 @@ import 'package:oppenhomies/pages/authentication/sign_up/screens/sign_up_verify.
 import 'package:oppenhomies/pages/automations/screens/automations.dart';
 import 'package:oppenhomies/pages/home/screens/home.dart';
 import 'package:oppenhomies/pages/market/screens/market.dart';
+import 'package:oppenhomies/pages/market/stock_details/screens/stock_details_tab_scaffold.dart';
 import 'package:oppenhomies/pages/notifications/screens/notifications.dart';
 import 'package:oppenhomies/pages/onboarding/ai_select/screens/ai_select.dart';
 import 'package:oppenhomies/pages/onboarding/story/screens/onboarding_story.dart';
@@ -32,7 +33,7 @@ class OpRoutes {
   static final home = RouteModel(
       path: '/home',
       name: 'home',
-      pageBuilder: (context, state) => buildPageWithFadeTransition(context:context, state: state, child: const Home()));
+      pageBuilder: (context, state) => buildPageWithFadeTransition(context:context, state: state, child: const Home()),);
 
   static final ai = RouteModel(
     path: '/ai',
@@ -107,7 +108,7 @@ class OpRoutes {
   static final stockDetails = RouteModel(
     path: 'stock_details',
     name: 'stock_details',
-    builder: (context, state) => const Placeholder(),
+    builder: (context, state) => const StockDetails(),
   );
 
   static final signInLanding = RouteModel(

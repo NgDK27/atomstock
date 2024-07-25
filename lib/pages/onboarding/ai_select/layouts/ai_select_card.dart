@@ -25,7 +25,7 @@ class AiSelectCard extends ConsumerWidget {
       margin: const EdgeInsets.symmetric(horizontal: OpSpacing.md),
         decoration: BoxDecoration(
             color: OpDynamicColor.surface(context).withOpacity(OpOpacity.secondary),
-            borderRadius: const BorderRadius.all(Radius.circular(OpRadius.md))),
+            borderRadius: const BorderRadius.all(Radius.circular(OpRadius.md)),),
         child: Container(
             decoration: BoxDecoration(
                 gradient: RadialGradient(
@@ -42,11 +42,11 @@ class AiSelectCard extends ConsumerWidget {
                   stops: const [0.0, 0.3, 0.5, 0.7, 0.9, 1.0],
                 ),
                 border: Border.all(
-                    color: OpDynamicColor.outlineVariant(context), width: 1),
-                borderRadius: const BorderRadius.all(Radius.circular(OpRadius.md))),
+                    color: OpDynamicColor.outlineVariant(context), width: 1,),
+                borderRadius: const BorderRadius.all(Radius.circular(OpRadius.md)),),
             child: Padding(
               padding: const EdgeInsets.fromLTRB(
-                  OpSpacing.md, OpSpacing.md, OpSpacing.md, OpSpacing.lg),
+                  OpSpacing.md, OpSpacing.md, OpSpacing.md, OpSpacing.lg,),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -63,13 +63,13 @@ class AiSelectCard extends ConsumerWidget {
                               fit: BoxFit.contain,
                               child: model.illustration,
                             ),
-                          )),
+                          ),),
                       switch (model.type) {
                         AiSelectCardType.recommended =>
                           const ChipMediumPrimary(text: "Recommended"),
                         AiSelectCardType.comingSoon =>
                           const ChipMediumNeutral(text: "Coming soon"),
-                      }
+                      },
                     ],
                   ),
                   const SizedBox(height: OpSpacing.lg),
@@ -77,7 +77,7 @@ class AiSelectCard extends ConsumerWidget {
                     children: [
                       const SparkleFilled(),
                       const SizedBox(width: OpSpacing.xs),
-                      Text(model.aiName, style: OpTextStyle.headline(context))
+                      Text(model.aiName, style: OpTextStyle.headline(context)),
                     ],
                   ),
                   const SizedBox(height: OpSpacing.lg),
@@ -89,7 +89,7 @@ class AiSelectCard extends ConsumerWidget {
                     data: model.description,
                     styleSheet: MarkdownStyleSheet(
                         p: OpTextStyle.labelLarge(context),
-                        listBullet: OpTextStyle.labelLarge(context)),
+                        listBullet: OpTextStyle.labelLarge(context),),
                   ),
                   const SizedBox(height: OpSpacing.lg),
                   const OpDividerVariant(),
@@ -98,21 +98,21 @@ class AiSelectCard extends ConsumerWidget {
                     children: [
                       Text('${model.accuracyPercentage}%',
                           style: OpTextStyle.labelMediumProminent(context)
-                              ?.copyWith(color: themeColorHarmonized)),
+                              ?.copyWith(color: themeColorHarmonized),),
                       Text(
                         ' average weekly accuracy',
                         style: OpTextStyle.labelMediumProminent(context)
                             ?.copyWith(
-                                color: OpDynamicColor.onSurface(context)),
+                                color: OpDynamicColor.onSurface(context),),
                       ),
                     ],
                   ),
                   const SizedBox(height: OpSpacing.xs3),
                   Text(model.supportingText,
                       style: OpTextStyle.labelMedium(context)?.copyWith(
-                          color: OpDynamicColor.onSurfaceVariant(context)))
+                          color: OpDynamicColor.onSurfaceVariant(context),),),
                 ],
               ),
-            )));
+            ),),);
   }
 }

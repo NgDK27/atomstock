@@ -44,7 +44,7 @@ class AuthenticationLandingLayout extends ConsumerWidget {
         child: Container(
           decoration: BoxDecoration(
             gradient: OpGradient.pageGradient(context,
-                beginColor: OpDynamicColor.aquaHarmonized(context)),
+                beginColor: OpDynamicColor.aquaHarmonized(context),),
           ),
           child: SafeArea(
             minimum: const EdgeInsets.symmetric(horizontal: OpSpacing.md),
@@ -66,8 +66,8 @@ class AuthenticationLandingLayout extends ConsumerWidget {
                         TextSpan(
                             text: supportingEndText,
                             style: OpTextStyle.titleSmall(context)?.copyWith(
-                                color: OpDynamicColor.aiHarmonized(context)))
-                      ])),
+                                color: OpDynamicColor.aiHarmonized(context),),),
+                      ],),),
                 const SizedBox(height: OpSpacing.xl),
                 OpFilledPrimaryButton(
                   text: "Continue with email",
@@ -106,12 +106,12 @@ class AuthenticationLandingLayout extends ConsumerWidget {
                                           child: const Text('Clear choice and sign in'),
                                         ),
                                       ],
-                                    ));
+                                    ),);
                           }
-                        : navigateSwitchAuthenticationFlow),
+                        : navigateSwitchAuthenticationFlow,),
               ],
             ),
           ),
-        ));
+        ),);
   }
 }

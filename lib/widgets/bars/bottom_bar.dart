@@ -14,12 +14,12 @@ class BottomBar extends StatelessWidget {
         decoration: BoxDecoration(
             border: Border(
                 top:
-                    BorderSide(color: OpDynamicColor.outlineVariant(context))),
-        color: OpDynamicColor.surface(context)),
+                    BorderSide(color: OpDynamicColor.outlineVariant(context)),),
+        color: OpDynamicColor.surface(context),),
         child: SafeArea(
             top: false,
             minimum: const EdgeInsets.symmetric(
-                horizontal: OpSpacing.md, vertical: OpSpacing.sm),
-            child: child));
+                horizontal: OpSpacing.md, vertical: OpSpacing.sm,),
+            child: child,),);
   }
 }

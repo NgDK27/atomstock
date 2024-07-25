@@ -23,8 +23,8 @@ class _OpPlatformSliverTabScaffoldState extends State<OpPlatformSliverTabScaffol
     return routes.allRoutes.map((route) => BottomNavigationBarItem(
       label: route.label,
       icon: route.icon,
-      activeIcon: route.activeIcon
-    )).toList();
+      activeIcon: route.activeIcon,
+    ),).toList();
   });
 
   List<BottomNavigationBarItem> get _itemsFilled {
@@ -33,14 +33,14 @@ class _OpPlatformSliverTabScaffoldState extends State<OpPlatformSliverTabScaffol
       label: route.label,
       icon: route.activeIcon.copyWith(color: OpDynamicColor.onSurfaceVariant(context).withOpacity(OpOpacity.tertiary)),
       activeIcon: route.activeIcon.copyWith(color: OpDynamicColor.primary(context)),
-    )).toList();
+    ),).toList();
   }
 
   late final _getCurrentIndex = useMemoized(() => (BuildContext context) {
     final state = GoRouterState.of(context);
     final routes = OpMainRoutes(context);
     return routes.allRoutes.indexWhere((route) => state.matchedLocation.startsWith('/${route.route}'));
-  });
+  },);
 
   void _onItemTapped(BuildContext context, int index) {
     final routes = OpMainRoutes(context);

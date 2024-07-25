@@ -40,7 +40,7 @@ class OpPlatformSliverScaffold extends HookWidget {
         }
       });
       return null;
-    }, [floatingBottomWidget]);
+    }, [floatingBottomWidget],);
 
     return PlatformScaffold(
       body: Stack(

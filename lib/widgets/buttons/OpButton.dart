@@ -30,15 +30,15 @@ abstract class OpButton extends ConsumerWidget {
                   Theme.of(context).colorScheme.onSurface.withOpacity(0.12),
               // From M3 doc
               backgroundColor: getMaterialBackgroundColor(context),
-              overlayColor: getMaterialOverlayColor(context))),
+              overlayColor: getMaterialOverlayColor(context),),),
       child: child ?? Text(
         text,
         softWrap: false,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(
             color: getTextColor(context),
-            fontVariations: const [FontVariation.weight(600)]),
-      )
+            fontVariations: const [FontVariation.weight(600)],),
+      ),
     );
   }
 

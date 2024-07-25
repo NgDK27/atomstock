@@ -13,11 +13,27 @@ extension CurrencyFormatter on double {
             decimalSeparator: ',',
             symbolAndNumberSeparator: ' ',
             fractionDigits: 0,
-            compactFormatType: CompactFormatType.short
-        )
+            compactFormatType: CompactFormatType.short,
+        ),
     );
 
     return fmf.output.symbolOnRight;
+  }
+
+  String vndNoSymbolFormat() {
+    final MoneyFormatter fmf = MoneyFormatter(
+      amount: this,
+      settings: MoneyFormatterSettings(
+        symbol: '₫',
+        thousandSeparator: '.',
+        decimalSeparator: ',',
+        symbolAndNumberSeparator: ' ',
+        fractionDigits: 0,
+        compactFormatType: CompactFormatType.short,
+      ),
+    );
+
+    return fmf.output.nonSymbol;
   }
 
   String vndCompactFormat() {
@@ -29,8 +45,8 @@ extension CurrencyFormatter on double {
             decimalSeparator: ',',
             symbolAndNumberSeparator: ' ',
             fractionDigits: 3,
-            compactFormatType: CompactFormatType.short
-        )
+            compactFormatType: CompactFormatType.short,
+        ),
     );
 
     return fmf.output.compactSymbolOnRight;
