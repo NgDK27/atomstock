@@ -4,7 +4,7 @@ import json
 import random
 
 async def simulate_user(user_id):
-    uri = "ws://localhost:8000/ws"
+    uri = "ws://localhost:8000/ws/bruh"
     async with websockets.connect(uri) as websocket:
         print(f"User {user_id} connected")
 

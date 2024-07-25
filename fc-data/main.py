@@ -108,8 +108,10 @@ class StreamManager:
     def start_streams(self):
         self.stock_stream = MarketDataStream(config, client)
         self.index_stream = MarketDataStream(config, client)
-        self.stock_stream.start(on_stock_message, on_error, "X:ALL")
-        self.index_stream.start(on_index_message, on_error, "MI:ALL")
+        stock_symbols = "-".join([symbol for symbol, _, _ in self.stocks])
+        index_symbols = "-".join([symbol for symbol, _ in self.indexes])
+        self.stock_stream.start(on_stock_message, on_error, f"X:{stock_symbols}")
+        self.index_stream.start(on_index_message, on_error, f"X:{index_symbols}")
 
     def stop_streams(self):
         if self.stock_stream:
@@ -377,7 +379,7 @@ def on_index_message(message):
 def on_error(error):
     print(f"Streaming error occurred: {error}")
 
-@app.websocket("/ws")
+@app.websocket("/ws/{user_id}")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     print("WebSocket connection accepted")

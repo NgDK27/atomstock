@@ -57,7 +57,7 @@ CREATE TABLE rules (
     trigger_time TIME,
     trigger_day VARCHAR(10),
     range_type VARCHAR(10) CHECK (range_type IN ('ABOVE', 'BELOW')),
-    stop_loss_percentage NUMERIC(5, 2) NOT NULL,
+    stop_loss_percentage NUMERIC(5, 2),
     spending_limit NUMERIC(10, 2),
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
