@@ -28,6 +28,6 @@ class OpTonalPrimaryButton extends OpButton {
   Color getTextColor(BuildContext context) {
     return platformThemeData(context,
         material: (ThemeData data) => data.colorScheme.onSecondaryContainer,
-        cupertino: (CupertinoThemeData data) => data.primaryColor);
+        cupertino: (CupertinoThemeData data) => data.primaryColor,);
   }
 }

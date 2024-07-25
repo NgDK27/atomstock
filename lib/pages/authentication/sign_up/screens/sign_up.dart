@@ -20,11 +20,11 @@ class SignUp extends HookWidget {
   const SignUp({super.key});
 
   void handleSignUp(
-      BuildContext context, String email, String password, String name) {
+      BuildContext context, String email, String password, String name,) {
     // Optional: Log to console
     if (kDebugMode) {
       print(
-          'Sign up attempted - Email: $email, Password: $password, Name: $name');
+          'Sign up attempted - Email: $email, Password: $password, Name: $name',);
     }
 
     context.goNamed(OpRoutes.signUpVerify.name);
@@ -64,21 +64,21 @@ class SignUp extends HookWidget {
         nameValidationMode.value = AutovalidateMode.always;
       }
       return null;
-    }, [nameDebounced]);
+    }, [nameDebounced],);
 
     useEffect(() {
       if (emailDebounced?.isNotEmpty == true) {
         emailValidationMode.value = AutovalidateMode.always;
       }
       return null;
-    }, [emailDebounced]);
+    }, [emailDebounced],);
 
     useEffect(() {
       if (passwordDebounced?.isNotEmpty == true) {
         passwordValidationMode.value = AutovalidateMode.always;
       }
       return null;
-    }, [passwordDebounced]);
+    }, [passwordDebounced],);
 
     useEffect(() {
       if (email.text.isNotEmpty &&
@@ -90,7 +90,7 @@ class SignUp extends HookWidget {
         isFormValid.value = false;
       }
       return null;
-    }, [email, password, name]);
+    }, [email, password, name],);
 
     return OpPlatformSliverScaffold(
         scrollable: true,
@@ -178,23 +178,23 @@ class SignUp extends HookWidget {
                                   PlatformSwitch(
                                       value: showPassword.value,
                                       onChanged: (bool value) =>
-                                          showPassword.value = value),
+                                          showPassword.value = value,),
                                 ],
                               ),
                             ],
                           ),
-                        )),
+                        ),),
                   ],
                 ),
-              )),
+              ),),
         ],
         floatingBottomWidget: BottomBar(
             child: OpFilledPrimaryButton(
           text: "Sign up",
               onPressed: isFormValid.value
               ? () => handleSignUp(context, emailController.text,
-                  passwordController.text, nameController.text)
-              : null
-        )));
+                  passwordController.text, nameController.text,)
+              : null,
+        ),),);
   }
 }

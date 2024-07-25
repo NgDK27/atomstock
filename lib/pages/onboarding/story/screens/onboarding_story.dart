@@ -50,10 +50,10 @@ class _OnboardingStoryState extends ConsumerState<OnboardingStory> {
                     onPressed: _navigateSignUp,
                   ),
                 ],
-              ));
+              ),);
         },
         indicatorPadding: EdgeInsets.fromLTRB(
-            OpSpacing.md, MediaQuery.of(context).padding.top, OpSpacing.md, 0),
+            OpSpacing.md, MediaQuery.of(context).padding.top, OpSpacing.md, 0,),
         pageLength: 1,
         storyLength: (_) {
           return 6;

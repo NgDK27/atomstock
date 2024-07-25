@@ -29,6 +29,6 @@ class OpTonalNeutralButton extends OpButton {
   Color getTextColor(BuildContext context) {
     return platformThemeData(context,
         material: (ThemeData data) => data.colorScheme.onSecondaryContainer,
-        cupertino: (CupertinoThemeData data) => OpLightDarkColor.onSurface);
+        cupertino: (CupertinoThemeData data) => OpLightDarkColor.onSurface,);
   }
 }

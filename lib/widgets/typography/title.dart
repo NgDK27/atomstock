@@ -24,11 +24,11 @@ class OpTitle extends StatelessWidget {
                   title,
                   style: OpTextStyle.titleSmall(context)
                       ?.copyWith(fontVariations: [FontVariation.weight(600)]),
-                )
+                ),
               ],
             ),
             const SizedBox(height: OpSpacing.xs),
           ],
-        ));
+        ),);
   }
 }

@@ -15,10 +15,10 @@ class RenderFlexPage extends StatelessWidget {
                 Text('Column > Expanded_A > Column > Text_B'),
                 Expanded( // Expanded_B
 
-                    child: Text('Column > Expanded_A > Column > Expanded_B'))
+                    child: Text('Column > Expanded_A > Column > Expanded_B'),),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

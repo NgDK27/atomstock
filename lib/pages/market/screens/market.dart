@@ -24,7 +24,7 @@ class Market extends ConsumerWidget {
     final sampleStocks = [
       StockModel.sample(),
       StockModel.positiveSample(),
-      StockModel.negativeSample()
+      StockModel.negativeSample(),
     ];
 
     return OpPlatformSliverScaffold(
@@ -86,7 +86,7 @@ class Market extends ConsumerWidget {
               ...sampleStocks.map((stock) => StockListTile(stock: stock)),
               const SizedBox(height: OpSpacing.xl),
               OpTitle("Top movers today",
-                  leading: Text("↔", style: TextStyle().bold())),
+                  leading: Text("↔", style: TextStyle().bold()),),
               ...sampleStocks.map((stock) => StockListTile(stock: stock)),
             ]),
           ),

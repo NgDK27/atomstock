@@ -47,7 +47,7 @@ class OnboardingContentLayout extends ConsumerWidget {
           SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
             statusBarColor: Colors.transparent,
             systemNavigationBarColor: Colors.transparent,
-          ));
+          ),);
         }
       default:
         {}
@@ -56,7 +56,7 @@ class OnboardingContentLayout extends ConsumerWidget {
     return PlatformWidgetBuilder(
         material: (_, child, __) => Theme(
             data: Theme.of(context).copyWith(brightness: Brightness.dark),
-            child: child!),
+            child: child!,),
         cupertino: (_, child, __) =>
             CupertinoTheme(data: opCupertinoDarkTheme, child: child!),
         child: Stack(
@@ -67,7 +67,7 @@ class OnboardingContentLayout extends ConsumerWidget {
                       material: (ThemeData data) => data.colorScheme.primary
                           .withOpacity(OpOpacity.quaternary),
                       cupertino: (CupertinoThemeData data) =>
-                          data.primaryColor.withOpacity(OpOpacity.quaternary)),
+                          data.primaryColor.withOpacity(OpOpacity.quaternary),),
                   BlendMode.srcOver,
                 ),
                 child: ColorFiltered(
@@ -76,7 +76,7 @@ class OnboardingContentLayout extends ConsumerWidget {
                           material: (ThemeData data) => data.colorScheme.surface
                               .withOpacity(OpOpacity.quaternary),
                           cupertino: (_) => OpColor.charcoal120
-                              .withOpacity(OpOpacity.tertiary)),
+                              .withOpacity(OpOpacity.tertiary),),
                       BlendMode.srcOver,
                     ),
                     child: ClipRect(
@@ -90,7 +90,7 @@ class OnboardingContentLayout extends ConsumerWidget {
                           height: MediaQuery.of(context).size.height,
                         ),
                       ),
-                    ))),
+                    ),),),
             SafeArea(
               minimum: const EdgeInsets.symmetric(horizontal: OpSpacing.md),
               child: Column(
@@ -107,7 +107,7 @@ class OnboardingContentLayout extends ConsumerWidget {
                               OpColor.mono100.tintWithPrimary(context),
                             PlatformTarget.iOS => OpColor.mono100,
                             _ => OpTextStyle.display(context)?.color,
-                          })),
+                          },),),
                   Expanded(
                     child: Center(
                       child: Transform.scale(
@@ -136,6 +136,6 @@ class OnboardingContentLayout extends ConsumerWidget {
               ),
             ),
           ],
-        ));
+        ),);
   }
 }

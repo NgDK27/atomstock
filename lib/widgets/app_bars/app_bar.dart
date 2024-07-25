@@ -25,7 +25,7 @@ class OpPlatformSliverAppBar extends HookWidget {
         centerTitle: true,
         leading: leading,
         actions: trailing != null ? [
-          trailing!
+          trailing!,
         ] : [],
         automaticallyImplyLeading: true,
       ),

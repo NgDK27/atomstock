@@ -80,14 +80,14 @@ class SignIn extends HookWidget {
         emailValidationMode.value = AutovalidateMode.always;
       }
       return null;
-    }, [emailDebounced]);
+    }, [emailDebounced],);
 
     useEffect(() {
       if (passwordDebounced?.isNotEmpty == true) {
         passwordValidationMode.value = AutovalidateMode.always;
       }
       return null;
-    }, [passwordDebounced]);
+    }, [passwordDebounced],);
 
     useEffect(() {
       if (email.text.isNotEmpty && password.text.isNotEmpty) {
@@ -97,7 +97,7 @@ class SignIn extends HookWidget {
         isFormValid.value = false;
       }
       return null;
-    }, [email, password]);
+    }, [email, password],);
 
     return OpPlatformSliverScaffold(
         scrollable: true,
@@ -151,10 +151,10 @@ class SignIn extends HookWidget {
                                 autofillHints: const [
                                   AutofillHints.password,
                                 ],
-                              ).animated()
+                              ).animated(),
                             ],
                           ),
-                        )),
+                        ),),
                     const SizedBox(height: OpSpacing.md),
                     Row(
                       children: [
@@ -163,7 +163,7 @@ class SignIn extends HookWidget {
                         PlatformSwitch(
                             value: showPassword.value,
                             onChanged: (bool value) =>
-                            showPassword.value = value
+                            showPassword.value = value,
                         ),
                       ],
                     ),
@@ -175,14 +175,14 @@ class SignIn extends HookWidget {
                     ),
                   ],
                 ),
-              )),
+              ),),
         ],
         floatingBottomWidget: BottomBar(
             child: OpFilledPrimaryButton(
                 text: "Sign in",
                 onPressed: isFormValid.value
                     ? () => handleSignIn(
-                        context, emailController.text, passwordController.text)
-                    : null)));
+                        context, emailController.text, passwordController.text,)
+                    : null,),),);
   }
 }

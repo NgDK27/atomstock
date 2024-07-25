@@ -64,7 +64,7 @@ abstract class GlassmorphismIllustration extends StatelessWidget {
             right: underlyingRightPositionOffset,
             child: Align(
                 alignment: underlyingAlignment,
-                child: SvgPicture.string(underlyingSvg))),
+                child: SvgPicture.string(underlyingSvg),),),
         // Overlay SVG
         ClipPath(
           clipper: SVGPathClipper(overlaySvgPath),
@@ -79,7 +79,7 @@ abstract class GlassmorphismIllustration extends StatelessWidget {
                     end: Alignment.bottomRight,
                     colors: [
                       overlayBeginColor.withOpacity(0.1),
-                      overlayEndColor.withOpacity(0.1)
+                      overlayEndColor.withOpacity(0.1),
                     ],
                   ),
                   boxShadow: [
@@ -88,15 +88,15 @@ abstract class GlassmorphismIllustration extends StatelessWidget {
                       blurRadius: 6,
                       spreadRadius: 0,
                       offset: const Offset(0.0, 3.0),
-                    )
-                  ]),
+                    ),
+                  ],),
             ),
           ),
         ),
         // Overlay SVG Outline
         CustomPaint(
           painter: SVGBorderPainter(overlaySvgPath,
-              overlayBorderColor.withOpacity(0.3), overlayBorderWidth),
+              overlayBorderColor.withOpacity(0.3), overlayBorderWidth,),
           size: Size(overlayWidth, overlayHeight),
         ),
         // Topmost SVG
@@ -120,7 +120,7 @@ abstract class GlassmorphismIllustration extends StatelessWidget {
                           end: Alignment.bottomRight,
                           colors: [
                             overlayBeginColor.withOpacity(0.4),
-                            overlayEndColor.withOpacity(0.4)
+                            overlayEndColor.withOpacity(0.4),
                           ],
                         ),
                         boxShadow: [
@@ -129,12 +129,12 @@ abstract class GlassmorphismIllustration extends StatelessWidget {
                             blurRadius: 50,
                             spreadRadius: 5,
                             offset: const Offset(0.0, 3.0),
-                          )
-                        ]),
+                          ),
+                        ],),
                   ),
                 ),
               ),
-            )),
+            ),),
         // Topmost SVG Outline
         Positioned(
             bottom: topmostBottomPositionOffset,
@@ -145,13 +145,13 @@ abstract class GlassmorphismIllustration extends StatelessWidget {
                 alignment: topmostAlignment,
                 child: CustomPaint(
                   painter: SVGBorderPainter(topmostSvgPath,
-                      overlayBorderColor.withOpacity(0.3), overlayBorderWidth),
+                      overlayBorderColor.withOpacity(0.3), overlayBorderWidth,),
                   size: Size(overlayWidth, overlayHeight),
                   child: SizedBox(
                     width: topmostWidth,
                     height: topmostHeight,
                   ),
-                ))),
+                ),),),
       ],
     );
   }

@@ -18,10 +18,10 @@ class ResetPassword extends ConsumerWidget {
               child: Column(
                 children: [
                   SizedBox(height: OpSpacing.md),
-                  Text("🚧 Work in progress")
+                  Text("🚧 Work in progress"),
                 ],
               ),
-            ))
+            ),),
       ],
     );
   }

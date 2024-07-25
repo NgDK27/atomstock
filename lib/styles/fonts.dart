@@ -72,8 +72,8 @@ final opMaterialTextTheme = const TextTheme().copyWith(
     fontFamily: "Inter",
     fontFeatures: interFontFeatures,
     fontVariations: [
-      FontVariation.weight(550)
-    ]
+      FontVariation.weight(550),
+    ],
   ),
   labelSmall: const TextStyle(
     fontFamily: "Inter",
@@ -85,7 +85,7 @@ final opCupertinoTextTheme = const CupertinoTextThemeData().copyWith(
     textStyle: const CupertinoTextThemeData().textStyle.copyWith(
       fontFamily: "Inter",
       fontFeatures: interFontFeatures,
-      letterSpacing: 0
+      letterSpacing: 0,
     ),
     actionTextStyle: const CupertinoTextThemeData().actionTextStyle.copyWith(
       fontFamily: "Inter",
@@ -100,8 +100,8 @@ final opCupertinoTextTheme = const CupertinoTextThemeData().copyWith(
       fontFamily: "Inter",
       fontFeatures: interFontFeatures,
       fontVariations: [
-        const FontVariation.weight(500)
-      ]
+        const FontVariation.weight(500),
+      ],
     ),
     navLargeTitleTextStyle: const CupertinoTextThemeData().navLargeTitleTextStyle.copyWith(
       fontFamily: "Inter",
@@ -118,4 +118,4 @@ final opCupertinoTextTheme = const CupertinoTextThemeData().copyWith(
     dateTimePickerTextStyle: const CupertinoTextThemeData().dateTimePickerTextStyle.copyWith(
       fontFamily: "Inter",
       fontFeatures: interFontFeatures,
-    ));
+    ),);

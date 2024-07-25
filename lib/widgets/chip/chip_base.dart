@@ -19,10 +19,10 @@ abstract class ChipBase extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
           color: getColor(context),
-          borderRadius: const BorderRadius.all(Radius.circular(OpRadius.full))),
+          borderRadius: const BorderRadius.all(Radius.circular(OpRadius.full)),),
       child: Padding(
         padding: const EdgeInsets.symmetric(
-            vertical: OpSpacing.xs2, horizontal: OpSpacing.xs),
+            vertical: OpSpacing.xs2, horizontal: OpSpacing.xs,),
         child: Text(
           text,
           style: getTextStyle(context),
@@ -73,7 +73,7 @@ class ChipMediumAqua extends ChipBase {
           .harmonizeWith(data.colorScheme.primary)
           .withOpacity(OpOpacity.tertiary),
       cupertino: (_) =>
-          OpDynamicColor.primary(context).withOpacity(OpOpacity.tertiary));
+          OpDynamicColor.primary(context).withOpacity(OpOpacity.tertiary),);
 
   @override
   TextStyle? getTextStyle(BuildContext context) =>
@@ -89,7 +89,7 @@ class ChipMediumCherry extends ChipBase {
   Color getColor(BuildContext context) => platformThemeData(context,
       material: (ThemeData data) =>
           OpLightDarkColor.stockFall.harmonizeWith(data.colorScheme.primary),
-      cupertino: (_) => OpDynamicColor.primary(context)); // TODO Fix
+      cupertino: (_) => OpDynamicColor.primary(context),); // TODO Fix
 
   @override
   TextStyle? getTextStyle(BuildContext context) =>

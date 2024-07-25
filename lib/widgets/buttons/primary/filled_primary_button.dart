@@ -6,7 +6,7 @@ import '../OpButton.dart';
 
 class OpFilledPrimaryButton extends OpButton {
   const OpFilledPrimaryButton(
-      {super.key, required super.text, super.onPressed, super.child});
+      {super.key, required super.text, super.onPressed, super.child,});
 
   @override
   Color getCupertinoColor(BuildContext context) {
@@ -29,6 +29,6 @@ class OpFilledPrimaryButton extends OpButton {
         material: (ThemeData data) => super.onPressed == null
             ? data.colorScheme.onSurface.withOpacity(0.38) // M3 Doc
             : data.colorScheme.onPrimary,
-        cupertino: (CupertinoThemeData data) => data.primaryContrastingColor);
+        cupertino: (CupertinoThemeData data) => data.primaryContrastingColor,);
   }
 }
