@@ -8,6 +8,7 @@ part of 'stock_model.dart';
 
 _$StockModelImpl _$$StockModelImplFromJson(Map<String, dynamic> json) =>
     _$StockModelImpl(
+      id: json['id'] as String,
       name: json['name'] as String,
       ticker: json['ticker'] as String,
       currentPrice: (json['currentPrice'] as num).toDouble(),
@@ -25,6 +26,7 @@ _$StockModelImpl _$$StockModelImplFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$$StockModelImplToJson(_$StockModelImpl instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'name': instance.name,
       'ticker': instance.ticker,
       'currentPrice': instance.currentPrice,

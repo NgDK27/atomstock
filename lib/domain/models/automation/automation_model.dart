@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'stock_model.freezed.dart';
-part 'stock_model.g.dart';
+part 'automation_model.freezed.dart';
+part 'automation_model.g.dart';
 
 @unfreezed
-class StockModel with _$StockModel {
-  factory StockModel({
+class AutomationModel with _$AutomationModel {
+  factory AutomationModel({
     required final String id,
     required final String name,
     required final String ticker,
@@ -21,22 +21,22 @@ class StockModel with _$StockModel {
     double? close,
     double? high,
     double? low,
-  }) = _StockModel;
+  }) = _AutomationModel;
 
-  const StockModel._();
+  const AutomationModel._();
 
-  factory StockModel.fromJson(Map<String, dynamic> json) => _$StockModelFromJson(json);
+  factory AutomationModel.fromJson(Map<String, dynamic> json) => _$AutomationModelFromJson(json);
 
-  factory StockModel.sample() => StockModel(
+  factory AutomationModel.sample() => AutomationModel(
     id: 'stock-001',
-    name: 'Phở Stock Exchange',
+    name: 'Phở Automation Exchange',
     ticker: 'PHO',
     currentPrice: 58310000,
     priceChange: 24000,
     percentChange: 1.93,
   );
 
-  factory StockModel.positiveSample() => StockModel(
+  factory AutomationModel.positiveSample() => AutomationModel(
     id: 'stock-002',
     name: 'Bánh Mì Bonanza',
     ticker: 'BMI',
@@ -45,7 +45,7 @@ class StockModel with _$StockModel {
     percentChange: 5.28,
   );
 
-  factory StockModel.negativeSample() => StockModel(
+  factory AutomationModel.negativeSample() => AutomationModel(
     id: 'stock-003',
     name: 'Durian Derivatives',
     ticker: 'PUNGENT',
@@ -54,7 +54,7 @@ class StockModel with _$StockModel {
     percentChange: -9.09,
   );
 
-  factory StockModel.detailedSample() => StockModel(
+  factory AutomationModel.detailedSample() => AutomationModel(
     id: 'stock-004',
     name: 'Cà Phê Sữa Đá Tech',
     ticker: 'CAFE',

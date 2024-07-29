@@ -27,6 +27,8 @@ class SignUp extends HookWidget {
           'Sign up attempted - Email: $email, Password: $password, Name: $name',);
     }
 
+
+
     context.goNamed(OpRoutes.signUpVerify.name);
   }
 

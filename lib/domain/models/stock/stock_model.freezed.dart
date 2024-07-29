@@ -20,6 +20,7 @@ StockModel _$StockModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$StockModel {
+  String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get ticker => throw _privateConstructorUsedError;
   double get currentPrice => throw _privateConstructorUsedError;
@@ -58,7 +59,8 @@ abstract class $StockModelCopyWith<$Res> {
       _$StockModelCopyWithImpl<$Res, StockModel>;
   @useResult
   $Res call(
-      {String name,
+      {String id,
+      String name,
       String ticker,
       double currentPrice,
       double priceChange,
@@ -86,6 +88,7 @@ class _$StockModelCopyWithImpl<$Res, $Val extends StockModel>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? name = null,
     Object? ticker = null,
     Object? currentPrice = null,
@@ -101,6 +104,10 @@ class _$StockModelCopyWithImpl<$Res, $Val extends StockModel>
     Object? low = freezed,
   }) {
     return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -166,7 +173,8 @@ abstract class _$$StockModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String name,
+      {String id,
+      String name,
       String ticker,
       double currentPrice,
       double priceChange,
@@ -192,6 +200,7 @@ class __$$StockModelImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? name = null,
     Object? ticker = null,
     Object? currentPrice = null,
@@ -207,6 +216,10 @@ class __$$StockModelImplCopyWithImpl<$Res>
     Object? low = freezed,
   }) {
     return _then(_$StockModelImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -267,7 +280,8 @@ class __$$StockModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$StockModelImpl extends _StockModel with DiagnosticableTreeMixin {
   _$StockModelImpl(
-      {required this.name,
+      {required this.id,
+      required this.name,
       required this.ticker,
       required this.currentPrice,
       required this.priceChange,
@@ -285,6 +299,8 @@ class _$StockModelImpl extends _StockModel with DiagnosticableTreeMixin {
   factory _$StockModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$StockModelImplFromJson(json);
 
+  @override
+  final String id;
   @override
   final String name;
   @override
@@ -314,7 +330,7 @@ class _$StockModelImpl extends _StockModel with DiagnosticableTreeMixin {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'StockModel(name: $name, ticker: $ticker, currentPrice: $currentPrice, priceChange: $priceChange, percentChange: $percentChange, floor: $floor, ceiling: $ceiling, totalVolume: $totalVolume, totalValue: $totalValue, open: $open, close: $close, high: $high, low: $low)';
+    return 'StockModel(id: $id, name: $name, ticker: $ticker, currentPrice: $currentPrice, priceChange: $priceChange, percentChange: $percentChange, floor: $floor, ceiling: $ceiling, totalVolume: $totalVolume, totalValue: $totalValue, open: $open, close: $close, high: $high, low: $low)';
   }
 
   @override
@@ -322,6 +338,7 @@ class _$StockModelImpl extends _StockModel with DiagnosticableTreeMixin {
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'StockModel'))
+      ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('name', name))
       ..add(DiagnosticsProperty('ticker', ticker))
       ..add(DiagnosticsProperty('currentPrice', currentPrice))
@@ -353,7 +370,8 @@ class _$StockModelImpl extends _StockModel with DiagnosticableTreeMixin {
 
 abstract class _StockModel extends StockModel {
   factory _StockModel(
-      {required final String name,
+      {required final String id,
+      required final String name,
       required final String ticker,
       required double currentPrice,
       required double priceChange,
@@ -371,6 +389,8 @@ abstract class _StockModel extends StockModel {
   factory _StockModel.fromJson(Map<String, dynamic> json) =
       _$StockModelImpl.fromJson;
 
+  @override
+  String get id;
   @override
   String get name;
   @override
