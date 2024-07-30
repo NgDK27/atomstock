@@ -10,12 +10,17 @@ class OpFilledGlowPrimaryButton extends OpFilledPrimaryButton {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return PlatformWidgetBuilder(
-      cupertino: (_, child, __) =>
-          DecoratedBox(decoration: CupertinoPrimaryGlow(), child: child),
-      material: (_, child, __) =>
-          DecoratedBox(decoration: MaterialPrimaryGlow(context), child: child),
-      child: super.build(context, ref),
-    );
+    Widget button = super.build(context, ref);
+
+    if (onPressed != null) {
+      return PlatformWidgetBuilder(
+        cupertino: (_, __, ___) =>
+            DecoratedBox(decoration: CupertinoPrimaryGlow(), child: button),
+        material: (_, __, ___) =>
+            DecoratedBox(decoration: MaterialPrimaryGlow(context), child: button),
+      );
+    }
+
+    return button;
   }
 }

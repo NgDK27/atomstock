@@ -116,6 +116,7 @@ class Settings extends ConsumerWidget {
                   // Add AiSelectCardSettings as the first item
                   return Column(
                     children: [
+
                       AiSelectCardSettings(
                         model: AiSelectCardData.playItSaferAi,
                       ),
@@ -128,7 +129,7 @@ class Settings extends ConsumerWidget {
                     children: [
                       PlatformListTile(
                         title: Text(itemData.title),
-                        onTap: () => context.goNamed(itemData.route),
+                        onTap: () => context.pushNamed(itemData.route),
                         leading: PlatformWidget(
                           material: (_, __) => Icon(itemData.materialIcon),
                           cupertino: (_, __) => Icon(itemData.cupertinoIcon),
@@ -143,8 +144,12 @@ class Settings extends ConsumerWidget {
                           ),
                           cupertino: (context, __) => Icon(
                             CupertinoIcons.chevron_right,
+                            size: 16,
                             color: OpDynamicColor.onSurfaceVariant(context),
                           ),
+                        ),
+                        cupertino: (_, __) => CupertinoListTileData(
+                          padding: EdgeInsets.symmetric(vertical: OpSpacing.sm, horizontal: OpSpacing.md)
                         ),
                       ),
                       if (index == 3 || index == 7 || index == 9)

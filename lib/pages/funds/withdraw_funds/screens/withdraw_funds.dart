@@ -1,0 +1,13 @@
+import 'package:flutter/widgets.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:oppenhomies/pages/funds/layouts/move_funds.dart';
+import 'package:oppenhomies/pages/funds/models/move_funds_type.dart';
+
+class WithdrawFunds extends HookConsumerWidget {
+  const WithdrawFunds({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return MoveFunds(type: MoveFundsType.withdraw,);
+  }
+}

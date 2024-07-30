@@ -8,6 +8,8 @@ import 'package:oppenhomies/pages/authentication/sign_in/screens/sign_in.dart';
 import 'package:oppenhomies/pages/authentication/sign_up/screens/sign_up.dart';
 import 'package:oppenhomies/pages/authentication/sign_up/screens/sign_up_verify.dart';
 import 'package:oppenhomies/pages/automations/screens/automations.dart';
+import 'package:oppenhomies/pages/funds/add_funds/screens/add_funds.dart';
+import 'package:oppenhomies/pages/funds/withdraw_funds/screens/withdraw_funds.dart';
 import 'package:oppenhomies/pages/home/screens/home.dart';
 import 'package:oppenhomies/pages/market/screens/market.dart';
 import 'package:oppenhomies/pages/market/stock_details/screens/stock_details_tab_scaffold.dart';
@@ -150,15 +152,15 @@ class OpRoutes {
 
   // region Settings sub-routes
   static final addFunds = RouteModel(
-  path: 'add_funds',
+  path: '/add_funds',
   name: 'add_funds',
-  builder: (context, state) => const Placeholder(), // Replace with actual widget
+  builder: (context, state) => const AddFunds(), // Replace with actual widget
   );
 
   static final withdrawFunds = RouteModel(
-  path: 'withdraw_funds',
+  path: '/withdraw_funds',
   name: 'withdraw_funds',
-  builder: (context, state) => const Placeholder(), // Replace with actual widget
+  builder: (context, state) => const WithdrawFunds(), // Replace with actual widget
   );
 
   static final connectedAccounts = RouteModel(

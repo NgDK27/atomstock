@@ -28,7 +28,7 @@ class ConnectedAccounts extends StatelessWidget {
                     decoration: BoxDecoration(
                       borderRadius:
                           BorderRadius.all(Radius.circular(OpRadius.md)),
-                      color: OpDynamicColor.surfaceContainerHigh(context),
+                      color: OpDynamicColor.surfaceContainer(context),
                     ),
                     child: Padding(
                       padding: EdgeInsets.all(OpSpacing.md),
@@ -58,7 +58,7 @@ class ConnectedAccounts extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: OpSpacing.md),
-                ListTile(
+                PlatformListTile(
                   title: Text("TymeX • Free Testing Account"),
                   trailing: Text("•••• 1234"),
                 ),

@@ -32,6 +32,12 @@ class OpDynamicColor {
         cupertino: (_) => OpLightDarkColor.containerNeutralLv2,);
   }
 
+  static Color surfaceContainer(context) {
+    return platformThemeData(context,
+      material: (ThemeData data) => data.colorScheme.surfaceContainer,
+      cupertino: (_) => OpLightDarkColor.containerNeutralLv1,);
+  }
+
   static Color primaryContainer(context) {
     return platformThemeData(context,
         material: (ThemeData data) => data.colorScheme.primaryContainer,

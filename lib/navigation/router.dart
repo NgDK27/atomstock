@@ -46,8 +46,6 @@ class OpRouter {
       ),
       OpRoutes.settings.route(
         routes: [
-          OpRoutes.addFunds.route(),
-          OpRoutes.withdrawFunds.route(),
           OpRoutes.connectedAccounts.route(),
           OpRoutes.yourName.route(),
           OpRoutes.updateEmail.route(),
@@ -60,6 +58,8 @@ class OpRouter {
         ],
       ),
       OpRoutes.notifications.route(),
+      OpRoutes.addFunds.route(),
+      OpRoutes.withdrawFunds.route(),
     ],
   );
 }
