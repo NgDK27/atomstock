@@ -6,7 +6,7 @@ class OpRouter {
   OpRouter._();
 
   static final router = GoRouter(
-    initialLocation: OpRoutes.home.path,
+    initialLocation: OpRoutes.settings.path,
     routes: [
       OpRoutes.onboarding.route(
         routes: [
@@ -44,7 +44,21 @@ class OpRouter {
           OpRoutes.portfolio.route(),
         ],
       ),
-      OpRoutes.settings.route(),
+      OpRoutes.settings.route(
+        routes: [
+          OpRoutes.addFunds.route(),
+          OpRoutes.withdrawFunds.route(),
+          OpRoutes.connectedAccounts.route(),
+          OpRoutes.yourName.route(),
+          OpRoutes.updateEmail.route(),
+          OpRoutes.updatePassword.route(),
+          OpRoutes.thirdPartySignIn.route(),
+          OpRoutes.appearance.route(),
+          OpRoutes.language.route(),
+          OpRoutes.faq.route(),
+          OpRoutes.contactSupport.route(),
+        ],
+      ),
       OpRoutes.notifications.route(),
     ],
   );

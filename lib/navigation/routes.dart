@@ -15,7 +15,8 @@ import 'package:oppenhomies/pages/notifications/screens/notifications.dart';
 import 'package:oppenhomies/pages/onboarding/ai_select/screens/ai_select.dart';
 import 'package:oppenhomies/pages/onboarding/story/screens/onboarding_story.dart';
 import 'package:oppenhomies/pages/portfolio/screens/portfolio.dart';
-import 'package:oppenhomies/pages/settings/screens/settings.dart';
+import 'package:oppenhomies/pages/settings/connected_accounts/connected_accounts.dart';
+import 'package:oppenhomies/pages/settings/settings/screens/settings.dart';
 
 import 'models/route_model.dart';
 
@@ -146,4 +147,72 @@ class OpRoutes {
     name: 'reset_password',
     builder: (context, state) => const ResetPassword(),
   );
+
+  // region Settings sub-routes
+  static final addFunds = RouteModel(
+  path: 'add_funds',
+  name: 'add_funds',
+  builder: (context, state) => const Placeholder(), // Replace with actual widget
+  );
+
+  static final withdrawFunds = RouteModel(
+  path: 'withdraw_funds',
+  name: 'withdraw_funds',
+  builder: (context, state) => const Placeholder(), // Replace with actual widget
+  );
+
+  static final connectedAccounts = RouteModel(
+  path: 'connected_accounts',
+  name: 'connected_accounts',
+  builder: (context, state) => const ConnectedAccounts(), // Replace with actual widget
+  );
+
+  static final yourName = RouteModel(
+  path: 'your_name',
+  name: 'your_name',
+  builder: (context, state) => const Placeholder(), // Replace with actual widget
+  );
+
+  static final updateEmail = RouteModel(
+  path: 'update_email',
+  name: 'update_email',
+  builder: (context, state) => const Placeholder(), // Replace with actual widget
+  );
+
+  static final updatePassword = RouteModel(
+  path: 'update_password',
+  name: 'update_password',
+  builder: (context, state) => const Placeholder(), // Replace with actual widget
+  );
+
+  static final thirdPartySignIn = RouteModel(
+  path: 'third_party_sign_in',
+  name: 'third_party_sign_in',
+  builder: (context, state) => const Placeholder(), // Replace with actual widget
+  );
+
+  static final appearance = RouteModel(
+  path: 'appearance',
+  name: 'appearance',
+  builder: (context, state) => const Placeholder(), // Replace with actual widget
+  );
+
+  static final language = RouteModel(
+  path: 'language',
+  name: 'language',
+  builder: (context, state) => const Placeholder(), // Replace with actual widget
+  );
+
+  static final faq = RouteModel(
+  path: 'faq',
+  name: 'faq',
+  builder: (context, state) => const Placeholder(), // Replace with actual widget
+  );
+
+  static final contactSupport = RouteModel(
+  path: 'contact_support',
+  name: 'contact_support',
+  builder: (context, state) => const Placeholder(), // Replace with actual widget
+  );
+// endregion
 }

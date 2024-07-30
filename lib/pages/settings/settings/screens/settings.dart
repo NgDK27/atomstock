@@ -4,7 +4,9 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oppenhomies/navigation/routes.dart';
-import 'package:oppenhomies/pages/settings/model/SettingsDestination.dart';
+import 'package:oppenhomies/pages/onboarding/ai_select/models/AiSelectCardData.dart';
+import 'package:oppenhomies/pages/settings/settings/layouts/ai_select_card_settings.dart';
+import 'package:oppenhomies/pages/settings/settings/model/SettingsDestination.dart';
 import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/opacities.dart';
 import 'package:oppenhomies/styles/spacings.dart';
@@ -20,71 +22,87 @@ class Settings extends ConsumerWidget {
     final List<SettingsDestination> settingsItems = [
       SettingsDestination(
         title: "Add funds",
-        route: OpRoutes.stockDetails.name,
+        route: OpRoutes.addFunds.name,
         materialIcon: Icons.add,
         cupertinoIcon: CupertinoIcons.add,
       ),
       SettingsDestination(
         title: "Withdraw funds",
-        route: OpRoutes.stockDetails.name,
+        route: OpRoutes.withdrawFunds.name,
         materialIcon: Icons.account_balance_wallet,
         cupertinoIcon: CupertinoIcons.creditcard,
       ),
       SettingsDestination(
         title: "Connected accounts",
-        route: OpRoutes.stockDetails.name,
+        route: OpRoutes.connectedAccounts.name,
         materialIcon: Icons.account_balance,
         cupertinoIcon: CupertinoIcons.person_crop_circle,
       ),
       SettingsDestination(
         title: "Your name",
-        route: OpRoutes.stockDetails.name,
+        route: OpRoutes.yourName.name,
         materialIcon: Icons.text_format,
         cupertinoIcon: CupertinoIcons.textformat,
       ),
       SettingsDestination(
         title: "Update email",
-        route: OpRoutes.stockDetails.name,
+        route: OpRoutes.updateEmail.name,
         materialIcon: Icons.email,
         cupertinoIcon: CupertinoIcons.mail,
       ),
       SettingsDestination(
         title: "Update password",
-        route: OpRoutes.stockDetails.name,
+        route: OpRoutes.updatePassword.name,
         materialIcon: Icons.lock,
         cupertinoIcon: CupertinoIcons.lock,
       ),
       SettingsDestination(
         title: "Third-party sign in",
-        route: OpRoutes.stockDetails.name,
+        route: OpRoutes.thirdPartySignIn.name,
         materialIcon: Icons.account_circle_sharp,
         cupertinoIcon: CupertinoIcons.checkmark_shield,
       ),
       SettingsDestination(
         title: "Appearance",
-        route: OpRoutes.stockDetails.name,
+        route: OpRoutes.appearance.name,
         materialIcon: Icons.palette,
         cupertinoIcon: CupertinoIcons.paintbrush,
       ),
       SettingsDestination(
         title: "Language",
-        route: OpRoutes.stockDetails.name,
+        route: OpRoutes.language.name,
         materialIcon: Icons.translate,
         cupertinoIcon: CupertinoIcons.t_bubble,
       ),
       SettingsDestination(
         title: "FAQ",
-        route: OpRoutes.stockDetails.name,
+        route: OpRoutes.faq.name,
         materialIcon: Icons.question_answer,
         cupertinoIcon: CupertinoIcons.chat_bubble_2,
       ),
       SettingsDestination(
         title: "Contact support",
-        route: OpRoutes.stockDetails.name,
+        route: OpRoutes.contactSupport.name,
         materialIcon: Icons.help,
         cupertinoIcon: CupertinoIcons.question_circle,
       ),
     ];
+
+    void handleSignOut() {
+      showPlatformDialog(
+        context: context,
+        builder: (_) => PlatformAlertDialog(
+          title: Text("Sign out attempted"),
+          actions: [
+            PlatformDialogAction(
+              child: Text("OK"),
+              onPressed: () => context.pop(),
+            ),
+          ],
+        ),
+      );
+    }
+
     return OpPlatformSliverScaffold(
       title: "Settings",
       transitionBetweenRoutes: false,
@@ -94,8 +112,18 @@ class Settings extends ConsumerWidget {
           sliver: SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
-                if (index < settingsItems.length) {
-                  final itemData = settingsItems[index];
+                if (index == 0) {
+                  // Add AiSelectCardSettings as the first item
+                  return Column(
+                    children: [
+                      AiSelectCardSettings(
+                        model: AiSelectCardData.playItSaferAi,
+                      ),
+                      SizedBox(height: OpSpacing.sm),
+                    ],
+                  );
+                } else if (index <= settingsItems.length) {
+                  final itemData = settingsItems[index - 1];
                   return Column(
                     children: [
                       PlatformListTile(
@@ -119,7 +147,7 @@ class Settings extends ConsumerWidget {
                           ),
                         ),
                       ),
-                      if (index == 2 || index == 6 || index == 8)
+                      if (index == 3 || index == 7 || index == 9)
                         Padding(
                           padding:
                               EdgeInsets.symmetric(horizontal: OpSpacing.md),
@@ -127,18 +155,19 @@ class Settings extends ConsumerWidget {
                         ),
                     ],
                   );
-                } else if (index == settingsItems.length) {
+                } else if (index == settingsItems.length + 1) {
                   return Padding(
                     padding: EdgeInsets.all(OpSpacing.md),
                     child: OpFilledNeutralButton(
-                      onPressed: () {},
-                      text: 'Log Out',
+                      onPressed: handleSignOut,
+                      text: 'Sign out',
                     ),
                   );
                 }
                 return null;
               },
-              childCount: settingsItems.length + 1, // +1 for the button
+              childCount: settingsItems.length +
+                  2, // +1 for AiSelectCardSettings, +1 for the button
             ),
           ),
         ),
