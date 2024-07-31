@@ -49,7 +49,6 @@ type SignInResponse struct {
 	AccessToken  string `json:"access_token"`
 	IdToken      string `json:"id_token"`
 	RefreshToken string `json:"refresh_token"`
-	UserID       string `json:"user_id"`
 	Message      string `json:"message"`
 }
 
@@ -212,7 +211,6 @@ func signInHandler(c *gin.Context) {
 		AccessToken:  accessToken,
 		IdToken:      *authOutput.AuthenticationResult.IdToken,
 		RefreshToken: *authOutput.AuthenticationResult.RefreshToken,
-		UserID:       userID,
 		Message:      "Sign-in successful!",
 	}
 	c.JSON(http.StatusOK, response)

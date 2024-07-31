@@ -32,33 +32,35 @@ INSERT INTO indexes (market_id, symbol) VALUES
 
 CREATE TABLE portfolios (
     id SERIAL PRIMARY KEY,
-    user_id VARCHAR(50) NOT NULL REFERENCES users(id) 
+    user_id VARCHAR(50) NOT NULL REFERENCES users(id),
+    total_value NUMERIC(20, 2) NOT NULL DEFAULT 0.00,
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE portfolio_stocks (
-    id SERIAL PRIMARY KEY,
-    portfolio_id INT REFERENCES portfolios(id),
-    symbol VARCHAR(10) NOT NULL,  -- Index ID or Stock Symbol
-    quantity INT NOT NULL,
-    purchase_price NUMERIC(10, 2) NOT NULL,
-    purchase_date DATE NOT NULL
-);
-
-
-CREATE TABLE rules (
+CREATE TABLE trading_rules (
     id SERIAL PRIMARY KEY,
     user_id VARCHAR(50) NOT NULL REFERENCES users(id),
-    symbol VARCHAR(10) NOT NULL,
-    rule_type VARCHAR(10) NOT NULL CHECK (rule_type IN ('BUY', 'SELL')),
+    symbol VARCHAR(10) NOT NULL REFERENCES stocks(symbol),
     shares INTEGER NOT NULL,
-    condition_type VARCHAR(20) NOT NULL CHECK (condition_type IN ('PRICE', 'VOLUME')),
-    trigger_type VARCHAR(20) NOT NULL CHECK (trigger_type IN ('DAILY', 'WEEKLY', 'THRESHOLD')),
-    trigger_value NUMERIC(10, 2),
-    trigger_time TIME,
-    trigger_day VARCHAR(10),
-    range_type VARCHAR(10) CHECK (range_type IN ('ABOVE', 'BELOW')),
-    stop_loss_percentage NUMERIC(5, 2),
-    spending_limit NUMERIC(10, 2),
+    entry_condition_type VARCHAR(20) NOT NULL CHECK (entry_condition_type IN ('PRICE', 'VOLUME')),
+    entry_trigger_value NUMERIC(10, 2) NOT NULL,
+    entry_range_type VARCHAR(10) NOT NULL CHECK (entry_range_type IN ('ABOVE', 'BELOW')),
+    stop_loss_percentage NUMERIC(5, 2) NOT NULL,
+    take_profit_percentage NUMERIC(5, 2),
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE trades (
+    id SERIAL PRIMARY KEY,
+    rule_id INTEGER NOT NULL REFERENCES trading_rules(id),
+    user_id VARCHAR(50) NOT NULL REFERENCES users(id),
+    symbol VARCHAR(10) NOT NULL REFERENCES stocks(symbol),
+    entry_price NUMERIC(10, 2) NOT NULL,
+    entry_time TIMESTAMP NOT NULL,
+    shares INTEGER NOT NULL,
+    exit_price NUMERIC(10, 2),
+    exit_time TIMESTAMP,
+    exit_type VARCHAR(20) CHECK (exit_type IN ('STOP_LOSS', 'TAKE_PROFIT', 'MANUAL')),
+    status VARCHAR(20) NOT NULL CHECK (status IN ('OPEN', 'CLOSED'))
 );

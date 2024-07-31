@@ -24,7 +24,7 @@ def md_get_daily_index():
 	print(client.daily_index(config, model.daily_index('', 'VNIndex', '11/07/2024', '11/07/2024', 1, 100, '', '')))
 
 def md_get_stock_price():
-	print(client.daily_stock_price(config, model.daily_stock_price ('VPB', '23/07/2024', '23/07/2024', 1, 100)))
+	print(client.daily_stock_price(config, model.daily_stock_price ('TL4', '23/07/2024', '23/07/2024', 1, 100)))
 
 def main():
     
