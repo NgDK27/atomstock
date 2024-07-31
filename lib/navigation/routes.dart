@@ -17,7 +17,11 @@ import 'package:oppenhomies/pages/notifications/screens/notifications.dart';
 import 'package:oppenhomies/pages/onboarding/ai_select/screens/ai_select.dart';
 import 'package:oppenhomies/pages/onboarding/story/screens/onboarding_story.dart';
 import 'package:oppenhomies/pages/portfolio/screens/portfolio.dart';
+import 'package:oppenhomies/pages/settings/appearance/screens/appearance.dart';
 import 'package:oppenhomies/pages/settings/connected_accounts/connected_accounts.dart';
+import 'package:oppenhomies/pages/settings/contact_support/screens/contact_support.dart';
+import 'package:oppenhomies/pages/settings/faq/screens/faq.dart';
+import 'package:oppenhomies/pages/settings/language/screens/appearance.dart';
 import 'package:oppenhomies/pages/settings/settings/screens/settings.dart';
 
 import 'models/route_model.dart';
@@ -196,25 +200,25 @@ class OpRoutes {
   static final appearance = RouteModel(
   path: 'appearance',
   name: 'appearance',
-  builder: (context, state) => const Placeholder(), // Replace with actual widget
+  builder: (context, state) => const Appearance(), // Replace with actual widget
   );
 
   static final language = RouteModel(
   path: 'language',
   name: 'language',
-  builder: (context, state) => const Placeholder(), // Replace with actual widget
+  builder: (context, state) => const Language(), // Replace with actual widget
   );
 
   static final faq = RouteModel(
   path: 'faq',
   name: 'faq',
-  builder: (context, state) => const Placeholder(), // Replace with actual widget
+  builder: (context, state) => const Faq(), // Replace with actual widget
   );
 
   static final contactSupport = RouteModel(
   path: 'contact_support',
   name: 'contact_support',
-  builder: (context, state) => const Placeholder(), // Replace with actual widget
+  builder: (context, state) => const ContactSupport(), // Replace with actual widget
   );
 // endregion
 }

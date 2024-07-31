@@ -47,6 +47,7 @@ class OpPlatformSliverAppBar extends HookWidget {
             animation: borderAnimation,
             builder: (context, child) {
               return CupertinoSliverNavigationBar(
+
                 transitionBetweenRoutes: transitionBetweenRoutes,
                 largeTitle: Text(title),
                 border: Border(

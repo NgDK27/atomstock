@@ -145,7 +145,7 @@ class MoveFunds extends HookConsumerWidget {
                     ),
                   ),
                   cupertino: (_, __) => CupertinoTextFieldData(
-                    suffix: Text("₫"),
+                    suffix: Text("₫", style: OpTextStyle.titleLarge(context)),
                     placeholderStyle: TextStyle(
                       color: OpDynamicColor.onSurface(context)
                           .withOpacity(OpOpacity.secondary),
@@ -224,8 +224,10 @@ class MoveFunds extends HookConsumerWidget {
                   cupertino: (_, __) => CupertinoTextFieldData(
                     suffix: Padding(
                       padding: EdgeInsets.only(right: OpSpacing.xs),
-                      child: Icon(CupertinoIcons.chevron_right
-                      ,color: OpDynamicColor.onSurface(context),),
+                      child: Icon(
+                        CupertinoIcons.chevron_right,
+                        color: OpDynamicColor.onSurface(context),
+                      ),
                     ),
                     padding: EdgeInsets.symmetric(
                       vertical: OpSpacing.sm,
@@ -236,7 +238,9 @@ class MoveFunds extends HookConsumerWidget {
                         Radius.circular(OpRadius.md),
                       ),
                       border: Border.all(
-                          color: OpDynamicColor.onSurfaceVariant(context)),
+                        color: OpDynamicColor.onSurfaceVariant(context)
+                            .withOpacity(OpOpacity.tertiary),
+                      ),
                     ),
                   ),
                 ),

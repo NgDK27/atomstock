@@ -13,6 +13,7 @@ class OpPlatformSliverScaffold extends HookWidget {
   final Widget? floatingBottomWidget;
   final Widget? topBarLeading;
   final Widget? topBarTrailing;
+  final ScrollViewKeyboardDismissBehavior keyboardDismissBehavior;
 
   const OpPlatformSliverScaffold({
     super.key,
@@ -22,6 +23,7 @@ class OpPlatformSliverScaffold extends HookWidget {
     this.topBarLeading,
     this.topBarTrailing,
     this.transitionBetweenRoutes = true,
+    this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
     required this.slivers,
   });
 
@@ -30,24 +32,27 @@ class OpPlatformSliverScaffold extends HookWidget {
     final floatingWidgetKey = useMemoized(() => GlobalKey());
     final floatingWidgetHeight = useState<double>(0);
 
-    useEffect(() {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (floatingBottomWidget != null) {
-          final RenderBox? renderBox = floatingWidgetKey.currentContext
-              ?.findRenderObject() as RenderBox?;
-          if (renderBox != null) {
-            floatingWidgetHeight.value = renderBox.size.height;
+    useEffect(
+      () {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (floatingBottomWidget != null) {
+            final RenderBox? renderBox = floatingWidgetKey.currentContext
+                ?.findRenderObject() as RenderBox?;
+            if (renderBox != null) {
+              floatingWidgetHeight.value = renderBox.size.height;
+            }
           }
-        }
-      });
-      return null;
-    }, [floatingBottomWidget],);
+        });
+        return null;
+      },
+      [floatingBottomWidget],
+    );
 
     return PlatformScaffold(
       body: Stack(
         children: [
           CustomScrollView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
+            keyboardDismissBehavior: keyboardDismissBehavior,
             physics: scrollable ? null : const NeverScrollableScrollPhysics(),
             slivers: [
               OpPlatformSliverAppBar(

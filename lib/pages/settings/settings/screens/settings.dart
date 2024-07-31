@@ -118,7 +118,7 @@ class Settings extends ConsumerWidget {
                     children: [
 
                       AiSelectCardSettings(
-                        model: AiSelectCardData.playItSaferAi,
+                        model: AiSelectCardData.slowAndSteadyAi,
                       ),
                       SizedBox(height: OpSpacing.sm),
                     ],
