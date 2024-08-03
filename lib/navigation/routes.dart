@@ -23,10 +23,14 @@ import 'package:oppenhomies/pages/settings/contact_support/screens/contact_suppo
 import 'package:oppenhomies/pages/settings/faq/screens/faq.dart';
 import 'package:oppenhomies/pages/settings/language/screens/appearance.dart';
 import 'package:oppenhomies/pages/settings/settings/screens/settings.dart';
+import 'package:oppenhomies/pages/settings/third_party_sign_in/screens/third_party_sign_in.dart';
 import 'package:oppenhomies/pages/settings/update_email/input_new_email.dart';
 import 'package:oppenhomies/pages/settings/update_email/update_email_completed.dart';
 import 'package:oppenhomies/pages/settings/update_email/verify_current_email.dart';
 import 'package:oppenhomies/pages/settings/update_email/verify_new_email.dart';
+import 'package:oppenhomies/pages/settings/update_password/screens/input_new_password.dart';
+import 'package:oppenhomies/pages/settings/update_password/screens/update_password_completed.dart';
+import 'package:oppenhomies/pages/settings/update_password/screens/verify_current_password.dart';
 import 'package:oppenhomies/pages/settings/your_name/screens/your_name.dart';
 
 import 'models/route_model.dart';
@@ -214,18 +218,32 @@ class OpRoutes {
     builder: (context, state) => const UpdateEmailCompleted(),
   );
 
-  static final updatePassword = RouteModel(
-    path: 'update_password',
-    name: 'update_password',
+  static final verifyCurrentPassword = RouteModel(
+    path: 'verify_current_password',
+    name: 'verify_current_password',
     builder: (context, state) =>
-        const Placeholder(), // Replace with actual widget
+        const VerifyCurrentPassword(), // Replace with actual widget
+  );
+
+  static final inputNewPassword = RouteModel(
+    path: 'input_new_password',
+    name: 'input_new_password',
+    builder: (context, state) =>
+    const InputNewPassword(), // Replace with actual widget
+  );
+
+  static final updatePasswordCompleted = RouteModel(
+    path: 'update_password_completed',
+    name: 'update_password_completed',
+    builder: (context, state) =>
+    const UpdatePasswordCompleted(), // Replace with actual widget
   );
 
   static final thirdPartySignIn = RouteModel(
     path: 'third_party_sign_in',
     name: 'third_party_sign_in',
     builder: (context, state) =>
-        const Placeholder(), // Replace with actual widget
+        const ThirdPartySignIn(), // Replace with actual widget
   );
 
   static final appearance = RouteModel(

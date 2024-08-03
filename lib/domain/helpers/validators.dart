@@ -48,6 +48,55 @@ class AuthenticationValidator {
     return null;
   }
 
+  static String? confirmPasswordValidator(String? value, String password) {
+    if (value == null || value.isEmpty) {
+      return 'Confirm password is required';
+    }
+
+    if (value != password) {
+      return 'Passwords do not match';
+    }
+
+    return null;
+  }
+
+  static String? newPasswordValidator(String? value, String oldPassword) {
+    if (value == null || value.isEmpty) {
+      return 'New password is required';
+    }
+
+    if (value == oldPassword) {
+      return 'New password must be different from the old password';
+    }
+
+    if (value.length < 8) {
+      return 'New password must be at least 8 characters long';
+    }
+
+    final hasUppercase = RegExp(r'[A-Z]').hasMatch(value);
+    final hasLowercase = RegExp(r'[a-z]').hasMatch(value);
+    final hasDigits = RegExp(r'\d').hasMatch(value);
+    final hasSpecialCharacters = RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value);
+
+    if (!hasUppercase) {
+      return 'New password must contain at least one uppercase letter';
+    }
+
+    if (!hasLowercase) {
+      return 'New password must contain at least one lowercase letter';
+    }
+
+    if (!hasDigits) {
+      return 'New password must contain at least one number';
+    }
+
+    if (!hasSpecialCharacters) {
+      return 'New password must contain at least one special character';
+    }
+
+    return null;
+  }
+
   static String? fullNameValidator(String? value) {
     if (value == null || value.isEmpty) {
       return 'Name is required';

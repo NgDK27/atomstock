@@ -64,7 +64,16 @@ class OpRouter {
               ),
             ],
           ),
-          OpRoutes.updatePassword.route(),
+          OpRoutes.verifyCurrentPassword.route(
+            routes: [
+              OpRoutes.inputNewPassword.route(
+                routes: [
+                  OpRoutes.updatePasswordCompleted.route(
+                  ),
+                ],
+              ),
+            ],
+          ),
           OpRoutes.thirdPartySignIn.route(),
           OpRoutes.appearance.route(),
           OpRoutes.language.route(),

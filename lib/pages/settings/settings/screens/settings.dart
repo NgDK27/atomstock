@@ -52,7 +52,7 @@ class Settings extends ConsumerWidget {
       ),
       SettingsDestination(
         title: "Update password",
-        route: OpRoutes.updatePassword.name,
+        route: OpRoutes.verifyCurrentPassword.name,
         materialIcon: Icons.lock,
         cupertinoIcon: CupertinoIcons.lock,
       ),
