@@ -55,4 +55,17 @@ class AuthenticationValidator {
 
     return null;
   }
+
+  static String? updateFullNameValidator(String? value, {String? originalName}) {
+    if (value == null || value.isEmpty) {
+      return 'Name is required';
+    }
+
+    // Check if the new name is different from the original name
+    if (originalName != null && value.trim().toLowerCase() == originalName.trim().toLowerCase()) {
+      return ' ';
+    }
+
+    return null;
+  }
 }

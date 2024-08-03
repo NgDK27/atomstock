@@ -23,6 +23,7 @@ import 'package:oppenhomies/pages/settings/contact_support/screens/contact_suppo
 import 'package:oppenhomies/pages/settings/faq/screens/faq.dart';
 import 'package:oppenhomies/pages/settings/language/screens/appearance.dart';
 import 'package:oppenhomies/pages/settings/settings/screens/settings.dart';
+import 'package:oppenhomies/pages/settings/your_name/screens/your_name.dart';
 
 import 'models/route_model.dart';
 
@@ -176,7 +177,7 @@ class OpRoutes {
   static final yourName = RouteModel(
   path: 'your_name',
   name: 'your_name',
-  builder: (context, state) => const Placeholder(), // Replace with actual widget
+  builder: (context, state) => const YourName(), // Replace with actual widget
   );
 
   static final updateEmail = RouteModel(
