@@ -10,14 +10,19 @@ class OpRouter {
     routes: [
       OpRoutes.onboarding.route(
         routes: [
-          OpRoutes.signInLanding.route(routes: [
-            OpRoutes.signIn.route(routes: [OpRoutes.resetPassword.route()]),
-          ],),
+          OpRoutes.signInLanding.route(
+            routes: [
+              OpRoutes.signIn.route(routes: [OpRoutes.resetPassword.route()]),
+            ],
+          ),
           OpRoutes.aiSelect.route(
             routes: [
-              OpRoutes.signUpLanding.route(routes: [
-                OpRoutes.signUp.route(routes: [OpRoutes.signUpVerify.route()]),
-              ],),
+              OpRoutes.signUpLanding.route(
+                routes: [
+                  OpRoutes.signUp
+                      .route(routes: [OpRoutes.signUpVerify.route()]),
+                ],
+              ),
             ],
           ),
         ],
@@ -48,7 +53,17 @@ class OpRouter {
         routes: [
           OpRoutes.connectedAccounts.route(),
           OpRoutes.yourName.route(),
-          OpRoutes.updateEmail.route(),
+          OpRoutes.verifyCurrentEmail.route(
+            routes: [
+              OpRoutes.inputNewEmail.route(
+                routes: [
+                  OpRoutes.verifyNewEmail.route(
+                    routes: [OpRoutes.updateEmailCompleted.route()],
+                  ),
+                ],
+              ),
+            ],
+          ),
           OpRoutes.updatePassword.route(),
           OpRoutes.thirdPartySignIn.route(),
           OpRoutes.appearance.route(),

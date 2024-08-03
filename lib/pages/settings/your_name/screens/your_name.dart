@@ -21,7 +21,7 @@ class YourName extends HookConsumerWidget {
     // Optional: Log to console
     if (kDebugMode) {
       print(
-        'Sign up attempted - Name: $name',);
+        'Name update attempted - Name: $name',);
     }
 
     context.pop();

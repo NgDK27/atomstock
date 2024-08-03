@@ -23,6 +23,10 @@ import 'package:oppenhomies/pages/settings/contact_support/screens/contact_suppo
 import 'package:oppenhomies/pages/settings/faq/screens/faq.dart';
 import 'package:oppenhomies/pages/settings/language/screens/appearance.dart';
 import 'package:oppenhomies/pages/settings/settings/screens/settings.dart';
+import 'package:oppenhomies/pages/settings/update_email/input_new_email.dart';
+import 'package:oppenhomies/pages/settings/update_email/update_email_completed.dart';
+import 'package:oppenhomies/pages/settings/update_email/verify_current_email.dart';
+import 'package:oppenhomies/pages/settings/update_email/verify_new_email.dart';
 import 'package:oppenhomies/pages/settings/your_name/screens/your_name.dart';
 
 import 'models/route_model.dart';
@@ -39,34 +43,38 @@ class OpRoutes {
 
   // Main app routes
   static final home = RouteModel(
-      path: '/home',
-      name: 'home',
-      pageBuilder: (context, state) => buildPageWithFadeTransition(context:context, state: state, child: const Home()),);
+    path: '/home',
+    name: 'home',
+    pageBuilder: (context, state) => buildPageWithFadeTransition(
+        context: context, state: state, child: const Home()),
+  );
 
   static final ai = RouteModel(
     path: '/ai',
     name: 'ai',
-    pageBuilder: (context, state) => buildPageWithFadeTransition(context:context, state: state, child: const Ai()),
+    pageBuilder: (context, state) => buildPageWithFadeTransition(
+        context: context, state: state, child: const Ai()),
   );
 
   static final automations = RouteModel(
     path: '/automations',
     name: 'automations',
-    pageBuilder: (context, state) =>
-        buildPageWithFadeTransition(context:context, state: state, child: const Automations()),
+    pageBuilder: (context, state) => buildPageWithFadeTransition(
+        context: context, state: state, child: const Automations()),
   );
 
   static final market = RouteModel(
     path: '/market',
     name: 'market',
-    pageBuilder: (context, state) => buildPageWithFadeTransition(context:context, state: state, child: const Market()),
+    pageBuilder: (context, state) => buildPageWithFadeTransition(
+        context: context, state: state, child: const Market()),
   );
 
   static final portfolio = RouteModel(
     path: '/portfolio',
     name: 'portfolio',
-    pageBuilder: (context, state) =>
-        buildPageWithFadeTransition(context:context, state: state, child: const Portfolio()),
+    pageBuilder: (context, state) => buildPageWithFadeTransition(
+        context: context, state: state, child: const Portfolio()),
   );
 
   // Onboarding routes
@@ -157,69 +165,93 @@ class OpRoutes {
 
   // region Settings sub-routes
   static final addFunds = RouteModel(
-  path: '/add_funds',
-  name: 'add_funds',
-  builder: (context, state) => const AddFunds(), // Replace with actual widget
+    path: '/add_funds',
+    name: 'add_funds',
+    builder: (context, state) => const AddFunds(), // Replace with actual widget
   );
 
   static final withdrawFunds = RouteModel(
-  path: '/withdraw_funds',
-  name: 'withdraw_funds',
-  builder: (context, state) => const WithdrawFunds(), // Replace with actual widget
+    path: '/withdraw_funds',
+    name: 'withdraw_funds',
+    builder: (context, state) =>
+        const WithdrawFunds(), // Replace with actual widget
   );
 
   static final connectedAccounts = RouteModel(
-  path: 'connected_accounts',
-  name: 'connected_accounts',
-  builder: (context, state) => const ConnectedAccounts(), // Replace with actual widget
+    path: 'connected_accounts',
+    name: 'connected_accounts',
+    builder: (context, state) =>
+        const ConnectedAccounts(), // Replace with actual widget
   );
 
   static final yourName = RouteModel(
-  path: 'your_name',
-  name: 'your_name',
-  builder: (context, state) => const YourName(), // Replace with actual widget
+    path: 'your_name',
+    name: 'your_name',
+    builder: (context, state) => const YourName(), // Replace with actual widget
   );
 
-  static final updateEmail = RouteModel(
-  path: 'update_email',
-  name: 'update_email',
-  builder: (context, state) => const Placeholder(), // Replace with actual widget
+  static final verifyCurrentEmail = RouteModel(
+    path: 'verify_current_email',
+    name: 'verify_current_email',
+    builder: (context, state) => const VerifyCurrentEmail(),
+  );
+
+  static final inputNewEmail = RouteModel(
+    path: 'input_new_email',
+    name: 'input_new_email',
+    builder: (context, state) => const InputNewEmail(),
+  );
+
+  static final verifyNewEmail = RouteModel(
+    path: 'verify_new_email',
+    name: 'verify_new_email',
+    builder: (context, state) => const VerifyNewEmail(),
+  );
+
+  static final updateEmailCompleted = RouteModel(
+    path: 'update_email_completed',
+    name: 'update_email_completed',
+    builder: (context, state) => const UpdateEmailCompleted(),
   );
 
   static final updatePassword = RouteModel(
-  path: 'update_password',
-  name: 'update_password',
-  builder: (context, state) => const Placeholder(), // Replace with actual widget
+    path: 'update_password',
+    name: 'update_password',
+    builder: (context, state) =>
+        const Placeholder(), // Replace with actual widget
   );
 
   static final thirdPartySignIn = RouteModel(
-  path: 'third_party_sign_in',
-  name: 'third_party_sign_in',
-  builder: (context, state) => const Placeholder(), // Replace with actual widget
+    path: 'third_party_sign_in',
+    name: 'third_party_sign_in',
+    builder: (context, state) =>
+        const Placeholder(), // Replace with actual widget
   );
 
   static final appearance = RouteModel(
-  path: 'appearance',
-  name: 'appearance',
-  builder: (context, state) => const Appearance(), // Replace with actual widget
+    path: 'appearance',
+    name: 'appearance',
+    builder: (context, state) =>
+        const Appearance(), // Replace with actual widget
   );
 
   static final language = RouteModel(
-  path: 'language',
-  name: 'language',
-  builder: (context, state) => const Language(), // Replace with actual widget
+    path: 'language',
+    name: 'language',
+    builder: (context, state) => const Language(), // Replace with actual widget
   );
 
   static final faq = RouteModel(
-  path: 'faq',
-  name: 'faq',
-  builder: (context, state) => const Faq(), // Replace with actual widget
+    path: 'faq',
+    name: 'faq',
+    builder: (context, state) => const Faq(), // Replace with actual widget
   );
 
   static final contactSupport = RouteModel(
-  path: 'contact_support',
-  name: 'contact_support',
-  builder: (context, state) => const ContactSupport(), // Replace with actual widget
+    path: 'contact_support',
+    name: 'contact_support',
+    builder: (context, state) =>
+        const ContactSupport(), // Replace with actual widget
   );
 // endregion
 }

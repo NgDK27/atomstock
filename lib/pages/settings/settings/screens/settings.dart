@@ -46,7 +46,7 @@ class Settings extends ConsumerWidget {
       ),
       SettingsDestination(
         title: "Update email",
-        route: OpRoutes.updateEmail.name,
+        route: OpRoutes.verifyCurrentEmail.name,
         materialIcon: Icons.email,
         cupertinoIcon: CupertinoIcons.mail,
       ),
