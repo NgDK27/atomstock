@@ -2,6 +2,7 @@ import asyncio
 from ssi_fc_data import fc_md_client, model
 from ssi_fc_data.fc_md_stream import MarketDataStream
 from confluent_kafka import Producer
+from confluent_kafka.admin import AdminClient, NewTopic
 import json
 import config
 from dotenv import load_dotenv
@@ -74,6 +75,19 @@ producer = Producer(kafka_config)
 # Initialize the SSI client
 client = fc_md_client.MarketDataClient(config)
 
+# def create_topics(topic_names):
+#     admin_client = AdminClient({'bootstrap.servers': f"{os.getenv('KAFKA_HOST')}:{os.getenv('KAFKA_PORT')}"})
+#     new_topics = [NewTopic(topic, num_partitions=1, replication_factor=1) for topic in topic_names]
+#     fs = admin_client.create_topics(new_topics)
+#     for topic, f in fs.items():
+#         try:
+#             f.result()  # The result itself is None
+#             print(f"Topic {topic} created")
+#         except Exception as e:
+#             print(f"Failed to create topic {topic}: {e}")
+
+# # Call this function before starting to produce messages
+# create_topics([f'stock-{symbol}' for symbol, _, _ in stocks] + [f'index-{symbol}' for symbol, _ in indexes])
 
 def delivery_report(err, msg):
     if err is not None:
@@ -92,7 +106,7 @@ def on_stock_message(message):
         
         logger.info(f"Received message for symbol: {symbol}")
         logger.info(f"Producing message to topic: {topic}")
-        producer.produce(f'stock-{symbol}', json.dumps(data).encode('utf-8'), callback=delivery_report)
+        producer.produce(topic, json.dumps(data).encode('utf-8'), callback=delivery_report)
         producer.poll(0)
     except Exception as e:
         print(f"Error in on_stock_message: {e}")
@@ -106,7 +120,7 @@ def on_index_message(message):
         logger.info(f"Received message for symbol: {index_id}")
         logger.info(f"Producing message to topic: {topic}")
 
-        producer.produce(f'index-{index_id}', json.dumps(data).encode('utf-8'), callback=delivery_report)
+        producer.produce(topic, json.dumps(data).encode('utf-8'), callback=delivery_report)
         producer.poll(0)
     except Exception as e:
         print(f"Error in on_index_message: {e}")
@@ -115,7 +129,6 @@ def on_error(error):
     print(f"Streaming error occurred: {error}")
 
 async def main():
-    stocks, indexes = get_symbols()
 
     stock_stream = MarketDataStream(config, client)
     index_stream = MarketDataStream(config, client)
