@@ -110,7 +110,6 @@ func main() {
 	})
 
 	
-
 	if err := checkRedisConnection(redisClient); err != nil {
 		log.Fatalf("Failed to connect to Redis: %v", err)
 	}

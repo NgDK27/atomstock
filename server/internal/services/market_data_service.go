@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"log"
 	"strings"
-	"time"
     "fmt"
 
 	"github.com/segmentio/kafka-go"
@@ -34,7 +33,6 @@ func (s *MarketDataService) Start(ctx context.Context) error {
 			msg, err := s.reader.FetchMessage(ctx)
 			if err != nil {
 				log.Printf("Error fetching message: %v", err)
-				time.Sleep(5 * time.Second)
 				continue
 			}
 
@@ -77,7 +75,7 @@ func (s *MarketDataService) processStockData(data []byte, symbol string) error {
 	ctx := context.Background()
 	key := "stock:" + symbol
 
-	_, err = s.redisClient.HSet(ctx, key, map[string]interface{}{
+	_, err = s.redisClient.HMSet(ctx, key, map[string]interface{}{
 		"RefPrice":      stockData.RefPrice,
 		"Ceiling":       stockData.Ceiling,
 		"Floor":         stockData.Floor,
@@ -91,7 +89,6 @@ func (s *MarketDataService) processStockData(data []byte, symbol string) error {
 		"TotalVal":      stockData.TotalVal,
 		"TradingTime":   stockData.TradingTime,
 		"TradingDate":   stockData.TradingDate,
-		"TradingStatus": stockData.TradingStatus,
 	}).Result()
 
 	if err != nil {
@@ -103,7 +100,7 @@ func (s *MarketDataService) processStockData(data []byte, symbol string) error {
 	if err != nil {
 		log.Printf("Error retrieving stock data from Redis: %v", err)
 	} else {
-		log.Printf("Stored data for %s: %v", symbol, storedData)
+		log.Printf("Stored data for %s: %v", key, storedData)
 	}
 
 	log.Printf("Stored stock data for %s", symbol)
@@ -120,7 +117,7 @@ func (s *MarketDataService) processIndexData(data []byte, indexId string) error 
 	ctx := context.Background()
 	key := "index:" + indexId
 
-	_, err = s.redisClient.HSet(ctx, key, map[string]interface{}{
+	_, err = s.redisClient.HMSet(ctx, key, map[string]interface{}{
 		"IndexValue":    indexData.IndexValue,
 		"Change":        indexData.Change,
 		"RatioChange":   indexData.RatioChange,
@@ -129,7 +126,6 @@ func (s *MarketDataService) processIndexData(data []byte, indexId string) error 
 		"TotalValue":    indexData.TotalValue,
 		"TradingTime":   indexData.TradingTime,
 		"TradingDate":   indexData.TradingDate,
-		"TradingStatus": indexData.TradingStatus,
 	}).Result()
 
 	if err != nil {

@@ -11,9 +11,8 @@ type StockData struct {
     Open          float64 `json:"Open"`
     High          float64 `json:"High"`
     Low           float64 `json:"Low"`
-    Volume        int64   `json:"Volume"`
+    Volume        float64 `json:"TotalVol"`
     TotalVal      float64 `json:"TotalVal"`
     TradingTime   string  `json:"Time"`
     TradingDate   string  `json:"TradingDate"`
-    TradingStatus string  `json:"TradingStatus"`
 }

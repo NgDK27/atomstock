@@ -10,5 +10,4 @@ type IndexData struct {
     TotalValue    float64 `json:"TotalValue"`
     TradingTime   string  `json:"Time"`
     TradingDate   string  `json:"TradingDate"`
-    TradingStatus string  `json:"TradingStatus"`
 }
