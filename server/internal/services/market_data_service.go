@@ -53,11 +53,10 @@ func (s *MarketDataService) processMessage(msg kafka.Message) error {
 
 	if strings.HasPrefix(topic, "stock-") {
 		symbol := strings.TrimPrefix(topic, "stock-")
-		log.Printf("Processing stock data for symbol: %s", symbol)
 		return s.processStockData(msg.Value, symbol)
 	} else if strings.HasPrefix(topic, "index-") {
 		indexId := strings.TrimPrefix(topic, "index-")
-		log.Printf("Processing index data for index: %s", indexId)
+
 		return s.processIndexData(msg.Value, indexId)
 	} else {
 		log.Printf("Unknown topic: %s", topic)
@@ -96,14 +95,13 @@ func (s *MarketDataService) processStockData(data []byte, symbol string) error {
 	}
 
 	// Verify data in Redis
-	storedData, err := s.redisClient.HGetAll(ctx, key).Result()
+	_, err = s.redisClient.HGetAll(ctx, key).Result()
 	if err != nil {
 		log.Printf("Error retrieving stock data from Redis: %v", err)
 	} else {
-		log.Printf("Stored data for %s: %v", key, storedData)
+		log.Printf("Stored stock data for %s", symbol)
 	}
 
-	log.Printf("Stored stock data for %s", symbol)
 	return nil
 }
 
@@ -133,14 +131,13 @@ func (s *MarketDataService) processIndexData(data []byte, indexId string) error 
 	}
 
 	// Verify data in Redis
-	storedData, err := s.redisClient.HGetAll(ctx, key).Result()
+	_, err = s.redisClient.HGetAll(ctx, key).Result()
 	if err != nil {
 		log.Printf("Error retrieving index data from Redis: %v", err)
 	} else {
-		log.Printf("Stored data for index %s: %v", indexId, storedData)
+		log.Printf("Stored index data for %s", indexId)
 	}
-
-	log.Printf("Stored index data for %s", indexId)
+	
 	return nil
 }
 

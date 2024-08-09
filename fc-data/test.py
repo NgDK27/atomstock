@@ -95,8 +95,7 @@ def delivery_report(err, msg):
     else:
         topic = msg.topic()
         value = json.loads(msg.value().decode('utf-8'))
-        logger.info(f"Message delivered to topic {topic}:")
-        logger.info(f"{value}")
+        logger.info(f"Message delivered to topic {topic}")
 
 def on_stock_message(message):
     try:
@@ -104,8 +103,6 @@ def on_stock_message(message):
         symbol = data['Symbol']
         topic = f'stock-{symbol}'
         
-        logger.info(f"Received message for symbol: {symbol}")
-        logger.info(f"Producing message to topic: {topic}")
         producer.produce(topic, json.dumps(data).encode('utf-8'), callback=delivery_report)
         producer.poll(0)
     except Exception as e:
@@ -116,9 +113,6 @@ def on_index_message(message):
         data = json.loads(message['Content'])
         index_id = data['IndexId']
         topic = f'stock-{index_id}'
-        
-        logger.info(f"Received message for symbol: {index_id}")
-        logger.info(f"Producing message to topic: {topic}")
 
         producer.produce(topic, json.dumps(data).encode('utf-8'), callback=delivery_report)
         producer.poll(0)
