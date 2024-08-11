@@ -75,18 +75,18 @@ func getTopics() ([]string, error) {
 }
 
 func setupKafkaReader(brokers []string, topics []string) (*kafka.Reader, error) {
-	reader := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:        brokers,
-		GroupID:        "market-data-consumer",
-		GroupTopics:    topics,
-		MinBytes:       10e3,
-		MaxBytes:       10e6,
-		CommitInterval: time.Second,
-		StartOffset:    kafka.LastOffset,
-		RetentionTime:  time.Hour,
-	})
+    reader := kafka.NewReader(kafka.ReaderConfig{
+        Brokers:        brokers,
+        GroupID:        "market-data-consumer",
+        GroupTopics:    topics,
+        // MinBytes:       10e3,
+        // MaxBytes:       10e6,
+        // CommitInterval: time.Second,
+        StartOffset:    kafka.LastOffset,
+        // RetentionTime:  time.Hour,
+    })
 
-	return reader, nil
+    return reader, nil
 }
 
 func checkRedisConnection(client *redis.Client) error {
@@ -109,7 +109,6 @@ func main() {
 		Addr: os.Getenv("REDIS_ADDR"),
 	})
 
-	
 	if err := checkRedisConnection(redisClient); err != nil {
 		log.Fatalf("Failed to connect to Redis: %v", err)
 	}
@@ -119,11 +118,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to get topics from database: %v", err)
 	}
-	
 
 	kafkaBrokers := os.Getenv("KAFKA_BROKERS")
 	if kafkaBrokers == "" {
-		kafkaBrokers = "localhost:9092"
+		kafkaBrokers = "192.168.147.224:9092"
 	}
 	brokers := strings.Split(kafkaBrokers, ",")
 
