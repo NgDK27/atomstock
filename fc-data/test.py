@@ -9,17 +9,24 @@ from dotenv import load_dotenv
 from pathlib import Path
 import os
 import psycopg2
-import config
 import logging
+import socket
 
+# Project setup
 project_root = Path(__file__).parent.parent.parent
 dotenv_path = project_root / 'oppenhomies/server/.env'
 load_dotenv(dotenv_path)
 
+# Database configuration
 DB_HOST = os.getenv('HOST')
 DB_NAME = os.getenv('DB_NAME')
 DB_USER = os.getenv('USER')
-DB_PASSWORD = os.getenv('PASSWORD')
+DB_PASSWORD = os.getenv('PASSWORD') 
+
+# Set up logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
 
 def get_symbols():
     stock_symbols = []
@@ -57,44 +64,31 @@ def get_symbols():
 
     return stock_symbols, index_symbols
 
+# Load environment variables
 load_dotenv()
 
+# Get symbols
 stocks, indexes = get_symbols()
 
-# Set up logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+# Kafka configuration
+KAFKA_HOST = os.getenv('KAFKA_HOST', 'localhost')
+KAFKA_PORT = os.getenv('KAFKA_PORT', '9092')
 
-# Initialize Kafka producer
 kafka_config = {
-    'bootstrap.servers': f"{os.getenv('KAFKA_HOST')}:{os.getenv('KAFKA_PORT')}",
+    'bootstrap.servers': f"{KAFKA_HOST}:{KAFKA_PORT}",
 }
 
 producer = Producer(kafka_config)
 
+
 # Initialize the SSI client
 client = fc_md_client.MarketDataClient(config)
-
-# def create_topics(topic_names):
-#     admin_client = AdminClient({'bootstrap.servers': f"{os.getenv('KAFKA_HOST')}:{os.getenv('KAFKA_PORT')}"})
-#     new_topics = [NewTopic(topic, num_partitions=1, replication_factor=1) for topic in topic_names]
-#     fs = admin_client.create_topics(new_topics)
-#     for topic, f in fs.items():
-#         try:
-#             f.result()  # The result itself is None
-#             print(f"Topic {topic} created")
-#         except Exception as e:
-#             print(f"Failed to create topic {topic}: {e}")
-
-# # Call this function before starting to produce messages
-# create_topics([f'stock-{symbol}' for symbol, _, _ in stocks] + [f'index-{symbol}' for symbol, _ in indexes])
 
 def delivery_report(err, msg):
     if err is not None:
         logger.error(f'Message delivery failed: {err}')
     else:
         topic = msg.topic()
-        value = json.loads(msg.value().decode('utf-8'))
         logger.info(f"Message delivered to topic {topic}")
 
 def on_stock_message(message):
@@ -103,27 +97,45 @@ def on_stock_message(message):
         symbol = data['Symbol']
         topic = f'stock-{symbol}'
         
-        producer.produce(topic, json.dumps(data).encode('utf-8'), callback=delivery_report)
+        
+        formatted_data = {
+            "Symbol": data['Symbol'],
+            "Price": float(data['LastPrice']),
+            "Change": float(data['Change']),
+            "RatioChange": float(data['RatioChange']),
+            "Volume": float(data['TotalVol'])
+        }
+        
+        producer.produce(topic, json.dumps(formatted_data).encode('utf-8'), callback=delivery_report)
         producer.poll(0)
     except Exception as e:
-        print(f"Error in on_stock_message: {e}")
+        logger.error(f"Error in on_stock_message: {e}")
 
 def on_index_message(message):
     try:
         data = json.loads(message['Content'])
         index_id = data['IndexId']
-        topic = f'stock-{index_id}'
-
-        producer.produce(topic, json.dumps(data).encode('utf-8'), callback=delivery_report)
+        topic = f'index-{index_id}'
+        
+       
+        formatted_data = {
+            "IndexValue": float(data['IndexValue']),
+            "Change": float(data['Change']),
+            "RatioChange": float(data['RatioChange']),
+            "TotalTrade": int(data['TotalTrade']),
+            "TotalQtty": int(data['TotalQtty']),
+            "TotalValue": float(data['TotalValue'])
+        }
+        
+        producer.produce(topic, json.dumps(formatted_data).encode('utf-8'), callback=delivery_report)
         producer.poll(0)
     except Exception as e:
-        print(f"Error in on_index_message: {e}")
+        logger.error(f"Error in on_index_message: {e}")
 
 def on_error(error):
-    print(f"Streaming error occurred: {error}")
+    logger.error(f"Streaming error occurred: {error}")
 
 async def main():
-
     stock_stream = MarketDataStream(config, client)
     index_stream = MarketDataStream(config, client)
 
@@ -134,7 +146,7 @@ async def main():
     index_stream.start(on_index_message, on_error, f"MI:{index_symbols}")
 
     while True:
-        producer.poll(0.1)
+        producer.poll()
         await asyncio.sleep(1)
 
 if __name__ == "__main__":

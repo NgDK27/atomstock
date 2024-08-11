@@ -119,7 +119,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to get topics from database: %v", err)
 	}
-	log.Printf("Topics to consume: %v", topics)
+	
 
 	kafkaBrokers := os.Getenv("KAFKA_BROKERS")
 	if kafkaBrokers == "" {
