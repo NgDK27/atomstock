@@ -79,13 +79,10 @@ func setupKafkaReader(brokers []string, topics []string) (*kafka.Reader, error) 
         Brokers:        brokers,
         GroupID:        "market-data-consumer",
         GroupTopics:    topics,
-        // MinBytes:       10e3,
-        // MaxBytes:       10e6,
-        // CommitInterval: time.Second,
+        CommitInterval: 200 * time.Millisecond,
         StartOffset:    kafka.LastOffset,
-        // RetentionTime:  time.Hour,
+        MaxWait:        500 * time.Millisecond,
     })
-
     return reader, nil
 }
 
@@ -120,9 +117,7 @@ func main() {
 	}
 
 	kafkaBrokers := os.Getenv("KAFKA_BROKERS")
-	if kafkaBrokers == "" {
-		kafkaBrokers = "192.168.147.224:9092"
-	}
+	
 	brokers := strings.Split(kafkaBrokers, ",")
 
 	reader, err := setupKafkaReader(brokers, topics)
