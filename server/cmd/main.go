@@ -316,6 +316,7 @@ func main() {
         log.Fatalf("Failed to connect to Redis: %v", err)
     }
     log.Println("Successfully connected to Redis")
+	
 
 	r := gin.Default()
 
@@ -323,8 +324,20 @@ func main() {
 	r.POST("/confirm_signup", confirmSignUpHandler)
 	r.POST("/signin", signInHandler)
 
-	r.GET("/main-market", handlers.GetMainMarketData(redisClient))
+	// Market data endpoints
+    r.GET("/main-market", handlers.GetMainMarketData(redisClient))
     r.GET("/ws/main-market", handlers.MainMarketWebSocket(redisClient))
+    
+    // Stock detail endpoints
+    r.GET("/stock/:symbol", handlers.GetStockDetail(redisClient))
+    r.GET("/ws/stock/:symbol", handlers.StockDetailWebSocket(redisClient))
+    
+    // Index detail endpoints
+    r.GET("/index/:indexId", handlers.GetIndexDetail(redisClient))
+    r.GET("/ws/index/:indexId", handlers.IndexDetailWebSocket(redisClient))
+    
+    // Search endpoint
+    r.GET("/search", handlers.SearchStocks(redisClient))
 
 	protected := r.Group("/")
 	protected.Use(AuthMiddleware())

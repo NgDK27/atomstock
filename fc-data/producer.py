@@ -119,6 +119,7 @@ def on_index_message(message):
         
        
         formatted_data = {
+            "IndexId": data['IndexId'],
             "IndexValue": float(data['IndexValue']),
             "Change": float(data['Change']),
             "RatioChange": float(data['RatioChange']),
