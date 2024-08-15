@@ -82,12 +82,19 @@ class OpTextStyle {
     ),
   );
 
+  static TextStyle? labelSmall(BuildContext context) => _getStyle(
+    context,
+    material: (data) => data.textTheme.labelSmall,
+    cupertino: (data) => data.textTheme.tabLabelTextStyle.copyWith(
+      fontSize: (data.textTheme.tabLabelTextStyle.fontSize ?? 10) * 1.3,
+    ),
+  );
+
   static TextStyle? labelMediumProminent(BuildContext context) => _getStyle(
     context,
     material: (data) => data.textTheme.labelMedium,
     cupertino: (data) => data.textTheme.tabLabelTextStyle.copyWith(
-      fontWeight: FontWeight.w600,
-      fontSize: (data.textTheme.tabLabelTextStyle.fontSize ?? 10) * 1.3,
+      fontSize: (data.textTheme.tabLabelTextStyle.fontSize ?? 10) * 1.1,
       letterSpacing: 0.8,
     ),
   );

@@ -18,11 +18,14 @@ abstract class ChipBase extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       decoration: BoxDecoration(
-          color: getColor(context),
-          borderRadius: const BorderRadius.all(Radius.circular(OpRadius.full)),),
+        color: getColor(context),
+        borderRadius: const BorderRadius.all(Radius.circular(OpRadius.full)),
+      ),
       child: Padding(
         padding: const EdgeInsets.symmetric(
-            vertical: OpSpacing.xs2, horizontal: OpSpacing.xs,),
+          vertical: OpSpacing.xs2,
+          horizontal: OpSpacing.xs,
+        ),
         child: Text(
           text,
           style: getTextStyle(context),
@@ -55,7 +58,8 @@ class ChipMediumNeutral extends ChipBase {
 
   @override
   Color getColor(BuildContext context) =>
-      OpDynamicColor.surfaceContainerHigh(context).withOpacity(OpOpacity.tertiary);
+      OpDynamicColor.surfaceContainerHigh(context)
+          .withOpacity(OpOpacity.tertiary);
 
   @override
   TextStyle? getTextStyle(BuildContext context) =>
@@ -68,12 +72,14 @@ class ChipMediumAqua extends ChipBase {
   const ChipMediumAqua({super.key, required super.text});
 
   @override
-  Color getColor(BuildContext context) => platformThemeData(context,
-      material: (ThemeData data) => OpLightDarkColor.primary
-          .harmonizeWith(data.colorScheme.primary)
-          .withOpacity(OpOpacity.tertiary),
-      cupertino: (_) =>
-          OpDynamicColor.primary(context).withOpacity(OpOpacity.tertiary),);
+  Color getColor(BuildContext context) => platformThemeData(
+        context,
+        material: (ThemeData data) => OpLightDarkColor.primary
+            .harmonizeWith(data.colorScheme.primary)
+            .withOpacity(OpOpacity.tertiary),
+        cupertino: (_) =>
+            OpDynamicColor.primary(context).withOpacity(OpOpacity.tertiary),
+      );
 
   @override
   TextStyle? getTextStyle(BuildContext context) =>
@@ -86,14 +92,28 @@ class ChipMediumCherry extends ChipBase {
   const ChipMediumCherry({super.key, required super.text});
 
   @override
-  Color getColor(BuildContext context) => platformThemeData(context,
-      material: (ThemeData data) =>
-          OpLightDarkColor.stockFall.harmonizeWith(data.colorScheme.primary),
-      cupertino: (_) => OpDynamicColor.primary(context),); // TODO Fix
+  Color getColor(BuildContext context) => platformThemeData(
+        context,
+        material: (ThemeData data) =>
+            OpLightDarkColor.stockFall.harmonizeWith(data.colorScheme.primary),
+        cupertino: (_) => OpDynamicColor.primary(context),
+      ); // TODO Fix
 
   @override
   TextStyle? getTextStyle(BuildContext context) =>
       OpTextStyle.labelMediumProminent(context)?.copyWith(
         color: OpDynamicColor.onPrimaryContainer(context),
       );
+}
+
+class ChipSmall extends ChipBase {
+  const ChipSmall({super.key, required super.text});
+
+  @override
+  Color getColor(BuildContext context) =>
+      OpDynamicColor.surfaceContainerHigh(context);
+
+  @override
+  TextStyle? getTextStyle(BuildContext context) =>
+      OpTextStyle.labelSmall(context);
 }

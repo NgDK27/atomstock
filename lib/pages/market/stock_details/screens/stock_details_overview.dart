@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:oppenhomies/domain/models/stock/stock_model.dart';
+import 'package:oppenhomies/pages/testing/chart_testing.dart';
 import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/opacities.dart';
 import 'package:oppenhomies/styles/spacings.dart';
@@ -20,8 +21,6 @@ class StockDetailsOverview extends HookWidget {
   Widget build(BuildContext context) {
     final detailFields = stock.detailFields.entries.toList();
     final split = (detailFields.length / 2).ceil();
-    Color accentColor =
-        StockColoring.determineStockColor(context, stock.priceChange);
     const mockTimeFrame = 'Yesterday';
 
     return  ListView(
@@ -82,12 +81,8 @@ class StockDetailsOverview extends HookWidget {
             ),
           ),
           //region Chart placeholder
-          Container(
-            decoration: BoxDecoration(
-              color: accentColor.withOpacity(OpOpacity.quaternary),
-            ),
-            child: SizedBox(height: 320),
-          ),
+
+          StockLineChart(),
           //endregion
           Padding(
             padding: EdgeInsets.symmetric(

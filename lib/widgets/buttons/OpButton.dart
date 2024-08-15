@@ -14,7 +14,6 @@ abstract class OpButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return PlatformTextButton(
-
       onPressed: onPressed,
       cupertino: (_, __) => CupertinoTextButtonData(
         borderRadius: BorderRadius.circular(OpRadius.full),

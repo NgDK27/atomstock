@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
@@ -20,7 +21,7 @@ class StockDetails extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Stock
-    final stock = StockModel.detailedSample();
+    final stock = StockModel.negativeSample();
 
     // Coloring based on change
     final accentColor =
@@ -122,6 +123,8 @@ class StockDetails extends HookConsumerWidget {
               ),
               child: TabBarView(
                 controller: tabController,
+                physics: const NeverScrollableScrollPhysics(),
+
                 children: DetailsTabDestinations.values.map((tab) {
                   switch (tab) {
                     case DetailsTabDestinations.overview:
