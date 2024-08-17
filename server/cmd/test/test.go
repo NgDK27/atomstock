@@ -40,6 +40,6 @@ func main() {
         Addr:     "localhost:6379",
     })
 
-    checkRedisHash(redisClient, "stock:SSI")
+    checkRedisHash(redisClient, "stock:ACB")
     // flushRedis(redisClient)
 }

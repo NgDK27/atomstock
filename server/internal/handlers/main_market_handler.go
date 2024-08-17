@@ -7,7 +7,7 @@ import (
     "strconv"
     "log"
     "strings"
-    "sort"
+    "sync"
 
     "github.com/gin-gonic/gin"
     "github.com/gorilla/websocket"
@@ -21,6 +21,13 @@ var upgrader = websocket.Upgrader{
     },
 }
 
+
+type MainMarketConnection struct {
+    conn          *websocket.Conn
+    initialStocks map[string]bool
+    mu            sync.Mutex
+}
+
 func GetMainMarketData(redisClient *redis.Client) gin.HandlerFunc {
     return func(c *gin.Context) {
         ctx := c.Request.Context()
@@ -29,18 +36,15 @@ func GetMainMarketData(redisClient *redis.Client) gin.HandlerFunc {
         var response gin.H
         switch category {
         case "volume":
-            response = gin.H{"topVolume": getTopN(ctx, redisClient, "top_volume", 30)}
+            response = gin.H{"topVolume": getTopN(ctx, redisClient, "stock_volume", 30)}
         case "gainers":
-            response = gin.H{"topGainers": getTopN(ctx, redisClient, "top_gainers", 30)}
+            response = gin.H{"topGainers": getTopN(ctx, redisClient, "stock_gainers", 30)}
         case "losers":
-            response = gin.H{"topLosers": getTopN(ctx, redisClient, "top_losers", 30)}
+            response = gin.H{"topLosers": getTopN(ctx, redisClient, "stock_losers", 30)}
+        case "indexes":
+            response = gin.H{"indexes": getAllIndexes(ctx, redisClient)}
         default:
-            response = gin.H{
-                "topVolume":  getTopN(ctx, redisClient, "top_volume", 3),
-                "topGainers": getTopN(ctx, redisClient, "top_gainers", 3),
-                "topLosers":  getTopN(ctx, redisClient, "top_losers", 3),
-                "indexes":    getDefaultIndexes(ctx, redisClient),
-            }
+            response = getInitialMainMarketData(ctx, redisClient)
         }
 
         c.JSON(http.StatusOK, response)
@@ -56,28 +60,39 @@ func MainMarketWebSocket(redisClient *redis.Client) gin.HandlerFunc {
         }
         defer conn.Close()
 
-        category := c.Query("category")
-
         ctx, cancel := context.WithCancel(c.Request.Context())
         defer cancel()
 
-        updateChan := make(chan interface{})
-
-        go listenForMainMarketUpdates(ctx, redisClient, category, updateChan)
-
-        initialData := getInitialData(ctx, redisClient, category)
-        if err := conn.WriteJSON(initialData); err != nil {
-            log.Printf("Error sending initial data: %v", err)
+        initialData := getInitialMainMarketData(ctx, redisClient)
+        err = conn.WriteJSON(initialData)
+        if err != nil {
+            log.Printf("Failed to send initial data: %v", err)
             return
         }
 
+        initialStocks := make(map[string]bool)
+        for _, category := range []string{"topVolume", "topGainers", "topLosers"} {
+            for _, stock := range initialData[category].([]models.StockData) {
+                initialStocks[stock.Symbol] = true
+            }
+        }
+
+        mainMarketConn := &MainMarketConnection{
+            conn:          conn,
+            initialStocks: initialStocks,
+        }
+
+        stockUpdateChan := make(chan models.StockData)
+        indexUpdateChan := make(chan models.IndexData)
+
+        go listenForUpdates(ctx, redisClient, stockUpdateChan, indexUpdateChan)
+
         for {
             select {
-            case update := <-updateChan:
-                if err := conn.WriteJSON(update); err != nil {
-                    log.Printf("Error writing to WebSocket: %v", err)
-                    return
-                }
+            case stockUpdate := <-stockUpdateChan:
+                handleStockUpdate(mainMarketConn, stockUpdate)
+            case indexUpdate := <-indexUpdateChan:
+                handleIndexUpdate(mainMarketConn, indexUpdate)
             case <-ctx.Done():
                 return
             }
@@ -85,42 +100,154 @@ func MainMarketWebSocket(redisClient *redis.Client) gin.HandlerFunc {
     }
 }
 
-func listenForMainMarketUpdates(ctx context.Context, redisClient *redis.Client, category string, updateChan chan<- interface{}) {
+func handleStockUpdate(conn *MainMarketConnection, update models.StockData) {
+    conn.mu.Lock()
+    defer conn.mu.Unlock()
+
+    if conn.initialStocks[update.Symbol] {
+        err := conn.conn.WriteJSON(gin.H{"type": "stockUpdate", "data": update})
+        if err != nil {
+            log.Printf("Failed to send stock update: %v", err)
+        }
+    }
+}
+
+func handleIndexUpdate(conn *MainMarketConnection, update models.IndexData) {
+    if update.IndexId == "VNIndex" || update.IndexId == "VN30" {
+        err := conn.conn.WriteJSON(gin.H{"type": "indexUpdate", "data": update})
+        if err != nil {
+            log.Printf("Failed to send index update: %v", err)
+        }
+    }
+}
+
+func listenForUpdates(ctx context.Context, redisClient *redis.Client, stockChan chan<- models.StockData, indexChan chan<- models.IndexData) {
     pubsub := redisClient.Subscribe(ctx, "stock_updates", "index_updates")
     defer pubsub.Close()
 
     for {
         select {
         case msg := <-pubsub.Channel():
-            var update map[string]interface{}
-            if err := json.Unmarshal([]byte(msg.Payload), &update); err != nil {
-                log.Printf("Error unmarshaling update: %v", err)
-                continue
-            }
-
-            switch category {
-            case "volume", "gainers", "losers":
-                if symbol, ok := update["Symbol"].(string); ok {
-                    if isInTopN(ctx, redisClient, symbol, "top_"+category, 30) {
-                        updateChan <- gin.H{"top_" + category: []map[string]interface{}{update}}
-                    }
+            switch msg.Channel {
+            case "stock_updates":
+                var update models.StockData
+                if err := json.Unmarshal([]byte(msg.Payload), &update); err == nil {
+                    stockChan <- update
                 }
-            default:
-                if symbol, ok := update["Symbol"].(string); ok {
-                    for _, cat := range []string{"volume", "gainers", "losers"} {
-                        if isInTopN(ctx, redisClient, symbol, "top_"+cat, 3) {
-                            updateChan <- gin.H{"top_" + cat: []map[string]interface{}{update}}
-                        }
-                    }
-                } else if indexId, ok := update["IndexId"].(string); ok {
-                    if indexId == "VNIndex" || indexId == "VN30" {
-                        updateChan <- gin.H{"index": []map[string]interface{}{update}}
-                    }
+            case "index_updates":
+                var update models.IndexData
+                if err := json.Unmarshal([]byte(msg.Payload), &update); err == nil {
+                    indexChan <- update
                 }
             }
         case <-ctx.Done():
             return
         }
+    }
+}
+
+func getInitialMainMarketData(ctx context.Context, redisClient *redis.Client) gin.H {
+    return gin.H{
+        "topVolume":  getTopN(ctx, redisClient, "stock_volume", 3),
+        "topGainers": getTopN(ctx, redisClient, "stock_gainers", 3),
+        "topLosers":  getTopN(ctx, redisClient, "stock_losers", 3),
+        "indexes":    getDefaultIndexes(ctx, redisClient),
+    }
+}
+
+func getTopN(ctx context.Context, redisClient *redis.Client, key string, n int) []models.StockData {
+    results, err := redisClient.ZRevRangeWithScores(ctx, key, 0, int64(n-1)).Result()
+    if err != nil {
+        log.Printf("Error fetching top stocks: %v", err)
+        return []models.StockData{}
+    }
+
+    stocks := make([]models.StockData, 0, len(results))
+    for _, z := range results {
+        symbol := z.Member.(string)
+        stockData := getStockData(ctx, redisClient, symbol)
+        if stockData != nil {
+            stocks = append(stocks, *stockData)
+        }
+    }
+
+    return stocks
+}
+
+func getAllIndexes(ctx context.Context, redisClient *redis.Client) []models.IndexData {
+    keys, err := redisClient.Keys(ctx, "index:*").Result()
+    if err != nil {
+        log.Printf("Error fetching index keys: %v", err)
+        return []models.IndexData{}
+    }
+
+    indexes := make([]models.IndexData, 0, len(keys))
+    for _, key := range keys {
+        indexId := key[6:] // Remove "index:" prefix
+        indexData := getIndexData(ctx, redisClient, indexId)
+        if indexData != nil {
+            indexes = append(indexes, *indexData)
+        }
+    }
+
+    return indexes
+}
+
+func getDefaultIndexes(ctx context.Context, redisClient *redis.Client) []models.IndexData {
+    indexSymbols := []string{"VNIndex", "VN30"}
+    indexes := make([]models.IndexData, 0, len(indexSymbols))
+    for _, symbol := range indexSymbols {
+        indexData := getIndexData(ctx, redisClient, symbol)
+        if indexData != nil {
+            indexes = append(indexes, *indexData)
+        }
+    }
+    return indexes
+}
+
+func getStockData(ctx context.Context, redisClient *redis.Client, symbol string) *models.StockData {
+    key := "stock:" + symbol
+    data, err := redisClient.HGetAll(ctx, key).Result()
+    if err != nil || len(data) == 0 {
+        return nil
+    }
+
+    price, _ := strconv.ParseFloat(data["Price"], 64)
+    change, _ := strconv.ParseFloat(data["Change"], 64)
+    ratioChange, _ := strconv.ParseFloat(data["RatioChange"], 64)
+    volume, _ := strconv.ParseFloat(data["Volume"], 64)
+
+    return &models.StockData{
+        Symbol:      symbol,
+        Price:       price,
+        Change:      change,
+        RatioChange: ratioChange,
+        Volume:      volume,
+    }
+}
+
+func getIndexData(ctx context.Context, redisClient *redis.Client, indexId string) *models.IndexData {
+    key := "index:" + indexId
+    data, err := redisClient.HGetAll(ctx, key).Result()
+    if err != nil || len(data) == 0 {
+        return nil
+    }
+
+    indexValue, _ := strconv.ParseFloat(data["IndexValue"], 64)
+    change, _ := strconv.ParseFloat(data["Change"], 64)
+    ratioChange, _ := strconv.ParseFloat(data["RatioChange"], 64)
+    totalTrade, _ := strconv.ParseInt(data["TotalTrade"], 10, 64)
+    totalQtty, _ := strconv.ParseInt(data["TotalQtty"], 10, 64)
+    totalValue, _ := strconv.ParseFloat(data["TotalValue"], 64)
+
+    return &models.IndexData{
+        IndexId:     indexId,
+        IndexValue:  indexValue,
+        Change:      change,
+        RatioChange: ratioChange,
+        TotalTrade:  totalTrade,
+        TotalQtty:   totalQtty,
+        TotalValue:  totalValue,
     }
 }
 
@@ -191,7 +318,7 @@ func listenForStockUpdates(ctx context.Context, redisClient *redis.Client, symbo
             if update.Symbol == symbol {
                 updateChan <- update
             }
-        case <-ctx.Done(): 
+        case <-ctx.Done():
             return
         }
     }
@@ -297,123 +424,5 @@ func searchStocksInRedis(ctx context.Context, redisClient *redis.Client, query s
     return results
 }
 
-func getTopN(ctx context.Context, redisClient *redis.Client, key string, n int) []models.StockData {
-    keys, _ := redisClient.Keys(ctx, "stock:*").Result()
-    var stocks []models.StockData
-    for _, key := range keys {
-        stockData := getStockData(ctx, redisClient, key[6:])
-        if stockData != nil && stockData.RatioChange != -100 {
-            stocks = append(stocks, *stockData)
-        }
-    }
 
-    sortStocks(stocks, key)
 
-    if len(stocks) > n {
-        return stocks[:n]
-    }
-    return stocks
-}
-
-func sortStocks(stocks []models.StockData, key string) {
-    switch key {
-    case "top_volume":
-        sort.Slice(stocks, func(i, j int) bool {
-            return stocks[i].Volume > stocks[j].Volume
-        })
-    case "top_gainers":
-        sort.Slice(stocks, func(i, j int) bool {
-            return stocks[i].RatioChange > stocks[j].RatioChange
-        })
-    case "top_losers":
-        sort.Slice(stocks, func(i, j int) bool {
-            return stocks[i].RatioChange < stocks[j].RatioChange
-        })
-    }
-}
-
-func getStockData(ctx context.Context, redisClient *redis.Client, symbol string) *models.StockData {
-    key := "stock:" + symbol
-    data, err := redisClient.HGetAll(ctx, key).Result()
-    if err != nil || len(data) == 0 {
-        return nil
-    }
-
-    price, _ := strconv.ParseFloat(data["Price"], 64)
-    change, _ := strconv.ParseFloat(data["Change"], 64)
-    ratioChange, _ := strconv.ParseFloat(data["RatioChange"], 64)
-    volume, _ := strconv.ParseFloat(data["Volume"], 64)
-
-    return &models.StockData{
-        Symbol:      symbol,
-        Price:       price,
-        Change:      change,
-        RatioChange: ratioChange,
-        Volume:      volume,
-    }
-}
-
-func getDefaultIndexes(ctx context.Context, redisClient *redis.Client) []models.IndexData {
-    indexSymbols := []string{"VNIndex", "VN30"}
-    var indexes []models.IndexData
-    for _, symbol := range indexSymbols {
-        indexData := getIndexData(ctx, redisClient, symbol)
-        if indexData != nil {
-            indexes = append(indexes, *indexData)
-        }
-    }
-    return indexes
-}
-
-func getIndexData(ctx context.Context, redisClient *redis.Client, indexId string) *models.IndexData {
-    key := "index:" + indexId
-    data, err := redisClient.HGetAll(ctx, key).Result()
-    if err != nil || len(data) == 0 {
-        return nil
-    }
-
-    indexValue, _ := strconv.ParseFloat(data["IndexValue"], 64)
-    change, _ := strconv.ParseFloat(data["Change"], 64)
-    ratioChange, _ := strconv.ParseFloat(data["RatioChange"], 64)
-    totalTrade, _ := strconv.ParseInt(data["TotalTrade"], 10, 64)
-    totalQtty, _ := strconv.ParseInt(data["TotalQtty"], 10, 64)
-    totalValue, _ := strconv.ParseFloat(data["TotalValue"], 64)
-
-    return &models.IndexData{
-        IndexId:     indexId,
-        IndexValue:  indexValue,
-        Change:      change,
-        RatioChange: ratioChange,
-        TotalTrade:  totalTrade,
-        TotalQtty:   totalQtty,
-        TotalValue:  totalValue,
-    }
-}
-
-func getInitialData(ctx context.Context, redisClient *redis.Client, category string) gin.H {
-    switch category {
-    case "volume":
-        return gin.H{"topVolume": getTopN(ctx, redisClient, "top_volume", 30)}
-    case "gainers":
-        return gin.H{"topGainers": getTopN(ctx, redisClient, "top_gainers", 30)}
-    case "losers":
-        return gin.H{"topLosers": getTopN(ctx, redisClient, "top_losers", 30)}
-    default:
-        return gin.H{
-            "topVolume":  getTopN(ctx, redisClient, "top_volume", 3),
-            "topGainers": getTopN(ctx, redisClient, "top_gainers", 3),
-            "topLosers":  getTopN(ctx, redisClient, "top_losers", 3),
-            "indexes":    getDefaultIndexes(ctx, redisClient),
-        }
-    }
-}
-
-func isInTopN(ctx context.Context, redisClient *redis.Client, symbol, key string, n int) bool {
-    stocks := getTopN(ctx, redisClient, key, n)
-    for _, stock := range stocks {
-        if stock.Symbol == symbol {
-            return true
-        }
-    }
-    return false
-}

@@ -83,6 +83,16 @@ func (s *MarketDataService) processStockData(data []byte, symbol string) error {
         return fmt.Errorf("error storing stock data in Redis: %v", err)
     }
 
+    if stockData.RatioChange != -100 {
+        // Update sorted sets
+        s.redisClient.ZAdd(ctx, "stock_volume", redis.Z{Score: stockData.Volume, Member: symbol})
+        s.redisClient.ZAdd(ctx, "stock_gainers", redis.Z{Score: stockData.RatioChange, Member: symbol})
+        s.redisClient.ZAdd(ctx, "stock_losers", redis.Z{Score: -stockData.RatioChange, Member: symbol})
+    } else {
+        log.Printf("Skipping update of sorted sets for %s because RatioChange is -100", symbol)
+    }
+
+
     // Publish update for real-time subscribers
     s.publishStockUpdate(ctx, stockData)
 
