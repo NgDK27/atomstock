@@ -25,7 +25,6 @@ func checkRedisHash(client *redis.Client, key string) {
 func flushRedis(redisClient *redis.Client) error {
     ctx := context.Background()
     
-    // FLUSHALL command
     err := redisClient.FlushAll(ctx).Err()
     if err != nil {
         return fmt.Errorf("failed to flush Redis: %v", err)

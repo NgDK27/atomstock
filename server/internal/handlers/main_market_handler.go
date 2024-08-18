@@ -37,10 +37,10 @@ func GetMainMarketData(redisClient *redis.Client) gin.HandlerFunc {
         switch category {
         case "volume":
             response = gin.H{"topVolume": getTopN(ctx, redisClient, "stock_volume", 30)}
-        case "gainers":
-            response = gin.H{"topGainers": getTopN(ctx, redisClient, "stock_gainers", 30)}
-        case "losers":
-            response = gin.H{"topLosers": getTopN(ctx, redisClient, "stock_losers", 30)}
+        case "increase":
+            response = gin.H{"topIncrease": getTopN(ctx, redisClient, "stock_increase", 30)}
+        case "decrease":
+            response = gin.H{"topDecrease": getTopN(ctx, redisClient, "stock_decrease", 30)}
         case "indexes":
             response = gin.H{"indexes": getAllIndexes(ctx, redisClient)}
         default:
@@ -71,7 +71,7 @@ func MainMarketWebSocket(redisClient *redis.Client) gin.HandlerFunc {
         }
 
         initialStocks := make(map[string]bool)
-        for _, category := range []string{"topVolume", "topGainers", "topLosers"} {
+        for _, category := range []string{"topVolume", "topIncrease", "topDecrease"} {
             for _, stock := range initialData[category].([]models.StockData) {
                 initialStocks[stock.Symbol] = true
             }
@@ -149,8 +149,8 @@ func listenForUpdates(ctx context.Context, redisClient *redis.Client, stockChan 
 func getInitialMainMarketData(ctx context.Context, redisClient *redis.Client) gin.H {
     return gin.H{
         "topVolume":  getTopN(ctx, redisClient, "stock_volume", 3),
-        "topGainers": getTopN(ctx, redisClient, "stock_gainers", 3),
-        "topLosers":  getTopN(ctx, redisClient, "stock_losers", 3),
+        "topIncrease": getTopN(ctx, redisClient, "stock_increase", 3),
+        "topDecrease":  getTopN(ctx, redisClient, "stock_decrease", 3),
         "indexes":    getDefaultIndexes(ctx, redisClient),
     }
 }
@@ -183,7 +183,7 @@ func getAllIndexes(ctx context.Context, redisClient *redis.Client) []models.Inde
 
     indexes := make([]models.IndexData, 0, len(keys))
     for _, key := range keys {
-        indexId := key[6:] // Remove "index:" prefix
+        indexId := key[6:] 
         indexData := getIndexData(ctx, redisClient, indexId)
         if indexData != nil {
             indexes = append(indexes, *indexData)
