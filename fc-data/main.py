@@ -202,7 +202,7 @@ async def fetch_stock_prices(symbol: str, start_date: datetime, end_date: dateti
         for chunk in chunk_results:
             all_data.extend(chunk)
         
-        all_data = sorted(all_data, key=lambda x: x['TradingDate'])
+        all_data = sorted(all_data, key=lambda x: datetime.strptime(x['TradingDate'], '%d/%m/%Y'))
 
     redis_client.setex(cache_key, 60*60*24, json.dumps(all_data))
 
