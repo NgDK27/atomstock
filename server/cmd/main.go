@@ -337,7 +337,7 @@ func main() {
     r.GET("/ws/index/:indexId", handlers.IndexDetailWebSocket(redisClient))
     
     // Search endpoint
-    r.GET("/search", handlers.SearchStocks(redisClient))
+    // r.GET("/search", handlers.SearchStocks(redisClient))
 
 	protected := r.Group("/")
 	protected.Use(AuthMiddleware())
@@ -350,14 +350,12 @@ func main() {
         }
     }()
 
-    // Set up graceful shutdown
+    // Set up shutdown
     quit := make(chan os.Signal, 1)
     signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
     <-quit
 
     log.Println("Shutting down server...")
-
-    // Perform any cleanup or shutdown operations here
 
     log.Println("Server exited")
 }
