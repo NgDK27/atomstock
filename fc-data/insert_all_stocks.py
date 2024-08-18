@@ -58,8 +58,8 @@ def get_securities_list(market: str):
             config,
             model.daily_stock_price(
                 symbol,
-                fromDate='11/07/2024',
-                toDate='11/07/2024',
+                fromDate='09/08/2024',
+                toDate='09/08/2024',
                 pageIndex=1,
                 pageSize=10
             )

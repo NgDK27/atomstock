@@ -13,6 +13,8 @@ import (
 	"strconv"
 	"strings"
 	"reflect"
+	"os/signal"
+    "syscall"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -21,6 +23,8 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"github.com/redis/go-redis/v9"
+    "oppenhomies/server/internal/handlers"
 	_ "github.com/lib/pq"
 )
 
@@ -49,7 +53,6 @@ type SignInResponse struct {
 	AccessToken  string `json:"access_token"`
 	IdToken      string `json:"id_token"`
 	RefreshToken string `json:"refresh_token"`
-	UserID       string `json:"user_id"`
 	Message      string `json:"message"`
 }
 
@@ -212,7 +215,6 @@ func signInHandler(c *gin.Context) {
 		AccessToken:  accessToken,
 		IdToken:      *authOutput.AuthenticationResult.IdToken,
 		RefreshToken: *authOutput.AuthenticationResult.RefreshToken,
-		UserID:       userID,
 		Message:      "Sign-in successful!",
 	}
 	c.JSON(http.StatusOK, response)
@@ -274,14 +276,12 @@ func AuthMiddleware() gin.HandlerFunc {
 
 func ConnectDatabase() {
 	
-	// Load database connection parameters
 	host := os.Getenv("HOST")
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
 	user := os.Getenv("USER")
 	dbname := os.Getenv("DB_NAME")
 	pass := os.Getenv("PASSWORD")
 
-	// Set up PostgreSQL connection
 	psqlSetup := fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable",
 		host, port, user, dbname, pass)
 	database, err := sql.Open("postgres", psqlSetup)
@@ -308,16 +308,56 @@ func main() {
     clientID = os.Getenv("clientID")
     clientSecret = os.Getenv("clientSecret")
 
+	redisClient := redis.NewClient(&redis.Options{
+        Addr: os.Getenv("REDIS_ADDR"),
+    })
+
+	if err := redisClient.Ping(context.Background()).Err(); err != nil {
+        log.Fatalf("Failed to connect to Redis: %v", err)
+    }
+    log.Println("Successfully connected to Redis")
+	
+
 	r := gin.Default()
 
 	r.POST("/signup", signupHandler)
 	r.POST("/confirm_signup", confirmSignUpHandler)
 	r.POST("/signin", signInHandler)
 
+	// Market data endpoints
+    r.GET("/main-market", handlers.GetMainMarketData(redisClient))
+    r.GET("/ws/main-market", handlers.MainMarketWebSocket(redisClient))
+    
+    // Stock detail endpoints
+    r.GET("/stock/:symbol", handlers.GetStockDetail(redisClient))
+    r.GET("/ws/stock/:symbol", handlers.StockDetailWebSocket(redisClient))
+    
+    // Index detail endpoints
+    r.GET("/index/:indexId", handlers.GetIndexDetail(redisClient))
+    r.GET("/ws/index/:indexId", handlers.IndexDetailWebSocket(redisClient))
+    
+    // Search endpoint
+    r.GET("/search", handlers.SearchStocks(redisClient))
+
 	protected := r.Group("/")
 	protected.Use(AuthMiddleware())
 	protected.GET("/hello", helloWorldHandler)
 	protected.POST("/deposit", depositHandler) 
 
-	log.Fatal(r.Run(":8080"))
+	go func() {
+        if err := r.Run(":8080"); err != nil {
+            log.Fatalf("Failed to start server: %v", err)
+        }
+    }()
+
+    // Set up graceful shutdown
+    quit := make(chan os.Signal, 1)
+    signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+    <-quit
+
+    log.Println("Shutting down server...")
+
+    // Perform any cleanup or shutdown operations here
+
+    log.Println("Server exited")
 }
