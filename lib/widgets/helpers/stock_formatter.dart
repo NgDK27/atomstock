@@ -12,6 +12,8 @@ extension StockFormatter on double {
     final symbol = isNegative ? '↓' : '↑';
     return '$symbol ${abs().toStringAsFixed(2)}%';
   }
+
+
 }
 
 extension StockColor on TextStyle {

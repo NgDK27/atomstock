@@ -89,6 +89,9 @@ class _$StatusCopyWithImpl<$Res, $Val extends Status>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  /// Create a copy of Status
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -105,6 +108,9 @@ class __$$InitializedImplCopyWithImpl<$Res>
   __$$InitializedImplCopyWithImpl(
       _$InitializedImpl _value, $Res Function(_$InitializedImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of Status
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -231,6 +237,9 @@ class __$$LoadingImplCopyWithImpl<$Res>
   __$$LoadingImplCopyWithImpl(
       _$LoadingImpl _value, $Res Function(_$LoadingImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of Status
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -357,6 +366,9 @@ class __$$SuccessImplCopyWithImpl<$Res>
   __$$SuccessImplCopyWithImpl(
       _$SuccessImpl _value, $Res Function(_$SuccessImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of Status
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -486,6 +498,8 @@ class __$$ErrorImplCopyWithImpl<$Res>
       _$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of Status
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -532,7 +546,9 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   @override
   int get hashCode => Object.hash(runtimeType, message);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of Status
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
@@ -623,7 +639,10 @@ abstract class _Error implements Status {
   const factory _Error(final String message) = _$ErrorImpl;
 
   String get message;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of Status
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -642,6 +661,9 @@ class __$$AwaitingUpdateImplCopyWithImpl<$Res>
   __$$AwaitingUpdateImplCopyWithImpl(
       _$AwaitingUpdateImpl _value, $Res Function(_$AwaitingUpdateImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of Status
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc

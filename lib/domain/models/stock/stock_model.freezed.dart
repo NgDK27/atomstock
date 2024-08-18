@@ -46,8 +46,12 @@ mixin _$StockModel {
   double? get low => throw _privateConstructorUsedError;
   set low(double? value) => throw _privateConstructorUsedError;
 
+  /// Serializes this StockModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of StockModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $StockModelCopyWith<StockModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -85,6 +89,8 @@ class _$StockModelCopyWithImpl<$Res, $Val extends StockModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of StockModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -197,6 +203,8 @@ class __$$StockModelImplCopyWithImpl<$Res>
       _$StockModelImpl _value, $Res Function(_$StockModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of StockModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -354,7 +362,9 @@ class _$StockModelImpl extends _StockModel with DiagnosticableTreeMixin {
       ..add(DiagnosticsProperty('low', low));
   }
 
-  @JsonKey(ignore: true)
+  /// Create a copy of StockModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$StockModelImplCopyWith<_$StockModelImpl> get copyWith =>
@@ -428,8 +438,11 @@ abstract class _StockModel extends StockModel {
   @override
   double? get low;
   set low(double? value);
+
+  /// Create a copy of StockModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$StockModelImplCopyWith<_$StockModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

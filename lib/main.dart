@@ -22,10 +22,14 @@ class OppenhomiesApp extends ConsumerWidget {
 
   // TODO: Remove once flutter_dynamic_colors is fixed
   (ColorScheme light, ColorScheme dark) _generateDynamicColourSchemes(
-      ColorScheme lightDynamic, ColorScheme darkDynamic,) {
+    ColorScheme lightDynamic,
+    ColorScheme darkDynamic,
+  ) {
     var lightBase = ColorScheme.fromSeed(seedColor: lightDynamic.primary);
     var darkBase = ColorScheme.fromSeed(
-        seedColor: darkDynamic.primary, brightness: Brightness.dark,);
+      seedColor: darkDynamic.primary,
+      brightness: Brightness.dark,
+    );
     var lightAdditionalColours = _extractAdditionalColours(lightBase);
     var darkAdditionalColours = _extractAdditionalColours(darkBase);
     var lightScheme =
@@ -33,6 +37,7 @@ class OppenhomiesApp extends ConsumerWidget {
     var darkScheme = _insertAdditionalColours(darkBase, darkAdditionalColours);
     return (lightScheme.harmonized(), darkScheme.harmonized());
   }
+
   List<Color> _extractAdditionalColours(ColorScheme scheme) => [
         scheme.surface,
         scheme.surfaceDim,
@@ -43,8 +48,11 @@ class OppenhomiesApp extends ConsumerWidget {
         scheme.surfaceContainerHigh,
         scheme.surfaceContainerHighest,
       ];
+
   ColorScheme _insertAdditionalColours(
-          ColorScheme scheme, List<Color> additionalColours,) =>
+    ColorScheme scheme,
+    List<Color> additionalColours,
+  ) =>
       scheme.copyWith(
         surface: additionalColours[0],
         surfaceDim: additionalColours[1],
@@ -59,8 +67,11 @@ class OppenhomiesApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Edge-to-edge
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        systemNavigationBarColor: Colors.transparent,),);
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.transparent,
+      ),
+    );
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
     return PlatformProvider(
@@ -69,41 +80,46 @@ class OppenhomiesApp extends ConsumerWidget {
           // TODO: Replace once flutter_dynamic_colors is fixed
           // TEMPORARY FIX because flutter_dynamic_colors are not generating all colors
           DynamicColorBuilder(
-              builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-        ColorScheme? lightScheme, darkScheme;
+        builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+          ColorScheme? lightScheme, darkScheme;
 
-        if (lightDynamic != null && darkDynamic != null) {
-          (lightScheme, darkScheme) =
-              _generateDynamicColourSchemes(lightDynamic, darkDynamic);
-        } else {
-          lightScheme = lightDynamic;
-          darkScheme = darkDynamic;
-        }
-        // CORRECT VERSION from documentation
-        // DynamicColorBuilder(
-        // builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic)
+          if (lightDynamic != null && darkDynamic != null) {
+            (lightScheme, darkScheme) =
+                _generateDynamicColourSchemes(lightDynamic, darkDynamic);
+          } else {
+            lightScheme = lightDynamic;
+            darkScheme = darkDynamic;
+          }
+          // CORRECT VERSION from documentation
+          // DynamicColorBuilder(
+          // builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic)
 
-        return PlatformTheme(
-          themeMode: ThemeMode.system,
-          materialLightTheme: ThemeData(
-              colorScheme: lightScheme, textTheme: opMaterialTextTheme,),
-          materialDarkTheme: ThemeData(
-              colorScheme: darkScheme, textTheme: opMaterialTextTheme,),
-          cupertinoLightTheme: opCupertinoLightTheme,
-          cupertinoDarkTheme: opCupertinoDarkTheme,
-          builder: (context) => PlatformApp.router(
-            title: 'Atomstock',
-            routerConfig: OpRouter.router,
-            debugShowCheckedModeBanner: false,
-            // Hide "Debug" banner
-            localizationsDelegates: <LocalizationsDelegate<dynamic>>[
-              DefaultMaterialLocalizations.delegate,
-              DefaultWidgetsLocalizations.delegate,
-              DefaultCupertinoLocalizations.delegate,
-            ],
-          ),
-        );
-      },),
+          return PlatformTheme(
+            themeMode: ThemeMode.system,
+            materialLightTheme: ThemeData(
+              colorScheme: lightScheme,
+              textTheme: opMaterialTextTheme,
+            ),
+            materialDarkTheme: ThemeData(
+              colorScheme: darkScheme,
+              textTheme: opMaterialTextTheme,
+            ),
+            cupertinoLightTheme: opCupertinoLightTheme,
+            cupertinoDarkTheme: opCupertinoDarkTheme,
+            builder: (context) => PlatformApp.router(
+              title: 'Atomstock',
+              routerConfig: OpRouter.router,
+              debugShowCheckedModeBanner: false,
+              // Hide "Debug" banner
+              localizationsDelegates: <LocalizationsDelegate<dynamic>>[
+                DefaultMaterialLocalizations.delegate,
+                DefaultWidgetsLocalizations.delegate,
+                DefaultCupertinoLocalizations.delegate,
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

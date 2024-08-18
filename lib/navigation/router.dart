@@ -33,7 +33,9 @@ class OpRouter {
         },
         routes: [
           OpRoutes.home.route(),
-          OpRoutes.ai.route(),
+          OpRoutes.ai.route(
+
+          ),
           OpRoutes.automations.route(
             routes: [
               OpRoutes.automationDetails.route(),

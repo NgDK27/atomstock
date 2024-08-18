@@ -46,8 +46,12 @@ mixin _$AutomationModel {
   double? get low => throw _privateConstructorUsedError;
   set low(double? value) => throw _privateConstructorUsedError;
 
+  /// Serializes this AutomationModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of AutomationModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $AutomationModelCopyWith<AutomationModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -85,6 +89,8 @@ class _$AutomationModelCopyWithImpl<$Res, $Val extends AutomationModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of AutomationModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -197,6 +203,8 @@ class __$$AutomationModelImplCopyWithImpl<$Res>
       _$AutomationModelImpl _value, $Res Function(_$AutomationModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of AutomationModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -355,7 +363,9 @@ class _$AutomationModelImpl extends _AutomationModel
       ..add(DiagnosticsProperty('low', low));
   }
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AutomationModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$AutomationModelImplCopyWith<_$AutomationModelImpl> get copyWith =>
@@ -430,8 +440,11 @@ abstract class _AutomationModel extends AutomationModel {
   @override
   double? get low;
   set low(double? value);
+
+  /// Create a copy of AutomationModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AutomationModelImplCopyWith<_$AutomationModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
