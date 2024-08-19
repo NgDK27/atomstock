@@ -13,6 +13,8 @@ class StockPricePoints with _$StockPricePoints {
     @Default([]) List<StockPricePoint> points,
   }) = _StockPricePoints;
 
+  // TODO: Query backend for data spots
+
   double get minPrice => points.isEmpty ? 0 : points.map((p) => p.price).reduce((a, b) => a < b ? a : b);
   double get maxPrice => points.isEmpty ? 0 : points.map((p) => p.price).reduce((a, b) => a > b ? a : b);
   DateTime get startDate => points.isEmpty ? DateTime.now() : points.first.timestamp;

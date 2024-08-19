@@ -7,6 +7,7 @@ part 'stock_model.g.dart';
 @unfreezed
 class StockModel with _$StockModel {
   factory StockModel({
+    // TODO: Add 'market this stock belongs to'
     required final String id,
     required final String name,
     required final String ticker,
