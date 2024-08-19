@@ -4,6 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'stock_price_point.dart';
 
 part 'stock_price_points.freezed.dart';
+part 'stock_price_points.g.dart';
 
 @freezed
 class StockPricePoints with _$StockPricePoints {
@@ -12,6 +13,8 @@ class StockPricePoints with _$StockPricePoints {
   const factory StockPricePoints({
     @Default([]) List<StockPricePoint> points,
   }) = _StockPricePoints;
+
+  factory StockPricePoints.fromJson(Map<String, dynamic> json) => _$StockPricePointsFromJson(json);
 
   // TODO: Query backend for data spots
 

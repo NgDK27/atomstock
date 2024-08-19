@@ -14,9 +14,16 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
+StockPricePoints _$StockPricePointsFromJson(Map<String, dynamic> json) {
+  return _StockPricePoints.fromJson(json);
+}
+
 /// @nodoc
 mixin _$StockPricePoints {
   List<StockPricePoint> get points => throw _privateConstructorUsedError;
+
+  /// Serializes this StockPricePoints to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
   /// Create a copy of StockPricePoints
   /// with the given fields replaced by the non-null parameter values.
@@ -96,11 +103,14 @@ class __$$StockPricePointsImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
+@JsonSerializable()
 class _$StockPricePointsImpl extends _StockPricePoints {
   const _$StockPricePointsImpl({final List<StockPricePoint> points = const []})
       : _points = points,
         super._();
+
+  factory _$StockPricePointsImpl.fromJson(Map<String, dynamic> json) =>
+      _$$StockPricePointsImplFromJson(json);
 
   final List<StockPricePoint> _points;
   @override
@@ -124,6 +134,7 @@ class _$StockPricePointsImpl extends _StockPricePoints {
             const DeepCollectionEquality().equals(other._points, _points));
   }
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, const DeepCollectionEquality().hash(_points));
@@ -136,12 +147,22 @@ class _$StockPricePointsImpl extends _StockPricePoints {
   _$$StockPricePointsImplCopyWith<_$StockPricePointsImpl> get copyWith =>
       __$$StockPricePointsImplCopyWithImpl<_$StockPricePointsImpl>(
           this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$StockPricePointsImplToJson(
+      this,
+    );
+  }
 }
 
 abstract class _StockPricePoints extends StockPricePoints {
   const factory _StockPricePoints({final List<StockPricePoint> points}) =
       _$StockPricePointsImpl;
   const _StockPricePoints._() : super._();
+
+  factory _StockPricePoints.fromJson(Map<String, dynamic> json) =
+      _$StockPricePointsImpl.fromJson;
 
   @override
   List<StockPricePoint> get points;

@@ -8,6 +8,8 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:oppenhomies/domain/models/stock/stock_model.dart';
 import 'package:oppenhomies/pages/market/stock_details/models/stock_details_tab_destinations.dart';
+import 'package:oppenhomies/pages/market/stock_details/screens/stock_details_ai.dart';
+import 'package:oppenhomies/pages/market/stock_details/screens/stock_details_automation.dart';
 import 'package:oppenhomies/pages/market/stock_details/screens/stock_details_overview.dart';
 import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/spacings.dart';
@@ -20,8 +22,8 @@ class StockDetails extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Stock
-    final stock = StockModel.negativeSample();
+    // Stock data
+    final stock = StockModel.detailedSample();
 
     // Coloring based on change
     final accentColor =
@@ -84,7 +86,7 @@ class StockDetails extends HookConsumerWidget {
       material: (_, __) =>
           MaterialScaffoldData(backgroundColor: accentColorScheme.surface),
       appBar: PlatformAppBar(
-        title: Text(stock.ticker),
+        title: Text(stock.symbol),
         material: (_, __) => MaterialAppBarData(
           centerTitle: true,
           backgroundColor: accentColorScheme.surface,
@@ -130,8 +132,9 @@ class StockDetails extends HookConsumerWidget {
                     case DetailsTabDestinations.overview:
                       return StockDetailsOverview(stock: stock);
                     case DetailsTabDestinations.automations:
+                      return StockDetailsAutomation();
                     case DetailsTabDestinations.ai:
-                      return const Placeholder();
+                      return StockDetailsAi();
                   }
                 }).toList(),
               ),

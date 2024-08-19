@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:oppenhomies/domain/models/stock/stock_price_date_filters.dart';
 import 'package:oppenhomies/domain/models/stock/stock_price_point.dart';
 import 'package:oppenhomies/domain/models/stock/stock_price_points.dart';
 import 'package:oppenhomies/pages/funds/layouts/move_funds.dart';
@@ -20,12 +21,14 @@ import 'package:oppenhomies/widgets/helpers/stock_formatter.dart';
 import 'package:intl/intl.dart';
 
 class StockLineChart extends StatefulHookWidget {
-  // final String title;
+  final StockPricePoints stockPricePoints;
+  final StockPriceDateFilter selectedDateFilter;
 
   const StockLineChart({
-    Key? key,
-    // required this.title,
-  }) : super(key: key);
+    super.key,
+    required this.stockPricePoints,
+    required this.selectedDateFilter
+  });
 
   @override
   State<StockLineChart> createState() => _StockLineChartState();
@@ -34,28 +37,15 @@ class StockLineChart extends StatefulHookWidget {
 class _StockLineChartState extends State<StockLineChart> {
   @override
   Widget build(BuildContext context) {
-    final stockPricePoints = useState(StockPricePoints.sample());
-    final dateFilterOptions = ["1D", '5D', '1M', '3M', '6M', 'All'];
-    final selectedFilter = useState('5D');
+    final stockPricePoints = useState(widget.stockPricePoints);
 
     final filteredData = useMemoized(() {
       final now = DateTime.now();
-      final filtered = switch (selectedFilter.value) {
-        '1D' => stockPricePoints.value.points.where((point) =>
-            point.timestamp.isAfter(now.subtract(const Duration(days: 1)))),
-        '5D' => stockPricePoints.value.points.where((point) =>
-            point.timestamp.isAfter(now.subtract(const Duration(days: 5)))),
-        '1M' => stockPricePoints.value.points.where((point) =>
-            point.timestamp.isAfter(now.subtract(const Duration(days: 30)))),
-        '3M' => stockPricePoints.value.points.where((point) =>
-            point.timestamp.isAfter(now.subtract(const Duration(days: 90)))),
-        '6M' => stockPricePoints.value.points.where((point) =>
-            point.timestamp.isAfter(now.subtract(const Duration(days: 180)))),
-        'All' => stockPricePoints.value.points,
-        _ => stockPricePoints.value.points,
-      };
-      return filtered.toList();
-    }, [selectedFilter.value, stockPricePoints.value]);
+      return stockPricePoints.value.points.where((point) =>
+          point.timestamp.isAfter(now.subtract(widget.selectedDateFilter.duration),),
+      ).toList();
+    }, [widget.selectedDateFilter, stockPricePoints.value],);
+
 
     final hasData = filteredData.isNotEmpty;
 
@@ -81,41 +71,38 @@ class _StockLineChartState extends State<StockLineChart> {
                 ? LineChart(
                 curve: Curves.easeInOutQuad,
                 duration: Duration(milliseconds: 300),
-                mainData(accentColor, filteredData, selectedFilter.value))
+                mainData(accentColor, filteredData, widget.selectedDateFilter))
                 : const Center(
                 child: Text('No data available for this period')),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: OpSpacing.xs3),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              for (final label in dateFilterOptions)
-                OpNeutralTextButton(
-                  text: label,
-                  onPressed: () => selectedFilter.value = label,
-                  tightPadding: true,
-                ),
-            ],
-          ),
-        ),
+        // Padding(
+        //   padding: const EdgeInsets.symmetric(horizontal: OpSpacing.xs3),
+        //   child: Row(
+        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //     children: [
+        //       for (final label in dateFilterOptions)
+        //         OpNeutralTextButton(
+        //           text: label,
+        //           onPressed: () => selectedFilter.value = label,
+        //           tightPadding: true,
+        //         ),
+        //     ],
+        //   ),
+        // ),
       ],
     );
   }
 
-  Widget bottomTitleWidgets(double value, TitleMeta meta, String filter) {
+  Widget bottomTitleWidgets(double value, TitleMeta meta, StockPriceDateFilter filter) {
     final style = OpTextStyle.labelSmall(context);
     final date = DateTime.fromMillisecondsSinceEpoch(value.toInt());
 
-    String text;
-    if (filter == '1D') {
-      text = DateFormat('HH:mm').format(date);
-    } else if (filter == '5D' || filter == '1M') {
-      text = DateFormat('MMM d').format(date);
-    } else {
-      text = DateFormat('MMM yyyy').format(date);
-    }
+    final text = switch (filter) {
+      StockPriceDateFilter.oneDay => DateFormat('HH:mm').format(date),
+      StockPriceDateFilter.oneWeek || StockPriceDateFilter.oneMonth => DateFormat('MMM d').format(date),
+      _ => DateFormat('MMM yyyy').format(date),
+    };
 
     return SideTitleWidget(
       axisSide: meta.axisSide,
@@ -157,7 +144,7 @@ class _StockLineChartState extends State<StockLineChart> {
   }
 
   LineChartData mainData(
-      Color accentColor, List<StockPricePoint> data, String filter) {
+      Color accentColor, List<StockPricePoint> data, StockPriceDateFilter filter) {
     if (data.isEmpty) {
       return LineChartData();
     }

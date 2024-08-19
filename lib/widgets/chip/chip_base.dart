@@ -48,7 +48,7 @@ class ChipMediumPrimary extends ChipBase {
 
   @override
   TextStyle? getTextStyle(BuildContext context) =>
-      OpTextStyle.labelMediumProminent(context)?.copyWith(
+      OpTextStyle.labelSmall(context).spacedOut().bold().copyWith(
         color: OpDynamicColor.onPrimaryContainer(context),
       );
 }
@@ -63,8 +63,22 @@ class ChipMediumNeutral extends ChipBase {
 
   @override
   TextStyle? getTextStyle(BuildContext context) =>
-      OpTextStyle.labelMediumProminent(context)?.copyWith(
+      OpTextStyle.labelSmall(context).spacedOut().bold().copyWith(
         color: OpDynamicColor.onPrimaryContainer(context),
+      );
+}
+
+class ChipMediumNeutralInverse extends ChipBase {
+  const ChipMediumNeutralInverse({super.key, required super.text});
+
+  @override
+  Color getColor(BuildContext context) =>
+      OpDynamicColor.inverseSurface(context);
+
+  @override
+  TextStyle? getTextStyle(BuildContext context) =>
+      OpTextStyle.labelSmall(context).spacedOut().bold().copyWith(
+        color: OpDynamicColor.surface(context),
       );
 }
 
@@ -83,7 +97,7 @@ class ChipMediumAqua extends ChipBase {
 
   @override
   TextStyle? getTextStyle(BuildContext context) =>
-      OpTextStyle.labelMediumProminent(context)?.copyWith(
+      OpTextStyle.labelSmall(context).spacedOut().bold().copyWith(
         color: OpDynamicColor.onPrimaryContainer(context),
       );
 }
@@ -101,7 +115,7 @@ class ChipMediumCherry extends ChipBase {
 
   @override
   TextStyle? getTextStyle(BuildContext context) =>
-      OpTextStyle.labelMediumProminent(context)?.copyWith(
+      OpTextStyle.labelSmall(context).spacedOut().bold().copyWith(
         color: OpDynamicColor.onPrimaryContainer(context),
       );
 }
@@ -115,5 +129,5 @@ class ChipSmall extends ChipBase {
 
   @override
   TextStyle? getTextStyle(BuildContext context) =>
-      OpTextStyle.labelSmall(context);
+      OpTextStyle.labelSmall(context).bold().spacedOut();
 }

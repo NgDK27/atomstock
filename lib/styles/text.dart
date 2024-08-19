@@ -86,7 +86,7 @@ class OpTextStyle {
     context,
     material: (data) => data.textTheme.labelSmall,
     cupertino: (data) => data.textTheme.tabLabelTextStyle.copyWith(
-      fontSize: (data.textTheme.tabLabelTextStyle.fontSize ?? 10) * 1.3,
+      fontSize: (data.textTheme.tabLabelTextStyle.fontSize ?? 10) * 1.1,
     ),
   );
 
@@ -94,7 +94,7 @@ class OpTextStyle {
     context,
     material: (data) => data.textTheme.labelMedium,
     cupertino: (data) => data.textTheme.tabLabelTextStyle.copyWith(
-      fontSize: (data.textTheme.tabLabelTextStyle.fontSize ?? 10) * 1.1,
+      fontSize: (data.textTheme.tabLabelTextStyle.fontSize ?? 10) * 1.3,
       letterSpacing: 0.8,
     ),
   );

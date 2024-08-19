@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:oppenhomies/domain/models/stock/exchange_model.dart';
+import 'package:oppenhomies/domain/models/stock/stock_price_points.dart';
 
 part 'stock_model.freezed.dart';
 part 'stock_model.g.dart';
@@ -7,10 +9,9 @@ part 'stock_model.g.dart';
 @unfreezed
 class StockModel with _$StockModel {
   factory StockModel({
-    // TODO: Add 'market this stock belongs to'
     required final String id,
     required final String name,
-    required final String ticker,
+    required final String symbol,
     required double currentPrice,
     required double priceChange,
     required double percentChange,
@@ -22,6 +23,8 @@ class StockModel with _$StockModel {
     double? close,
     double? high,
     double? low,
+    ExchangeModel? exchange,
+    StockPricePoints? pricePoints,
   }) = _StockModel;
 
   const StockModel._();
@@ -31,7 +34,7 @@ class StockModel with _$StockModel {
   factory StockModel.sample() => StockModel(
     id: 'stock-001',
     name: 'Phở Stock Exchange',
-    ticker: 'PHO',
+    symbol: 'PHO',
     currentPrice: 58310000,
     priceChange: 24000,
     percentChange: 1.93,
@@ -40,7 +43,7 @@ class StockModel with _$StockModel {
   factory StockModel.positiveSample() => StockModel(
     id: 'stock-002',
     name: 'Bánh Mì Bonanza',
-    ticker: 'BMI',
+    symbol: 'BMI',
     currentPrice: 458000000,
     priceChange: 23000000,
     percentChange: 5.28,
@@ -49,7 +52,7 @@ class StockModel with _$StockModel {
   factory StockModel.negativeSample() => StockModel(
     id: 'stock-003',
     name: 'Durian Derivatives',
-    ticker: 'PUNGENT',
+    symbol: 'PUNGENT',
     currentPrice: 115000000,
     priceChange: -11500000,
     percentChange: -9.09,
@@ -58,7 +61,7 @@ class StockModel with _$StockModel {
   factory StockModel.detailedSample() => StockModel(
     id: 'stock-004',
     name: 'Cà Phê Sữa Đá Tech',
-    ticker: 'CAFE',
+    symbol: 'CAFE',
     currentPrice: 186000,
     priceChange: 8000,
     percentChange: 4.49,
@@ -70,6 +73,8 @@ class StockModel with _$StockModel {
     close: 186000,
     high: 187000,
     low: 177000,
+    exchange: ExchangeModel.hose(),
+    pricePoints: StockPricePoints.sample(),
   );
 
   Map<String, double?> get detailFields {

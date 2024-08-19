@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:oppenhomies/domain/models/stock/market_session.dart';
 import 'package:oppenhomies/domain/models/stock/stock_model.dart';
-import 'package:oppenhomies/pages/testing/chart_testing.dart';
+import 'package:oppenhomies/domain/models/stock/stock_price_date_filters.dart';
 import 'package:oppenhomies/styles/colors.dart';
-import 'package:oppenhomies/styles/opacities.dart';
 import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/styles/text.dart';
+import 'package:oppenhomies/widgets/buttons/neutral/op_neutral_text_button.dart';
+import 'package:oppenhomies/widgets/buttons/primary/OpTonalPrimaryButton.dart';
 import 'package:oppenhomies/widgets/charts/stock_price_chart.dart';
+import 'package:oppenhomies/widgets/chip/chip_base.dart';
 import 'package:oppenhomies/widgets/helpers/money_formatter.dart';
-import 'package:oppenhomies/widgets/helpers/stock_formatter.dart';
 import 'package:oppenhomies/widgets/tables/simple_row.dart';
 import 'package:oppenhomies/widgets/typography/stock_percent_change_text.dart';
 import 'package:oppenhomies/widgets/typography/stock_price_change_text.dart';
@@ -22,100 +25,165 @@ class StockDetailsOverview extends HookWidget {
   Widget build(BuildContext context) {
     final detailFields = stock.detailFields.entries.toList();
     final split = (detailFields.length / 2).ceil();
-    const mockTimeFrame = 'Yesterday';
 
-    return  ListView(
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: OpSpacing.md,
-              vertical: OpSpacing.lg,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      stock.ticker,
-                      style: OpTextStyle.titleLarge(context),
-                    ),
-                    SizedBox(width: OpSpacing.xs),
-                    Text(
-                      '•',
-                      style: OpTextStyle.titleSmall(context),
-                    ),
-                    SizedBox(width: OpSpacing.xs),
-                    Text(
-                      stock.name,
-                      style: OpTextStyle.titleLarge(context),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: OpSpacing.xs3,
-                ),
-                Text(
-                  stock.currentPrice.vndFormat(),
-                  style: OpTextStyle.display(context).spacedOut(),
-                ),
-                SizedBox(
-                  height: OpSpacing.xs2,
-                ),
-                Row(
-                  children: [
-                    StockPriceChangeText(
-                      value: stock.priceChange,
-                    ),
-                    const SizedBox(width: OpSpacing.sm),
-                    StockPercentChangeText(
-                      value: stock.percentChange,
-                    ),
-                    const SizedBox(width: OpSpacing.sm),
-                    Text(
-                      mockTimeFrame,
-                      style: OpTextStyle.labelMedium(context),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+    const dateFilterOptions = StockPriceDateFilter.values;
+    final selectedFilter = useState(StockPriceDateFilter.oneDay);
+    final mockTimeFrame = selectedFilter.value;
+
+    final marketSession = useState(MarketSession.closed);
+
+    return ListView(
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: OpSpacing.md,
+            vertical: OpSpacing.lg,
           ),
-          //region Chart placeholder
-
-          StockLineChart(),
-          //endregion
-          Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: OpSpacing.md, vertical: OpSpacing.lg,),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: _buildHalfColumn(
-                    detailFields.sublist(0, split),
-                    context,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              switch (marketSession.value) {
+                MarketSession.open => ChipMediumAqua(
+                    text: "HOSE • ${marketSession.value.label}",
                   ),
-                ),
-                SizedBox(
-                  width: OpSpacing.lg,
-                ),
-                Expanded(
-                  child: _buildHalfColumn(
-                    detailFields.sublist(split),
-                    context,
+                MarketSession.closed => ChipMediumNeutral(
+                    text: "HOSE • ${marketSession.value.label}",
                   ),
-                ),
-              ],
-            ),
+              },
+              SizedBox(
+                height: OpSpacing.sm,
+              ),
+              Row(
+                children: [
+                  Text(
+                    stock.symbol,
+                    style: OpTextStyle.titleLarge(context),
+                  ),
+                  SizedBox(width: OpSpacing.xs),
+                  Text(
+                    '•',
+                    style: OpTextStyle.titleSmall(context),
+                  ),
+                  SizedBox(width: OpSpacing.xs),
+                  Text(
+                    stock.name,
+                    style: OpTextStyle.titleLarge(context),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: OpSpacing.xs3,
+              ),
+              Text(
+                stock.currentPrice.vndFormat(),
+                style: OpTextStyle.display(context).spacedOut(),
+              ),
+              SizedBox(
+                height: OpSpacing.xs2,
+              ),
+              Row(
+                children: [
+                  StockPriceChangeText(
+                    value: stock.priceChange,
+                  ),
+                  const SizedBox(width: OpSpacing.sm),
+                  StockPercentChangeText(
+                    value: stock.percentChange,
+                  ),
+                  const SizedBox(width: OpSpacing.sm),
+                  Text(
+                    mockTimeFrame.description,
+                    style: OpTextStyle.labelMedium(context),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
 
+        //region Chart
+        if (stock.pricePoints != null)
+          Column(
+            children: [
+              StockLineChart(
+                stockPricePoints: stock.pricePoints!,
+                selectedDateFilter: selectedFilter.value,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: OpSpacing.xs3),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: dateFilterOptions
+                      .map(
+                        (filter) => filter == selectedFilter.value
+                            ? OpTonalPrimaryButton(
+                                text: filter.label,
+                                onPressed: () {},
+                              )
+                            : OpNeutralTextButton(
+                                text: filter.label,
+                                onPressed: () => selectedFilter.value = filter,
+                                tightPadding: true,
+                              ),
+                      )
+                      .toList(),
+                ),
+              ),
+            ],
+          )
+        else
+          Column(children: [
+            SizedBox(
+              height: OpSpacing.xl5,
+            ),
+            Text(
+              'No price data available',
+              style: OpTextStyle.labelLarge(context)
+                  ?.copyWith(color: OpDynamicColor.onSurfaceVariant(context)),
+            ),
+            SizedBox(
+              height: OpSpacing.xl5,
+            ),
+          ]),
+        //region Date filters
+
+        //endregion
+        //endregion
+
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: OpSpacing.md,
+            vertical: OpSpacing.lg,
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: _buildHalfColumn(
+                  detailFields.sublist(0, split),
+                  context,
+                ),
+              ),
+              SizedBox(
+                width: OpSpacing.lg,
+              ),
+              Expanded(
+                child: _buildHalfColumn(
+                  detailFields.sublist(split),
+                  context,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildHalfColumn(
-      List<MapEntry<String, double?>> entries, BuildContext context,) {
+    List<MapEntry<String, double?>> entries,
+    BuildContext context,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [

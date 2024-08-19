@@ -10,7 +10,7 @@ _$StockModelImpl _$$StockModelImplFromJson(Map<String, dynamic> json) =>
     _$StockModelImpl(
       id: json['id'] as String,
       name: json['name'] as String,
-      ticker: json['ticker'] as String,
+      symbol: json['symbol'] as String,
       currentPrice: (json['currentPrice'] as num).toDouble(),
       priceChange: (json['priceChange'] as num).toDouble(),
       percentChange: (json['percentChange'] as num).toDouble(),
@@ -22,13 +22,20 @@ _$StockModelImpl _$$StockModelImplFromJson(Map<String, dynamic> json) =>
       close: (json['close'] as num?)?.toDouble(),
       high: (json['high'] as num?)?.toDouble(),
       low: (json['low'] as num?)?.toDouble(),
+      exchange: json['exchange'] == null
+          ? null
+          : ExchangeModel.fromJson(json['exchange'] as Map<String, dynamic>),
+      pricePoints: json['pricePoints'] == null
+          ? null
+          : StockPricePoints.fromJson(
+              json['pricePoints'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$StockModelImplToJson(_$StockModelImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'ticker': instance.ticker,
+      'symbol': instance.symbol,
       'currentPrice': instance.currentPrice,
       'priceChange': instance.priceChange,
       'percentChange': instance.percentChange,
@@ -40,4 +47,6 @@ Map<String, dynamic> _$$StockModelImplToJson(_$StockModelImpl instance) =>
       'close': instance.close,
       'high': instance.high,
       'low': instance.low,
+      'exchange': instance.exchange,
+      'pricePoints': instance.pricePoints,
     };
