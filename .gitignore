@@ -54,3 +54,4 @@ venv
 .fvm/
 /.fvmrc
 /server/cmd/dump.rdb
+!/ai_backend/tmp/
