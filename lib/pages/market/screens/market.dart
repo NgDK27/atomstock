@@ -21,29 +21,27 @@ class Market extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+
     final sampleStocks = [
       StockModel.sample(),
       StockModel.positiveSample(),
       StockModel.negativeSample(),
+      StockModel.detailedSample(),
     ];
 
     return OpPlatformSliverScaffold(
-      title: "Market",
+      title: "Explore",
       transitionBetweenRoutes: false,
       slivers: [
         SliverSafeArea(
           top: false,
-          // minimum: EdgeInsets.symmetric(horizontal: OpSpacing.md),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
-              PlatformWidget(
-                cupertino: (_, __) => const SizedBox(height: OpSpacing.sm),
-              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: OpSpacing.md),
                 child: PlatformWidget(
                   cupertino: (_, __) => CupertinoSearchTextField(
-                    placeholder: "Search",
+                    placeholder: "Search for stocks and indexes",
                     onTap: () => navigateMarketSearch(context),
                   ),
                   material: (_, __) => SearchBar(
@@ -51,43 +49,12 @@ class Market extends ConsumerWidget {
                       padding: EdgeInsets.only(left: OpSpacing.xs),
                       child: Icon(Icons.search),
                     ),
-                    hintText: "Search",
+                    hintText: "Search for stocks and indexes",
                     elevation: const WidgetStatePropertyAll(0),
                     onTap: () => navigateMarketSearch(context),
                   ),
                 ),
               ),
-              const SizedBox(height: OpSpacing.lg),
-              const OpTitle("Indexes"),
-              ...sampleStocks.map((stock) => StockListTile(stock: stock)),
-              const SizedBox(height: OpSpacing.xl),
-              OpTitle(
-                "Top performers today",
-                leading: Text(
-                  "↗",
-                  style:
-                      TextStyle(color: OpDynamicColor.aquaHarmonized(context))
-                          .bold(),
-                ),
-              ),
-              ...sampleStocks.map((stock) => StockListTile(stock: stock)),
-              const SizedBox(
-                height: OpSpacing.xl,
-              ),
-              OpTitle(
-                "Top decliners today",
-                leading: Text(
-                  "↘",
-                  style:
-                      TextStyle(color: OpDynamicColor.cherryHarmonized(context))
-                          .bold(),
-                ),
-              ),
-              ...sampleStocks.map((stock) => StockListTile(stock: stock)),
-              const SizedBox(height: OpSpacing.xl),
-              OpTitle("Top movers today",
-                  leading: Text("↔", style: const TextStyle().bold()),),
-              ...sampleStocks.map((stock) => StockListTile(stock: stock)),
             ]),
           ),
         ),

@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/styles/text.dart';
 
-class OpTitle extends StatelessWidget {
+class OpTitleSmall extends StatelessWidget {
   final Widget? leading;
   final String title;
 
-  const OpTitle(this.title, {super.key, this.leading});
+  const OpTitleSmall(this.title, {super.key, this.leading});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class OpTitle extends StatelessWidget {
               ],
               Text(
                 title,
-                style: OpTextStyle.titleSmall(context)?.copyWith(
+                style: OpTextStyle.labelMediumProminent(context)?.copyWith(
                   fontVariations: [const FontVariation.weight(600)],
                 ),
               ),

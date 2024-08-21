@@ -49,38 +49,38 @@ class OpRouter {
             ],
           ),
           OpRoutes.portfolio.route(),
-        ],
-      ),
-      OpRoutes.settings.route(
-        routes: [
-          OpRoutes.connectedAccounts.route(),
-          OpRoutes.yourName.route(),
-          OpRoutes.verifyCurrentEmail.route(
+          OpRoutes.settings.route(
             routes: [
-              OpRoutes.inputNewEmail.route(
+              OpRoutes.connectedAccounts.route(),
+              OpRoutes.yourName.route(),
+              OpRoutes.verifyCurrentEmail.route(
                 routes: [
-                  OpRoutes.verifyNewEmail.route(
-                    routes: [OpRoutes.updateEmailCompleted.route()],
+                  OpRoutes.inputNewEmail.route(
+                    routes: [
+                      OpRoutes.verifyNewEmail.route(
+                        routes: [OpRoutes.updateEmailCompleted.route()],
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
-          OpRoutes.verifyCurrentPassword.route(
-            routes: [
-              OpRoutes.inputNewPassword.route(
+              OpRoutes.verifyCurrentPassword.route(
                 routes: [
-                  OpRoutes.updatePasswordCompleted.route(
+                  OpRoutes.inputNewPassword.route(
+                    routes: [
+                      OpRoutes.updatePasswordCompleted.route(
+                      ),
+                    ],
                   ),
                 ],
               ),
+              OpRoutes.thirdPartySignIn.route(),
+              OpRoutes.appearance.route(),
+              OpRoutes.language.route(),
+              OpRoutes.faq.route(),
+              OpRoutes.contactSupport.route(),
             ],
           ),
-          OpRoutes.thirdPartySignIn.route(),
-          OpRoutes.appearance.route(),
-          OpRoutes.language.route(),
-          OpRoutes.faq.route(),
-          OpRoutes.contactSupport.route(),
         ],
       ),
       OpRoutes.notifications.route(),

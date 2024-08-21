@@ -104,7 +104,8 @@ class OpRoutes {
   static final settings = RouteModel(
     path: '/settings',
     name: 'settings',
-    builder: (context, state) => const Settings(),
+    pageBuilder: (context, state) => buildPageWithFadeTransition(
+      context: context, state: state, child: const Settings(),),
   );
 
   static final automationDetails = RouteModel(
