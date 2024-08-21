@@ -242,17 +242,269 @@ class _AiState extends ConsumerState<Ai> {
   }
 }
 
+// =======================================================
+//                          TESTING
+// =======================================================
 
+/*
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:oppenhomies/styles/spacings.dart';
+import 'package:oppenhomies/widgets/scaffolds/platform_sliver_scaffold.dart';
+import 'package:oppenhomies/domain/services/services.dart';
 
+class Ai extends ConsumerStatefulWidget {
+  const Ai({super.key});
+
+  @override
+  _AiState createState() => _AiState();
+}
+
+class _AiState extends ConsumerState<Ai> {
+  final OpenAIService openAIService = OpenAIService();
+  final TextEditingController _controller = TextEditingController();
+  List<Map<String, String>> messages = [];
+  bool hasStartedChat = false;
+
+  bool isLoggedIn = true; // Set false for new user's view 
+
+  void _sendMessage() async {
+    final text = _controller.text;
+    if (text.isNotEmpty) {
+      setState(() {
+        hasStartedChat = true;
+        messages.add({'sender': 'user', 'text': text});
+      });
+      _controller.clear();
+
+      final response = await openAIService.generateResponse(text, 'user-123');
+      setState(() {
+        messages.add({'sender': 'bot', 'text': response.trim()});
+      });
+    }
+  }
+
+  void _loadConversation(List<Map<String, String>> conversation) {
+    setState(() {
+      messages = conversation;
+      hasStartedChat = true;
+    });
+  }
+
+  void _startNewConversation() {
+    setState(() {
+      messages.clear();
+      hasStartedChat = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        title: Text(
+          "Oppenhomies AI Chat",
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        actions: [
+          if (!isLoggedIn)
+            IconButton(
+              icon: Icon(Icons.add_comment, color: Colors.white),
+              onPressed: _startNewConversation,
+            ),
+        ],
+      ),
+      drawer: isLoggedIn ? _buildDrawer() : null,
+      body: _buildChatScreen(),
+    );
+  }
+
+  Widget _buildDrawer() {
+    return Drawer(
+      backgroundColor: Colors.grey[900],
+      child: Column(
+        children: <Widget>[
+          SizedBox(height: 50.0),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey[800],
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Icon(Icons.close, color: Colors.white),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    _startNewConversation();
+                    Navigator.pop(context);
+                  },
+                  child: Image.asset(
+                    'assets/images/app_icon.png',
+                    height: 30,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: <Widget>[
+                ListTile(
+                  title: Text('Example Conversation 1',
+                      style: TextStyle(color: Colors.white)),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: Text('Example Conversation 2',
+                      style: TextStyle(color: Colors.white)),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChatScreen() {
+    return Column(
+      children: [
+        Expanded(
+          child: hasStartedChat && messages.isNotEmpty
+              ? ListView.builder(
+                  padding: const EdgeInsets.all(16.0),
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) {
+                    final message = messages[index];
+                    return Align(
+                      alignment: message['sender'] == 'user'
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
+                      child: Card(
+                        color: message['sender'] == 'user'
+                            ? Colors.blueGrey[800]
+                            : Colors.grey[700],
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                message['sender'] == 'user' ? "You:" : "AI:",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              SizedBox(height: 8.0),
+                              Text(
+                                message['text'] ?? '',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                )
+              : _buildWelcomeScreen(),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _controller,
+                  style: TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    hintText: "Enter your message...",
+                    hintStyle: TextStyle(color: Colors.grey[500]),
+                    filled: true,
+                    fillColor: Colors.grey[800],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+              ),
+              IconButton(
+                icon: Icon(Icons.send, color: Colors.blueAccent),
+                onPressed: _sendMessage,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildWelcomeScreen() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            'assets/images/app_icon.png',
+            height: 100,
+          ),
+          SizedBox(height: 20),
+          Text(
+            "Frequently Asked Questions",
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          SizedBox(height: 10),
+          _buildFAQItem("What can this chatbot do?"),
+          _buildFAQItem("How can I improve my skills?"),
+          _buildFAQItem("What are the current trends?"),
+          _buildFAQItem("How can I contact support?"),
+          _buildFAQItem("Where can I find more information?"),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFAQItem(String question) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Text(
+        question,
+        style: TextStyle(fontSize: 16, color: Colors.grey[400]),
+      ),
+    );
+  }
+}
+*/
 
 // =======================================================
 //                          OLD        
 // =======================================================
-
-
-
-
-
+/*
 // import 'package:flutter/cupertino.dart';
 // import 'package:flutter/material.dart';
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -489,3 +741,4 @@ class _AiState extends ConsumerState<Ai> {
 //     );
 //   }
 // }
+*/
