@@ -43,12 +43,19 @@ from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 import os
 from flask_cors import CORS
-
-from chain import get_chain
-
+from langfuse.callback import CallbackHandler
+import chain
 app = Flask(__name__)
 CORS(app)  # Allow all origins
+LANGFUSE_PUBLIC_KEY =os.getenv("LANGFUSE_PUBLIC_KEY")
+LANGFUSE_SECRET_KEY =os.getenv("LANGFUSE_SECRET_KEY")
 
+langfuse_handler = CallbackHandler(
+    secret_key=LANGFUSE_SECRET_KEY,
+    public_key=LANGFUSE_PUBLIC_KEY,
+    host="https://cloud.langfuse.com", # 🇪🇺 EU region
+    # host="https://us.cloud.langfuse.com", # 🇺🇸 US region
+)
 # Load environment variables from .env file
 load_dotenv()
 
@@ -95,7 +102,7 @@ def generate_response():
 
     # Call OpenAI with Langfuse tracking
     # response = call_openai(prompt, user_id)
-    response = get_chain().invoke({"input":prompt})['answer']
+    response = chain.get_chain().invoke({"input":prompt}, config={"callbacks": [langfuse_handler]})['answer']
     if isinstance(response, dict) and 'error' in response:
         return jsonify(response), response['status_code']
     else:
