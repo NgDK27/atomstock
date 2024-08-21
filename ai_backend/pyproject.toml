@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "chat-backend"
+version = "0.1.0"
+description = "Chat backend"
+authors = ["Minh Vu <minh.duplo@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+Flask = "^3.0.3"
+langchain-openai = "^0.1.22"
+langchain-voyageai = "^0.1.1"
+langchain-qdrant = "^0.1.3"
+langchain = "^0.2.14"
+langchain-community = "^0.2.12"
+qdrant-client = "^1.11.0"
+python-dotenv = "^1.0.1"
+requests = "^2.32.3"
+flask-cors = "^4.0.1"
+langfuse = "^2.44.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
