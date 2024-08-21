@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:oppenhomies/styles/colors.dart';
 
 const interFontFeatures = <FontFeature>[
   FontFeature.enable('tnum'),
@@ -82,40 +83,45 @@ final opMaterialTextTheme = const TextTheme().copyWith(
 );
 
 final opCupertinoTextTheme = const CupertinoTextThemeData().copyWith(
-    textStyle: const CupertinoTextThemeData().textStyle.copyWith(
-      fontFamily: "Inter",
-      fontFeatures: interFontFeatures,
-      letterSpacing: 0,
-    ),
-    actionTextStyle: const CupertinoTextThemeData().actionTextStyle.copyWith(
-      fontFamily: "Inter",
-      fontFeatures: interFontFeatures,
-
-    ),
-    tabLabelTextStyle: const CupertinoTextThemeData().tabLabelTextStyle.copyWith(
-      fontFamily: "Inter",
-      fontFeatures: interFontFeatures,
-    ),
-    navTitleTextStyle: const CupertinoTextThemeData().navTitleTextStyle.copyWith(
-      fontFamily: "Inter",
-      fontFeatures: interFontFeatures,
-      fontVariations: [
-        const FontVariation.weight(500),
-      ],
-    ),
-    navLargeTitleTextStyle: const CupertinoTextThemeData().navLargeTitleTextStyle.copyWith(
-      fontFamily: "Inter",
-      fontFeatures: interFontFeatures,
-    ),
-    navActionTextStyle: const CupertinoTextThemeData().navActionTextStyle.copyWith(
-      fontFamily: "Inter",
-      fontFeatures: interFontFeatures,
-    ),
-    pickerTextStyle: const CupertinoTextThemeData().pickerTextStyle.copyWith(
-      fontFamily: "Inter",
-      fontFeatures: interFontFeatures,
-    ),
-    dateTimePickerTextStyle: const CupertinoTextThemeData().dateTimePickerTextStyle.copyWith(
-      fontFamily: "Inter",
-      fontFeatures: interFontFeatures,
-    ),);
+  primaryColor: OpLightDarkColor.primary,
+  textStyle: const CupertinoTextThemeData().textStyle.copyWith(
+        fontFamily: "Inter",
+        fontFeatures: interFontFeatures,
+        letterSpacing: 0,
+      ),
+  actionTextStyle: const CupertinoTextThemeData().actionTextStyle.copyWith(
+        fontFamily: "Inter",
+        fontFeatures: interFontFeatures,
+      ),
+  tabLabelTextStyle: const CupertinoTextThemeData().tabLabelTextStyle.copyWith(
+        fontFamily: "Inter",
+        fontFeatures: interFontFeatures,
+      ),
+  navTitleTextStyle: const CupertinoTextThemeData().navTitleTextStyle.copyWith(
+    fontFamily: "Inter",
+    fontFeatures: interFontFeatures,
+    fontVariations: [
+      const FontVariation.weight(500),
+    ],
+  ),
+  navLargeTitleTextStyle:
+      const CupertinoTextThemeData().navLargeTitleTextStyle.copyWith(
+            fontFamily: "Inter",
+            fontFeatures: interFontFeatures,
+          ),
+  navActionTextStyle:
+      const CupertinoTextThemeData().navActionTextStyle.copyWith(
+            fontFamily: "Inter",
+            fontFeatures: interFontFeatures,
+            color: OpLightDarkColor.primary,
+          ),
+  pickerTextStyle: const CupertinoTextThemeData().pickerTextStyle.copyWith(
+        fontFamily: "Inter",
+        fontFeatures: interFontFeatures,
+      ),
+  dateTimePickerTextStyle:
+      const CupertinoTextThemeData().dateTimePickerTextStyle.copyWith(
+            fontFamily: "Inter",
+            fontFeatures: interFontFeatures,
+          ),
+);

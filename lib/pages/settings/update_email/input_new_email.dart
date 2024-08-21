@@ -27,7 +27,7 @@ class InputNewEmail extends HookWidget {
         'Sign up attempted - Email: $email',);
     }
 
-    context.goNamed(OpRoutes.verifyNewEmail.name);
+    context.pushReplacementNamed(OpRoutes.verifyNewEmail.name);
   }
 
   @override

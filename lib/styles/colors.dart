@@ -59,7 +59,7 @@ class OpDynamicColor {
     return platformThemeData(
       context,
       material: (ThemeData data) => data.colorScheme.onPrimaryContainer,
-      cupertino: (_) => OpLightDarkColor.onSurface,
+      cupertino: (_) => OpLightDarkColor.onSurfacePrimaryContainer,
     );
   }
 
@@ -84,8 +84,15 @@ class OpDynamicColor {
     return platformThemeData(
       context,
       material: (ThemeData data) => data.colorScheme.inverseSurface,
-      cupertino: (_) =>
-          OpLightDarkColor.surfaceInverse,
+      cupertino: (_) => OpLightDarkColor.surfaceInverse,
+    );
+  }
+
+  static Color onInverseSurface(context) {
+    return platformThemeData(
+      context,
+      material: (ThemeData data) => data.colorScheme.inverseSurface,
+      cupertino: (_) => OpLightDarkColor.onSurfaceInverse,
     );
   }
 

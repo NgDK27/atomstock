@@ -8,7 +8,6 @@ import 'package:oppenhomies/navigation/routes.dart';
 import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/styles/text.dart';
-import 'package:oppenhomies/widgets/buttons/primary/OpTonalPrimaryButton.dart';
 import 'package:oppenhomies/widgets/list_tiles/stock_list_tile.dart';
 import 'package:oppenhomies/widgets/scaffolds/platform_sliver_scaffold.dart';
 import 'package:oppenhomies/widgets/typography/title.dart';
@@ -22,9 +21,9 @@ class Home extends ConsumerWidget {
     context.pushNamed(OpRoutes.settings.name);
   }
 
-  void navigateNotifications(
-    BuildContext context,
-  ) {
+  void navigateToNotifications({
+    required BuildContext context,
+  }) {
     context.pushNamed(OpRoutes.notifications.name);
   }
 
@@ -39,6 +38,27 @@ class Home extends ConsumerWidget {
     return OpPlatformSliverScaffold(
       title: "Home",
       transitionBetweenRoutes: false,
+      topBarTrailing: PlatformIconButton(
+        cupertino: (_, __) => CupertinoIconButtonData(padding: EdgeInsets.zero),
+        icon: Icon(
+          platformThemeData(
+            context,
+            material: (_) => Icons.notifications,
+            cupertino: (_) => CupertinoIcons.bell_fill,
+          ),
+          size: platformThemeData(
+            context,
+            material: (_) => null,
+            cupertino: (_) => 24,
+          ),
+          color: platformThemeData(
+            context,
+            material: (_) => null,
+            cupertino: (_) => OpDynamicColor.onSurface(context),
+          ),
+        ),
+        onPressed: () => navigateToNotifications(context: context),
+      ),
       slivers: [
         SliverSafeArea(
           top: false,
@@ -67,40 +87,49 @@ class Home extends ConsumerWidget {
               //   ),
               // ),
               const SizedBox(height: OpSpacing.lg),
-              const OpTitle("Indexes"),
+              OpTitle("Indexes",
+                  trailingText: "Show more", trailingOnPressed: () {}),
               ...sampleStocks.map((stock) => StockListTile(stock: stock)),
-              const SizedBox(height: OpSpacing.xl),
+              const SizedBox(height: OpSpacing.xl2),
               OpTitle(
                 "Top performers today",
+                trailingText: "Show more",
+                trailingOnPressed: () {},
                 leading: Text(
                   "↗",
                   style:
-                  TextStyle(color: OpDynamicColor.aquaHarmonized(context))
-                      .bold(),
+                      TextStyle(color: OpDynamicColor.aquaHarmonized(context))
+                          .bold(),
                 ),
               ),
               ...sampleStocks.map((stock) => StockListTile(stock: stock)),
               const SizedBox(
-                height: OpSpacing.xl,
+                height: OpSpacing.xl2,
               ),
               OpTitle(
                 "Top decliners today",
+                trailingText: "Show more",
+                trailingOnPressed: () {},
                 leading: Text(
                   "↘",
                   style:
-                  TextStyle(color: OpDynamicColor.cherryHarmonized(context))
-                      .bold(),
+                      TextStyle(color: OpDynamicColor.cherryHarmonized(context))
+                          .bold(),
                 ),
               ),
               ...sampleStocks.map((stock) => StockListTile(stock: stock)),
-              const SizedBox(height: OpSpacing.xl),
-              OpTitle("Top movers today",
-                leading: Text("↔", style: const TextStyle().bold()),),
+              const SizedBox(height: OpSpacing.xl2),
+              OpTitle(
+                "Top movers today",
+                trailingText: "Show more",
+                trailingOnPressed: () {},
+                leading: Text("↔", style: const TextStyle().bold()),
+              ),
               ...sampleStocks.map((stock) => StockListTile(stock: stock)),
             ]),
           ),
         ),
       ],
     );
-      }
+  }
 }

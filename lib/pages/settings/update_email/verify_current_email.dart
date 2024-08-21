@@ -12,47 +12,54 @@ import 'package:oppenhomies/widgets/bars/bottom_bar.dart';
 import 'package:oppenhomies/widgets/buttons/primary/OpTonalPrimaryButton.dart';
 import 'package:oppenhomies/widgets/scaffolds/platform_sliver_scaffold.dart';
 
-
 class VerifyCurrentEmail extends HookWidget {
   const VerifyCurrentEmail({super.key});
 
-  void handleResendEmail(BuildContext context, ) {
+  void handleResendEmail(
+    BuildContext context,
+  ) {
     showPlatformDialog(
       context: context,
       builder: (context) => PlatformAlertDialog(
         title: const Text('Another verification code has been sent'),
         content: const Text(
-          "Make sure to check your 'spam' folder. If you still can't receive the email, please contact us for support",),
+          "Make sure to check your 'spam' folder. If you still can't receive the email, please contact us for support",
+        ),
         actions: [
           PlatformDialogAction(
             onPressed: () => context.pop(),
             child: Text('OK', style: OpTextStyle.bold()),
           ),
-
         ],
       ),
     );
   }
 
-  void onCompleted(BuildContext context, String code, TextEditingController textEditingController) {
-    showPlatformDialog(context: context,
-      builder: (_) => PlatformAlertDialog(
+  void onCompleted(BuildContext context, String code,
+      TextEditingController textEditingController) {
+    showPlatformDialog(
+      context: context,
+      builder: (context) => PlatformAlertDialog(
         title: const Text("Verification code inputted"),
         content: Text("Verification code: $code"),
         actions: [
           PlatformDialogAction(
             onPressed: () {
               textEditingController.clear();
-              context.pop();
+              Navigator.of(context, rootNavigator: true).pop();
             },
             child: Text('Stay here', style: OpTextStyle.bold()),
           ),
           PlatformDialogAction(
-            onPressed: () => context.goNamed(OpRoutes.inputNewEmail.name),
+            onPressed: () => {
+              Navigator.of(context, rootNavigator: true).pop(),
+              context.pushReplacementNamed(OpRoutes.inputNewEmail.name),
+            },
             child: Text('Continue', style: OpTextStyle.bold()),
           ),
         ],
-      ),);
+      ),
+    );
   }
 
   @override
@@ -71,11 +78,14 @@ class VerifyCurrentEmail extends HookWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: OpSpacing.sm),
-                Text("example@email.com",
-                  style: OpTextStyle.titleLarge(context),),
+                Text(
+                  "example@email.com",
+                  style: OpTextStyle.titleLarge(context),
+                ),
                 const SizedBox(height: OpSpacing.md),
                 const Text(
-                  "We’ve sent a verification code to your current email. Enter it here to continue",),
+                  "We’ve sent a verification code to your current email. Enter it here to continue",
+                ),
                 const SizedBox(height: OpSpacing.xl),
                 PlatformTextField(
                   autofocus: true,
@@ -86,24 +96,31 @@ class VerifyCurrentEmail extends HookWidget {
                   textInputAction: TextInputAction.done,
                   maxLengthEnforcement: MaxLengthEnforcement.enforced,
                   autofillHints: const [AutofillHints.oneTimeCode],
-                  style: OpTextStyle.display(context)
-                      ?.copyWith(letterSpacing: 5),
+                  style:
+                      OpTextStyle.display(context)?.copyWith(letterSpacing: 5),
                   makeCupertinoDecorationNull: true,
-                  onChanged: (value) => value.length == codeLength ? onCompleted(context,value, codeController) : {},
+                  onChanged: (value) => value.length == codeLength
+                      ? onCompleted(context, value, codeController)
+                      : {},
                   material: (_, __) => MaterialTextFieldData(
                     decoration: const InputDecoration(
                       counterText: "",
                       border: InputBorder.none,
-                      hintStyle:
-                      TextStyle(inherit: true, letterSpacing: 15),),
+                      hintStyle: TextStyle(inherit: true, letterSpacing: 15),
+                    ),
                   ),
                   cupertino: (_, __) => CupertinoTextFieldData(
                     placeholderStyle: TextStyle(
                       color: OpDynamicColor.onSurface(context)
                           .withOpacity(OpOpacity.secondary),
-                      letterSpacing: 15,),),
+                      letterSpacing: 15,
+                    ),
+                  ),
                 ),
-              ],),),),
+              ],
+            ),
+          ),
+        ),
       ],
       floatingBottomWidget: BottomBar(
         child: Row(
@@ -119,7 +136,9 @@ class VerifyCurrentEmail extends HookWidget {
                   ),
                   const SizedBox(height: OpSpacing.xs),
                   OpTonalPrimaryButton(
-                    text: "Resend", onPressed: () => handleResendEmail(context),),
+                    text: "Resend",
+                    onPressed: () => handleResendEmail(context),
+                  ),
                 ],
               ),
             ),

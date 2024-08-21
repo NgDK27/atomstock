@@ -64,7 +64,7 @@ class ChipMediumNeutral extends ChipBase {
   @override
   TextStyle? getTextStyle(BuildContext context) =>
       OpTextStyle.labelSmall(context).spacedOut().bold().copyWith(
-        color: OpDynamicColor.onPrimaryContainer(context),
+        color: OpDynamicColor.onSurface(context),
       );
 }
 
@@ -78,7 +78,7 @@ class ChipMediumNeutralInverse extends ChipBase {
   @override
   TextStyle? getTextStyle(BuildContext context) =>
       OpTextStyle.labelSmall(context).spacedOut().bold().copyWith(
-        color: OpDynamicColor.surface(context),
+        color: OpDynamicColor.onInverseSurface(context),
       );
 }
 

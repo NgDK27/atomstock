@@ -1,5 +1,4 @@
 import 'package:flutter/widgets.dart';
-import 'package:oppenhomies/navigation/extensions/fade_transition.dart';
 import 'package:oppenhomies/pages/ai/screens/ai.dart';
 import 'package:oppenhomies/pages/authentication/landing/screens/sign_in_landing.dart';
 import 'package:oppenhomies/pages/authentication/landing/screens/sign_up_landing.dart';
@@ -49,36 +48,41 @@ class OpRoutes {
   static final home = RouteModel(
     path: '/home',
     name: 'home',
-    pageBuilder: (context, state) => buildPageWithFadeTransition(
-        context: context, state: state, child: const Home(),),
+    // pageBuilder: (context, state) => buildPageWithFadeTransition(
+    //     context: context, state: state, child: const Home(),),
+    builder: (context, state) => const Home(),
   );
 
   static final ai = RouteModel(
     path: '/ai',
     name: 'ai',
-    pageBuilder: (context, state) => buildPageWithFadeTransition(
-        context: context, state: state, child: const Ai(),),
+    // pageBuilder: (context, state) => buildPageWithFadeTransition(
+    // context: context, state: state, child: const Ai(),),
+    builder: (context, state) => const Ai(),
   );
 
   static final automations = RouteModel(
     path: '/automations',
     name: 'automations',
-    pageBuilder: (context, state) => buildPageWithFadeTransition(
-        context: context, state: state, child: const Automations(),),
+    // pageBuilder: (context, state) => buildPageWithFadeTransition(
+    //     context: context, state: state, child: const Automations(),),
+    builder: (context, state) => const Automations(),
   );
 
   static final market = RouteModel(
     path: '/market',
     name: 'market',
-    pageBuilder: (context, state) => buildPageWithFadeTransition(
-        context: context, state: state, child: const Market(),),
+    // pageBuilder: (context, state) => buildPageWithFadeTransition(
+    //     context: context, state: state, child: const Market(),),
+    builder: (context, state) => const Market(),
   );
 
   static final portfolio = RouteModel(
     path: '/portfolio',
     name: 'portfolio',
-    pageBuilder: (context, state) => buildPageWithFadeTransition(
-        context: context, state: state, child: const Portfolio(),),
+    // pageBuilder: (context, state) => buildPageWithFadeTransition(
+    //     context: context, state: state, child: const Portfolio(),),
+    builder: (context, state) => const Portfolio(),
   );
 
   // Onboarding routes
@@ -104,8 +108,9 @@ class OpRoutes {
   static final settings = RouteModel(
     path: '/settings',
     name: 'settings',
-    pageBuilder: (context, state) => buildPageWithFadeTransition(
-      context: context, state: state, child: const Settings(),),
+    // pageBuilder: (context, state) => buildPageWithFadeTransition(
+    //   context: context, state: state, child: const Settings(),),
+    builder: (context, state) => const Settings(),
   );
 
   static final automationDetails = RouteModel(
@@ -230,14 +235,14 @@ class OpRoutes {
     path: 'input_new_password',
     name: 'input_new_password',
     builder: (context, state) =>
-    const InputNewPassword(), // Replace with actual widget
+        const InputNewPassword(), // Replace with actual widget
   );
 
   static final updatePasswordCompleted = RouteModel(
     path: 'update_password_completed',
     name: 'update_password_completed',
     builder: (context, state) =>
-    const UpdatePasswordCompleted(), // Replace with actual widget
+        const UpdatePasswordCompleted(), // Replace with actual widget
   );
 
   static final thirdPartySignIn = RouteModel(

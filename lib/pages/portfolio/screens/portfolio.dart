@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:oppenhomies/domain/models/stock/stock_model.dart';
 import 'package:oppenhomies/navigation/routes.dart';
+import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/styles/text.dart';
 import 'package:oppenhomies/widgets/buttons/icon_button.dart';
@@ -45,7 +46,8 @@ class Portfolio extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentFundsTotal = useState<double>(200500000);
+    final vndFund = useState<double>(200500000);
+    final totalPortfolioValue = useState<double>(1007000000);
 
     final sampleStocks = [
       StockModel.sample(),
@@ -72,6 +74,16 @@ class Portfolio extends HookConsumerWidget {
             material: (_) => Icons.notifications,
             cupertino: (_) => CupertinoIcons.bell_fill,
           ),
+          size: platformThemeData(
+            context,
+            material: (_) => null,
+            cupertino: (_) => 24,
+          ),
+          color: platformThemeData(
+            context,
+            material: (_) => null,
+            cupertino: (_) => OpDynamicColor.onSurface(context),
+          ),
         ),
         onPressed: () => navigateToNotifications(context: context),
       ),
@@ -87,9 +99,21 @@ class Portfolio extends HookConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const SizedBox(
+                      height: OpSpacing.xs2,
+                    ),
                     Text(
-                      currentFundsTotal.value.vndFormat(),
-                      style: OpTextStyle.display(context).spacedOut(),
+                      "Total value",
+                      style: OpTextStyle.titleLarge(context),
+                    ),
+                    const SizedBox(
+                      height: OpSpacing.xs3,
+                    ),
+                    Text(
+                      totalPortfolioValue.value.vndFormat(),
+                      style: OpTextStyle.display(context).spacedOut().copyWith(
+                            color: OpDynamicColor.onSurface(context),
+                          ),
                     ),
                     const SizedBox(
                       height: OpSpacing.xl,
@@ -105,7 +129,8 @@ class Portfolio extends HookConsumerWidget {
                         OpIconButton(
                           icon: PlatformIcons(context).downArrow,
                           text: "Withdraw",
-                          onPressed: () => navigateToWithdrawFunds(context: context),
+                          onPressed: () =>
+                              navigateToWithdrawFunds(context: context),
                         ),
                       ],
                     ),
@@ -119,23 +144,11 @@ class Portfolio extends HookConsumerWidget {
 
               //region Funds
               OpTitle("Funds"),
-              PlatformListTile(
-                title: Text(
-                  "Vietnam Dong",
-                  style: OpTextStyle.bodyLarge(context),
-                ),
-                subtitle: Text("VND"),
-                trailing: Column(
-                  children: [
-                    SizedBox(
-                      height: OpSpacing.xs2,
-                    ),
-                    Text(
-                      currentFundsTotal.value.vndFormat(),
-                      style: OpTextStyle.bodyLarge(context).spacedOut(),
-                    ),
-                  ],
-                ),
+              PortfolioListTile(
+                leadingText: "VND",
+                subtitleText: 'Vietnam Dong',
+                topTrailingText: vndFund.value.vndFormat(),
+                bottomTrailingText: "",
               ),
               SizedBox(
                 height: OpSpacing.xl,
@@ -155,7 +168,8 @@ class Portfolio extends HookConsumerWidget {
                     OpTitleSmall(letter),
                     ...stocks.map(
                       (stock) => PortfolioListTile(
-                        onPressed: () => navigateToStockDetails(context: context),
+                        onPressed: () =>
+                            navigateToStockDetails(context: context),
                         leadingText: stock.symbol,
                         subtitleText: stock.name,
                         topTrailingText:

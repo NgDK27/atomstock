@@ -181,7 +181,7 @@ class MoveFunds extends HookConsumerWidget {
                       borderRadius: const BorderRadius.all(
                         Radius.circular(OpRadius.full),
                       ),
-                      color: OpDynamicColor.surfaceContainer(context),
+                      color: OpDynamicColor.surfaceContainerHigh(context),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(OpSpacing.sm),
@@ -194,7 +194,7 @@ class MoveFunds extends HookConsumerWidget {
                               return PlatformIcons(context).downArrow;
                           }
                         }(),
-                        color: OpDynamicColor.primary(context),
+                        color: OpDynamicColor.onSurface(context),
                       ),
                     ),
                   ),

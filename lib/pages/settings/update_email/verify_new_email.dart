@@ -12,24 +12,29 @@ import 'package:oppenhomies/widgets/bars/bottom_bar.dart';
 import 'package:oppenhomies/widgets/buttons/primary/OpTonalPrimaryButton.dart';
 import 'package:oppenhomies/widgets/scaffolds/platform_sliver_scaffold.dart';
 
-
 class VerifyNewEmail extends HookWidget {
   const VerifyNewEmail({super.key});
 
-  void handleChangeEmail(BuildContext context, ) {
+  void handleChangeEmail(
+    BuildContext context,
+  ) {
     showPlatformDialog(
       context: context,
       builder: (context) => PlatformAlertDialog(
         title: const Text('Change email address?'),
         content: const Text(
-          "After changing the email address, you'll get another verification code",),
+          "After changing the email address, you'll get another verification code",
+        ),
         actions: [
           PlatformDialogAction(
-            onPressed: () => context.pop(),
+            onPressed: () => Navigator.of(context, rootNavigator: true).pop(),
             child: Text('Cancel', style: OpTextStyle.bold()),
           ),
           PlatformDialogAction(
-            onPressed: () => {context.pop(), context.pop()},
+            onPressed: () => {
+              Navigator.of(context, rootNavigator: true).pop(),
+              Navigator.of(context, rootNavigator: true).pop(),
+            },
             child: Text('Change email', style: OpTextStyle.bold()),
           ),
         ],
@@ -37,26 +42,30 @@ class VerifyNewEmail extends HookWidget {
     );
   }
 
-  void handleResendEmail(BuildContext context, ) {
+  void handleResendEmail(
+    BuildContext context,
+  ) {
     showPlatformDialog(
       context: context,
       builder: (context) => PlatformAlertDialog(
         title: const Text('Another verification code has been sent'),
         content: const Text(
-          "Make sure to check your 'spam' folder. If you still can't receive the email, please contact us for support",),
+          "Make sure to check your 'spam' folder. If you still can't receive the email, please contact us for support",
+        ),
         actions: [
           PlatformDialogAction(
             onPressed: () => context.pop(),
             child: Text('OK', style: OpTextStyle.bold()),
           ),
-
         ],
       ),
     );
   }
 
-  void onCompleted(BuildContext context, String code, TextEditingController textEditingController) {
-    showPlatformDialog(context: context,
+  void onCompleted(BuildContext context, String code,
+      TextEditingController textEditingController) {
+    showPlatformDialog(
+      context: context,
       builder: (_) => PlatformAlertDialog(
         title: const Text("Verification code inputted"),
         content: Text("Verification code: $code"),
@@ -69,11 +78,13 @@ class VerifyNewEmail extends HookWidget {
             child: Text('Stay here', style: OpTextStyle.bold()),
           ),
           PlatformDialogAction(
-            onPressed: () => context.goNamed(OpRoutes.updateEmailCompleted.name),
+            onPressed: () =>
+                context.goNamed(OpRoutes.updateEmailCompleted.name),
             child: Text('Continue', style: OpTextStyle.bold()),
           ),
         ],
-      ),);
+      ),
+    );
   }
 
   @override
@@ -92,11 +103,14 @@ class VerifyNewEmail extends HookWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: OpSpacing.sm),
-                Text("example@email.com",
-                  style: OpTextStyle.titleLarge(context),),
+                Text(
+                  "example@email.com",
+                  style: OpTextStyle.titleLarge(context),
+                ),
                 const SizedBox(height: OpSpacing.md),
                 const Text(
-                  "We’ve sent a verification code to your email. Enter it here and you’re done!",),
+                  "We’ve sent a verification code to your email. Enter it here and you’re done!",
+                ),
                 const SizedBox(height: OpSpacing.xl),
                 PlatformTextField(
                   autofocus: true,
@@ -107,24 +121,31 @@ class VerifyNewEmail extends HookWidget {
                   textInputAction: TextInputAction.done,
                   maxLengthEnforcement: MaxLengthEnforcement.enforced,
                   autofillHints: const [AutofillHints.oneTimeCode],
-                  style: OpTextStyle.display(context)
-                      ?.copyWith(letterSpacing: 5),
+                  style:
+                      OpTextStyle.display(context)?.copyWith(letterSpacing: 5),
                   makeCupertinoDecorationNull: true,
-                  onChanged: (value) => value.length == codeLength ? onCompleted(context,value, codeController) : {},
+                  onChanged: (value) => value.length == codeLength
+                      ? onCompleted(context, value, codeController)
+                      : {},
                   material: (_, __) => MaterialTextFieldData(
                     decoration: const InputDecoration(
                       counterText: "",
                       border: InputBorder.none,
-                      hintStyle:
-                      TextStyle(inherit: true, letterSpacing: 15),),
+                      hintStyle: TextStyle(inherit: true, letterSpacing: 15),
+                    ),
                   ),
                   cupertino: (_, __) => CupertinoTextFieldData(
                     placeholderStyle: TextStyle(
                       color: OpDynamicColor.onSurface(context)
                           .withOpacity(OpOpacity.secondary),
-                      letterSpacing: 15,),),
+                      letterSpacing: 15,
+                    ),
+                  ),
                 ),
-              ],),),),
+              ],
+            ),
+          ),
+        ),
       ],
       floatingBottomWidget: BottomBar(
         child: Row(
@@ -140,7 +161,9 @@ class VerifyNewEmail extends HookWidget {
                   ),
                   const SizedBox(height: OpSpacing.xs),
                   OpTonalPrimaryButton(
-                    text: "Resend", onPressed: () => handleResendEmail(context),),
+                    text: "Resend",
+                    onPressed: () => handleResendEmail(context),
+                  ),
                 ],
               ),
             ),
@@ -158,7 +181,9 @@ class VerifyNewEmail extends HookWidget {
                   ),
                   const SizedBox(height: OpSpacing.xs),
                   OpTonalPrimaryButton(
-                    text: "Change", onPressed: () => handleChangeEmail(context),),
+                    text: "Change",
+                    onPressed: () => handleChangeEmail(context),
+                  ),
                 ],
               ),
             ),
