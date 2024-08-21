@@ -23,7 +23,7 @@ retriever = vector_store.as_retriever(search_kwargs={'k': 12})
 
 def get_chain() -> Runnable:
 
-  llm = ChatOpenAI(temperature=0, model="gpt-4o-mini", max_tokens=4069)
+  llm = ChatOpenAI(temperature=0, model="gpt-4o-mini", max_tokens=4069,api_key=OPENAI_API_KEY)
   system_prompt = (
     "You are an answering question based on Vietnamese financial reports snippets. "
     "Use the following pieces of retrieved context to answer "
