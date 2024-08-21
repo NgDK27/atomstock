@@ -50,7 +50,7 @@ class InputNewPassword extends HookConsumerWidget {
 
     final confirmPasswordValidationMode = useState(AutovalidateMode.disabled);
     final confirmPasswordDebounced = useDebounced(
-        confirmPassword.text, const Duration(seconds: validationDelay));
+        confirmPassword.text, const Duration(seconds: validationDelay),);
 
     useEffect(
       () {

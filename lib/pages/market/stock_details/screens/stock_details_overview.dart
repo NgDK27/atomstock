@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:oppenhomies/domain/models/stock/market_session.dart';
 import 'package:oppenhomies/domain/models/stock/stock_model.dart';
 import 'package:oppenhomies/domain/models/stock/stock_price_date_filters.dart';
@@ -18,8 +17,9 @@ import 'package:oppenhomies/widgets/typography/stock_price_change_text.dart';
 
 class StockDetailsOverview extends HookWidget {
   final StockModel stock;
+  final Color accentColor;
 
-  const StockDetailsOverview({super.key, required this.stock});
+  const StockDetailsOverview({super.key, required this.stock, required this.accentColor});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class StockDetailsOverview extends HookWidget {
     return ListView(
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: OpSpacing.md,
             vertical: OpSpacing.lg,
           ),
@@ -50,7 +50,7 @@ class StockDetailsOverview extends HookWidget {
                     text: "HOSE • ${marketSession.value.label}",
                   ),
               },
-              SizedBox(
+              const SizedBox(
                 height: OpSpacing.sm,
               ),
               Row(
@@ -59,26 +59,26 @@ class StockDetailsOverview extends HookWidget {
                     stock.symbol,
                     style: OpTextStyle.titleLarge(context),
                   ),
-                  SizedBox(width: OpSpacing.xs),
+                  const SizedBox(width: OpSpacing.xs),
                   Text(
                     '•',
                     style: OpTextStyle.titleSmall(context),
                   ),
-                  SizedBox(width: OpSpacing.xs),
+                  const SizedBox(width: OpSpacing.xs),
                   Text(
                     stock.name,
                     style: OpTextStyle.titleLarge(context),
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: OpSpacing.xs3,
               ),
               Text(
                 stock.currentPrice.vndFormat(),
                 style: OpTextStyle.display(context).spacedOut(),
               ),
-              SizedBox(
+              const SizedBox(
                 height: OpSpacing.xs2,
               ),
               Row(
@@ -108,6 +108,7 @@ class StockDetailsOverview extends HookWidget {
               StockLineChart(
                 stockPricePoints: stock.pricePoints!,
                 selectedDateFilter: selectedFilter.value,
+                accentColor: accentColor,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: OpSpacing.xs3),
@@ -133,7 +134,7 @@ class StockDetailsOverview extends HookWidget {
           )
         else
           Column(children: [
-            SizedBox(
+            const SizedBox(
               height: OpSpacing.xl5,
             ),
             Text(
@@ -141,17 +142,17 @@ class StockDetailsOverview extends HookWidget {
               style: OpTextStyle.labelLarge(context)
                   ?.copyWith(color: OpDynamicColor.onSurfaceVariant(context)),
             ),
-            SizedBox(
+            const SizedBox(
               height: OpSpacing.xl5,
             ),
-          ]),
+          ],),
         //region Date filters
 
         //endregion
         //endregion
 
         Padding(
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: OpSpacing.md,
             vertical: OpSpacing.lg,
           ),
@@ -164,7 +165,7 @@ class StockDetailsOverview extends HookWidget {
                   context,
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: OpSpacing.lg,
               ),
               Expanded(

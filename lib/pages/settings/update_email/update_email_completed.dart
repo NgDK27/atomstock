@@ -6,6 +6,6 @@ class UpdateEmailCompleted extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return UpdateCompletedLayout(updatedField: "Email");
+    return const UpdateCompletedLayout(updatedField: "Email");
   }
 }

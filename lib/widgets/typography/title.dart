@@ -11,19 +11,19 @@ class OpTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: EdgeInsets.symmetric(horizontal: OpSpacing.md),
+        padding: const EdgeInsets.symmetric(horizontal: OpSpacing.md),
         child: Column(
           children: [
             Row(
               children: [
                 if (leading != null) ...[
                   leading!,
-                  SizedBox(width: OpSpacing.xs2),
+                  const SizedBox(width: OpSpacing.xs2),
                 ],
                 Text(
                   title,
                   style: OpTextStyle.titleSmall(context)
-                      ?.copyWith(fontVariations: [FontVariation.weight(600)]),
+                      ?.copyWith(fontVariations: [const FontVariation.weight(600)]),
                 ),
               ],
             ),

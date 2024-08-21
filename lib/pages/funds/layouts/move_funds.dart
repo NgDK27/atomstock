@@ -34,13 +34,13 @@ class MoveFunds extends HookConsumerWidget {
     showPlatformDialog(
       context: context,
       builder: (_) => PlatformAlertDialog(
-        title: Text("Account cannot be changed during testing phase"),
-        content: Text(
+        title: const Text("Account cannot be changed during testing phase"),
+        content: const Text(
           "Please use the provided free account, which has unlimited funds.",
         ),
         actions: [
           PlatformDialogAction(
-            child: Text("OK"),
+            child: const Text("OK"),
             onPressed: () => context.pop(),
           ),
         ],
@@ -62,7 +62,7 @@ class MoveFunds extends HookConsumerWidget {
         ),
         actions: [
           PlatformDialogAction(
-            child: Text("OK"),
+            child: const Text("OK"),
             onPressed: () => context.pop(),
           ),
         ],
@@ -151,7 +151,7 @@ class MoveFunds extends HookConsumerWidget {
                           .withOpacity(OpOpacity.secondary),
                       letterSpacing: 15,
                     ),
-                    padding: EdgeInsets.fromLTRB(
+                    padding: const EdgeInsets.fromLTRB(
                       OpSpacing.none,
                       OpSpacing.lg,
                       OpSpacing.none,
@@ -164,7 +164,7 @@ class MoveFunds extends HookConsumerWidget {
                   label: "Current balance",
                   value: currentBalance,
                 ),
-                OpDividerVariant(),
+                const OpDividerVariant(),
                 SimpleRow(
                   label: "Balance after ${type.label.toLowerCase()}ing",
                   value: type == MoveFundsType.add
@@ -178,13 +178,13 @@ class MoveFunds extends HookConsumerWidget {
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(
+                      borderRadius: const BorderRadius.all(
                         Radius.circular(OpRadius.full),
                       ),
                       color: OpDynamicColor.surfaceContainer(context),
                     ),
                     child: Padding(
-                      padding: EdgeInsets.all(OpSpacing.sm),
+                      padding: const EdgeInsets.all(OpSpacing.sm),
                       child: Icon(
                         () {
                           switch (type) {
@@ -207,14 +207,14 @@ class MoveFunds extends HookConsumerWidget {
                   onTap: () => handleChangeAccount(context: context),
                   material: (_, __) => MaterialTextFieldData(
                     decoration: InputDecoration(
-                      suffixIcon: Icon(Icons.chevron_right),
+                      suffixIcon: const Icon(Icons.chevron_right),
                       label: Text(
                         switch (type) {
                           MoveFundsType.add => "Adding from",
                           MoveFundsType.withdraw => "Withdrawing to",
                         },
                       ),
-                      border: OutlineInputBorder(
+                      border: const OutlineInputBorder(
                         borderRadius: BorderRadius.all(
                           Radius.circular(OpRadius.md),
                         ),
@@ -223,18 +223,18 @@ class MoveFunds extends HookConsumerWidget {
                   ),
                   cupertino: (_, __) => CupertinoTextFieldData(
                     suffix: Padding(
-                      padding: EdgeInsets.only(right: OpSpacing.xs),
+                      padding: const EdgeInsets.only(right: OpSpacing.xs),
                       child: Icon(
                         CupertinoIcons.chevron_right,
                         color: OpDynamicColor.onSurface(context),
                       ),
                     ),
-                    padding: EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       vertical: OpSpacing.sm,
                       horizontal: OpSpacing.sm,
                     ),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(
+                      borderRadius: const BorderRadius.all(
                         Radius.circular(OpRadius.md),
                       ),
                       border: Border.all(
@@ -285,7 +285,7 @@ class MoveFunds extends HookConsumerWidget {
                         context: context,
                         type: type,
                         amount: double.parse(inputController.text
-                            .replaceAll(RegExp(r'[^0-9]'), '')),
+                            .replaceAll(RegExp(r'[^0-9]'), ''),),
                       )
                   : null,
             ),

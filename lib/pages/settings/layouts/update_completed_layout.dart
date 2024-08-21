@@ -17,7 +17,7 @@ class UpdateCompletedLayout extends StatelessWidget {
       slivers: [
         SliverSafeArea(
           top: false,
-          minimum: EdgeInsets.symmetric(horizontal: OpSpacing.md),
+          minimum: const EdgeInsets.symmetric(horizontal: OpSpacing.md),
           sliver: SliverList(
             delegate: SliverChildListDelegate(
               [

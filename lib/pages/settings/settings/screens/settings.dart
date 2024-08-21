@@ -92,10 +92,10 @@ class Settings extends ConsumerWidget {
       showPlatformDialog(
         context: context,
         builder: (_) => PlatformAlertDialog(
-          title: Text("Sign out attempted"),
+          title: const Text("Sign out attempted"),
           actions: [
             PlatformDialogAction(
-              child: Text("OK"),
+              child: const Text("OK"),
               onPressed: () => context.pop(),
             ),
           ],
@@ -120,7 +120,7 @@ class Settings extends ConsumerWidget {
                       AiSelectCardSettings(
                         model: AiSelectCardData.slowAndSteadyAi,
                       ),
-                      SizedBox(height: OpSpacing.sm),
+                      const SizedBox(height: OpSpacing.sm),
                     ],
                   );
                 } else if (index <= settingsItems.length) {
@@ -149,11 +149,11 @@ class Settings extends ConsumerWidget {
                           ),
                         ),
                         cupertino: (_, __) => CupertinoListTileData(
-                          padding: EdgeInsets.symmetric(vertical: OpSpacing.sm, horizontal: OpSpacing.md)
+                          padding: const EdgeInsets.symmetric(vertical: OpSpacing.sm, horizontal: OpSpacing.md),
                         ),
                       ),
                       if (index == 3 || index == 7 || index == 9)
-                        Padding(
+                        const Padding(
                           padding:
                               EdgeInsets.symmetric(horizontal: OpSpacing.md),
                           child: OpDividerVariant(),
@@ -162,7 +162,7 @@ class Settings extends ConsumerWidget {
                   );
                 } else if (index == settingsItems.length + 1) {
                   return Padding(
-                    padding: EdgeInsets.all(OpSpacing.md),
+                    padding: const EdgeInsets.all(OpSpacing.md),
                     child: OpFilledNeutralButton(
                       onPressed: handleSignOut,
                       text: 'Sign out',

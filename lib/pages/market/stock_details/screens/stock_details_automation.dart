@@ -9,7 +9,7 @@ class StockDetailsAutomation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return  Padding(
-        padding: EdgeInsets.symmetric(horizontal: OpSpacing.lg),
+        padding: const EdgeInsets.symmetric(horizontal: OpSpacing.lg),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -17,14 +17,14 @@ class StockDetailsAutomation extends StatelessWidget {
               '🚧',
               style: OpTextStyle.display(context)?.copyWith(fontSize: 80),
             ),
-            SizedBox(
+            const SizedBox(
               height: OpSpacing.sm,
             ),
             Text(
               "This feature is under construction",
               style: OpTextStyle.titleLarge(context),
             ),
-            SizedBox(
+            const SizedBox(
               height: OpSpacing.xs,
             ),
             Text(

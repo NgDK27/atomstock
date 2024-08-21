@@ -50,35 +50,35 @@ class OpRoutes {
     path: '/home',
     name: 'home',
     pageBuilder: (context, state) => buildPageWithFadeTransition(
-        context: context, state: state, child: const Home()),
+        context: context, state: state, child: const Home(),),
   );
 
   static final ai = RouteModel(
     path: '/ai',
     name: 'ai',
     pageBuilder: (context, state) => buildPageWithFadeTransition(
-        context: context, state: state, child: const Ai()),
+        context: context, state: state, child: const Ai(),),
   );
 
   static final automations = RouteModel(
     path: '/automations',
     name: 'automations',
     pageBuilder: (context, state) => buildPageWithFadeTransition(
-        context: context, state: state, child: const Automations()),
+        context: context, state: state, child: const Automations(),),
   );
 
   static final market = RouteModel(
     path: '/market',
     name: 'market',
     pageBuilder: (context, state) => buildPageWithFadeTransition(
-        context: context, state: state, child: const Market()),
+        context: context, state: state, child: const Market(),),
   );
 
   static final portfolio = RouteModel(
     path: '/portfolio',
     name: 'portfolio',
     pageBuilder: (context, state) => buildPageWithFadeTransition(
-        context: context, state: state, child: const Portfolio()),
+        context: context, state: state, child: const Portfolio(),),
   );
 
   // Onboarding routes

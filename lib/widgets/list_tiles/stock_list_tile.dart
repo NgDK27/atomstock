@@ -55,7 +55,7 @@ class StockListTile extends HookWidget {
         ],
       ),
       cupertino: (_, __) =>
-          CupertinoListTileData(padding: EdgeInsets.all(OpSpacing.md)),
+          CupertinoListTileData(padding: const EdgeInsets.all(OpSpacing.md)),
     );
   }
 }

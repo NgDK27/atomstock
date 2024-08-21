@@ -37,7 +37,7 @@ class StockPricePoints with _$StockPricePoints {
       samplePoints.add(StockPricePoint(
         timestamp: currentDate,
         price: basePrice,
-      ));
+      ),);
 
       // More volatile price movement simulation
       double priceChange = random.nextDouble() * 5000 + 5000; // Random value between 5 and 10

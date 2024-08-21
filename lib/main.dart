@@ -111,7 +111,7 @@ class OppenhomiesApp extends ConsumerWidget {
               routerConfig: OpRouter.router,
               debugShowCheckedModeBanner: false,
               // Hide "Debug" banner
-              localizationsDelegates: <LocalizationsDelegate<dynamic>>[
+              localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
                 DefaultMaterialLocalizations.delegate,
                 DefaultWidgetsLocalizations.delegate,
                 DefaultCupertinoLocalizations.delegate,

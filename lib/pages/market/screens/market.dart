@@ -40,25 +40,25 @@ class Market extends ConsumerWidget {
                 cupertino: (_, __) => const SizedBox(height: OpSpacing.sm),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: OpSpacing.md),
+                padding: const EdgeInsets.symmetric(horizontal: OpSpacing.md),
                 child: PlatformWidget(
                   cupertino: (_, __) => CupertinoSearchTextField(
                     placeholder: "Search",
                     onTap: () => navigateMarketSearch(context),
                   ),
                   material: (_, __) => SearchBar(
-                    leading: Padding(
+                    leading: const Padding(
                       padding: EdgeInsets.only(left: OpSpacing.xs),
                       child: Icon(Icons.search),
                     ),
                     hintText: "Search",
-                    elevation: WidgetStatePropertyAll(0),
+                    elevation: const WidgetStatePropertyAll(0),
                     onTap: () => navigateMarketSearch(context),
                   ),
                 ),
               ),
               const SizedBox(height: OpSpacing.lg),
-              OpTitle("Indexes"),
+              const OpTitle("Indexes"),
               ...sampleStocks.map((stock) => StockListTile(stock: stock)),
               const SizedBox(height: OpSpacing.xl),
               OpTitle(
@@ -86,7 +86,7 @@ class Market extends ConsumerWidget {
               ...sampleStocks.map((stock) => StockListTile(stock: stock)),
               const SizedBox(height: OpSpacing.xl),
               OpTitle("Top movers today",
-                  leading: Text("↔", style: TextStyle().bold()),),
+                  leading: Text("↔", style: const TextStyle().bold()),),
               ...sampleStocks.map((stock) => StockListTile(stock: stock)),
             ]),
           ),

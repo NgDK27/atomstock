@@ -21,11 +21,11 @@ class ContactSupport extends HookWidget {
     showPlatformDialog(
       context: context,
       builder: (_) => PlatformAlertDialog(
-        title: Text("Support request submitted"),
+        title: const Text("Support request submitted"),
         content: Text("Type: ${type.label},\nDetails: $details"),
         actions: [
           PlatformDialogAction(
-            child: Text("OK"),
+            child: const Text("OK"),
             onPressed: () => context.pop(),
           ),
         ],
@@ -47,7 +47,7 @@ class ContactSupport extends HookWidget {
       slivers: [
         SliverSafeArea(
           top: false,
-          minimum: EdgeInsets.symmetric(horizontal: OpSpacing.md),
+          minimum: const EdgeInsets.symmetric(horizontal: OpSpacing.md),
           sliver: SliverList(
             delegate: SliverChildListDelegate(
               [
@@ -63,7 +63,7 @@ class ContactSupport extends HookWidget {
                     onTap: () => selectedSupportType.value = value,
                     cupertino: (_, __) => CupertinoListTileData(
                         padding:
-                            EdgeInsets.symmetric(horizontal: OpSpacing.none)),
+                            const EdgeInsets.symmetric(horizontal: OpSpacing.none),),
                     trailing: value == selectedSupportType.value
                         ? Icon(PlatformIcons(context).checkMark)
                         : null,

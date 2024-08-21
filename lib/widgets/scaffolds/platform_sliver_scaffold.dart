@@ -62,7 +62,7 @@ class OpPlatformSliverScaffold extends HookWidget {
                 transitionBetweenRoutes: transitionBetweenRoutes,
               ),
               if (isCupertino(context))
-                SliverToBoxAdapter(child: SizedBox(height: OpSpacing.sm)),
+                const SliverToBoxAdapter(child: SizedBox(height: OpSpacing.sm)),
               ...slivers,
               SliverToBoxAdapter(
                 child: SizedBox(height: floatingWidgetHeight.value),

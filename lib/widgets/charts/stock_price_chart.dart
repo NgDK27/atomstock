@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -6,14 +5,12 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:oppenhomies/domain/models/stock/stock_price_date_filters.dart';
 import 'package:oppenhomies/domain/models/stock/stock_price_point.dart';
 import 'package:oppenhomies/domain/models/stock/stock_price_points.dart';
-import 'package:oppenhomies/pages/funds/layouts/move_funds.dart';
 import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/opacities.dart';
 import 'package:oppenhomies/styles/radius.dart';
 
 import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/styles/text.dart';
-import 'package:oppenhomies/widgets/buttons/neutral/op_neutral_text_button.dart';
 import 'package:oppenhomies/widgets/chip/chip_base.dart';
 import 'package:oppenhomies/widgets/gradients/gradient.dart';
 import 'package:oppenhomies/widgets/helpers/money_formatter.dart';
@@ -23,11 +20,13 @@ import 'package:intl/intl.dart';
 class StockLineChart extends StatefulHookWidget {
   final StockPricePoints stockPricePoints;
   final StockPriceDateFilter selectedDateFilter;
+  final Color accentColor;
 
   const StockLineChart({
     super.key,
     required this.stockPricePoints,
-    required this.selectedDateFilter
+    required this.selectedDateFilter,
+    required this.accentColor,
   });
 
   @override
@@ -54,7 +53,7 @@ class _StockLineChartState extends State<StockLineChart> {
       context,
       filteredData.last.price - filteredData.first.price,
     )
-        : Colors.grey; // Default color when no data
+        : widget.accentColor; // Default color when no data
 
     return Column(
       children: <Widget>[
@@ -70,26 +69,12 @@ class _StockLineChartState extends State<StockLineChart> {
             child: hasData
                 ? LineChart(
                 curve: Curves.easeInOutQuad,
-                duration: Duration(milliseconds: 300),
-                mainData(accentColor, filteredData, widget.selectedDateFilter))
+                duration: const Duration(milliseconds: 300),
+                mainData(accentColor, filteredData, widget.selectedDateFilter),)
                 : const Center(
-                child: Text('No data available for this period')),
+                child: Text('No data available for this period'),),
           ),
         ),
-        // Padding(
-        //   padding: const EdgeInsets.symmetric(horizontal: OpSpacing.xs3),
-        //   child: Row(
-        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //     children: [
-        //       for (final label in dateFilterOptions)
-        //         OpNeutralTextButton(
-        //           text: label,
-        //           onPressed: () => selectedFilter.value = label,
-        //           tightPadding: true,
-        //         ),
-        //     ],
-        //   ),
-        // ),
       ],
     );
   }
@@ -116,7 +101,7 @@ class _StockLineChartState extends State<StockLineChart> {
   }
 
   Widget leftTitleWidgets(
-      double value, TitleMeta meta, List<StockPricePoint> data) {
+      double value, TitleMeta meta, List<StockPricePoint> data,) {
     if (data.isEmpty) return const SizedBox.shrink();
 
     final minPrice = data.map((e) => e.price).reduce((a, b) => a < b ? a : b);
@@ -144,7 +129,7 @@ class _StockLineChartState extends State<StockLineChart> {
   }
 
   LineChartData mainData(
-      Color accentColor, List<StockPricePoint> data, StockPriceDateFilter filter) {
+      Color accentColor, List<StockPricePoint> data, StockPriceDateFilter filter,) {
     if (data.isEmpty) {
       return LineChartData();
     }
@@ -155,14 +140,14 @@ class _StockLineChartState extends State<StockLineChart> {
     final maxY = data.map((e) => e.price).reduce((a, b) => a > b ? a : b);
 
     return LineChartData(
-      gridData: FlGridData(show: false),
+      gridData: const FlGridData(show: false),
       titlesData: FlTitlesData(
         show: true,
         rightTitles: AxisTitles(
             sideTitles: SideTitles(
                 showTitles: true,
                 reservedSize: 6,
-                getTitlesWidget: (_, __) => SizedBox.shrink())),
+                getTitlesWidget: (_, __) => const SizedBox.shrink(),),),
         topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
@@ -232,7 +217,7 @@ class _StockLineChartState extends State<StockLineChart> {
               FlDotData(
                   show: true,
                   getDotPainter: (_, __, ___, ____) => FlDotCirclePainter(
-                      color: OpDynamicColor.onSurface(context))),
+                      color: OpDynamicColor.onSurface(context),),),
             );
           }).toList();
         },
