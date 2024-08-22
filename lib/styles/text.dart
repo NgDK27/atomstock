@@ -65,7 +65,7 @@ class OpTextStyle {
   static TextStyle? bodyLarge(BuildContext context) => _getStyle(
     context,
     material: (data) => data.textTheme.bodyLarge,
-    cupertino: (data) => data.textTheme.textStyle.bold(),
+    cupertino: (data) => data.textTheme.textStyle,
   );
 
   static TextStyle? body(BuildContext context) => _getStyle(

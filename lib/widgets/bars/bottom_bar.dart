@@ -11,15 +11,20 @@ class BottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        decoration: BoxDecoration(
-            border: Border(
-                top:
-                    BorderSide(color: OpDynamicColor.outlineVariant(context)),),
-        color: OpDynamicColor.surface(context),),
-        child: SafeArea(
-            top: false,
-            minimum: const EdgeInsets.symmetric(
-                horizontal: OpSpacing.md, vertical: OpSpacing.sm,),
-            child: child,),);
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(color: OpDynamicColor.outlineVariant(context)),
+        ),
+        color: OpDynamicColor.surface(context),
+      ),
+      child: SafeArea(
+        top: false,
+        minimum: const EdgeInsets.symmetric(
+          horizontal: OpSpacing.md,
+          vertical: OpSpacing.sm,
+        ),
+        child: child,
+      ),
+    );
   }
 }

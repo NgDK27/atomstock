@@ -14,6 +14,7 @@ class OpPlatformSliverScaffold extends HookWidget {
   final Widget? topBarLeading;
   final Widget? topBarTrailing;
   final ScrollViewKeyboardDismissBehavior keyboardDismissBehavior;
+  final ScrollController? scrollController;
 
   const OpPlatformSliverScaffold({
     super.key,
@@ -24,6 +25,7 @@ class OpPlatformSliverScaffold extends HookWidget {
     this.topBarTrailing,
     this.transitionBetweenRoutes = true,
     this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
+    this.scrollController,
     required this.slivers,
   });
 
@@ -53,6 +55,7 @@ class OpPlatformSliverScaffold extends HookWidget {
         children: [
           CustomScrollView(
             keyboardDismissBehavior: keyboardDismissBehavior,
+            controller: scrollController,
             physics: scrollable ? null : const NeverScrollableScrollPhysics(),
             slivers: [
               OpPlatformSliverAppBar(
