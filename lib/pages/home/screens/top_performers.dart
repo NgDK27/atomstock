@@ -1,12 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:oppenhomies/widgets/scaffolds/platform_sliver_scaffold.dart';
+import 'package:oppenhomies/domain/models/stock/stock_model.dart';
+import 'package:oppenhomies/pages/home/layouts/stock_collections_layout.dart';
 
 class TopPerformers extends HookConsumerWidget {
   const TopPerformers({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return OpPlatformSliverScaffold(title: "Top Performers Today", slivers: []);
+    final sampleStocks = [
+      StockModel.sample(),
+      StockModel.positiveSample(),
+      StockModel.negativeSample(),
+      StockModel.detailedSample(),
+    ];
+
+    return StockCollectionsLayout(
+      title: "Top Performers Today",
+      stocks: sampleStocks,
+    );
   }
 }

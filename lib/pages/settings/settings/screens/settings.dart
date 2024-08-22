@@ -116,7 +116,6 @@ class Settings extends ConsumerWidget {
                   // Add AiSelectCardSettings as the first item
                   return Column(
                     children: [
-
                       AiSelectCardSettings(
                         model: AiSelectCardData.slowAndSteadyAi,
                       ),
