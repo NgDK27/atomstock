@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 class OpenAIService {
   final String apiUrl =
-      'http://192.168.1.193:5000/api/generate_response'; // local machine
+      'http://192.168.1.193:5000/generate_response'; // local machine
   Future<String> generateResponse(String prompt, String userId) async {
     try {
       final response = await http.post(
