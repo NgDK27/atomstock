@@ -11,6 +11,10 @@ import 'package:oppenhomies/pages/automations/screens/automations.dart';
 import 'package:oppenhomies/pages/funds/add_funds/screens/add_funds.dart';
 import 'package:oppenhomies/pages/funds/withdraw_funds/screens/withdraw_funds.dart';
 import 'package:oppenhomies/pages/home/screens/home.dart';
+import 'package:oppenhomies/pages/home/screens/indexes.dart';
+import 'package:oppenhomies/pages/home/screens/top_decliners.dart';
+import 'package:oppenhomies/pages/home/screens/top_movers.dart';
+import 'package:oppenhomies/pages/home/screens/top_performers.dart';
 import 'package:oppenhomies/pages/market/screens/market.dart';
 import 'package:oppenhomies/pages/market/stock_details/screens/stock_details_tab_scaffold.dart';
 import 'package:oppenhomies/pages/notifications/screens/notifications.dart';
@@ -167,6 +171,37 @@ class OpRoutes {
     name: 'reset_password',
     builder: (context, state) => const ResetPassword(),
   );
+
+
+  //region Home sub-routes
+  static final indexes = RouteModel(
+    path: 'indexes',
+    name: 'indexes',
+    builder: (context, state) =>
+    const Indexes(), // Replace with actual widget
+  );
+
+  static final topPerformers = RouteModel(
+    path: 'top_performers',
+    name: 'top_performers',
+    builder: (context, state) =>
+    const TopPerformers(), // Replace with actual widget
+  );
+
+  static final topDecliners = RouteModel(
+    path: 'top_decliners',
+    name: 'top_decliners',
+    builder: (context, state) =>
+    const TopDecliners(), // Replace with actual widget
+  );
+
+  static final topMovers = RouteModel(
+    path: 'top_movers',
+    name: 'top_movers',
+    builder: (context, state) =>
+    const TopMovers(), // Replace with actual widget
+  );
+  //endregion
 
   // region Settings sub-routes
   static final addFunds = RouteModel(

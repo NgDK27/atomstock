@@ -27,6 +27,30 @@ class Home extends ConsumerWidget {
     context.pushNamed(OpRoutes.notifications.name);
   }
 
+  void navigateToIndexes({
+    required BuildContext context,
+  }) {
+    context.pushNamed(OpRoutes.indexes.name);
+  }
+
+  void navigateToTopPerformers({
+    required BuildContext context,
+  }) {
+    context.pushNamed(OpRoutes.topPerformers.name);
+  }
+
+  void navigateToTopDecliners({
+    required BuildContext context,
+  }) {
+    context.pushNamed(OpRoutes.topDecliners.name);
+  }
+
+  void navigateToTopMovers({
+    required BuildContext context,
+  }) {
+    context.pushNamed(OpRoutes.topMovers.name);
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final sampleStocks = [
@@ -70,7 +94,7 @@ class Home extends ConsumerWidget {
               ),
               OpTitleLarge(
                 "Indexes",
-                onPressed: () {},
+                onPressed: () => navigateToIndexes(context: context),
                 leading: Icon(
                   Symbols.bar_chart_rounded,
                   weight: 800,
@@ -79,10 +103,10 @@ class Home extends ConsumerWidget {
                 ),
               ),
               ...sampleStocks.map((stock) => StockListTile(stock: stock)),
-              const SizedBox(height: OpSpacing.xl),
+              const SizedBox(height: OpSpacing.lg),
               OpTitleLarge(
                 "Top performers today",
-                onPressed: () {},
+                onPressed: () => navigateToTopPerformers(context: context),
                 leading: Icon(
                   Symbols.north_east_rounded,
                   weight: 800,
@@ -92,11 +116,11 @@ class Home extends ConsumerWidget {
               ),
               ...sampleStocks.map((stock) => StockListTile(stock: stock)),
               const SizedBox(
-                height: OpSpacing.xl,
+                height: OpSpacing.lg,
               ),
               OpTitleLarge(
                 "Top decliners today",
-                onPressed: () {},
+                onPressed: () => navigateToTopDecliners(context: context),
                 leading: Icon(
                   Symbols.south_east_rounded,
                   weight: 800,
@@ -105,10 +129,10 @@ class Home extends ConsumerWidget {
                 ),
               ),
               ...sampleStocks.map((stock) => StockListTile(stock: stock)),
-              const SizedBox(height: OpSpacing.xl),
+              const SizedBox(height: OpSpacing.lg),
               OpTitleLarge(
                 "Top movers today",
-                onPressed: () {},
+                onPressed: () => navigateToTopMovers(context: context),
                 leading: Icon(
                   Symbols.swap_horiz_rounded,
                   weight: 800,

@@ -32,10 +32,15 @@ class OpRouter {
           return OpPlatformSliverTabScaffold(child: child);
         },
         routes: [
-          OpRoutes.home.route(),
-          OpRoutes.ai.route(
-
+          OpRoutes.home.route(
+            routes: [
+              OpRoutes.indexes.route(),
+              OpRoutes.topPerformers.route(),
+              OpRoutes.topDecliners.route(),
+              OpRoutes.topMovers.route(),
+            ],
           ),
+          OpRoutes.ai.route(),
           OpRoutes.automations.route(
             routes: [
               OpRoutes.automationDetails.route(),
@@ -68,8 +73,7 @@ class OpRouter {
                 routes: [
                   OpRoutes.inputNewPassword.route(
                     routes: [
-                      OpRoutes.updatePasswordCompleted.route(
-                      ),
+                      OpRoutes.updatePasswordCompleted.route(),
                     ],
                   ),
                 ],
