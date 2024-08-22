@@ -45,7 +45,7 @@ class _OpPlatformSliverTabScaffoldState extends State<OpPlatformSliverTabScaffol
   void _onItemTapped(BuildContext context, int index) {
     final routes = OpMainRoutes(context);
     final selectedRoute = routes.allRoutes[index];
-    context.replaceNamed(selectedRoute.route);
+    context.goNamed(selectedRoute.route);
   }
 
   @override

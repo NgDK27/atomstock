@@ -47,6 +47,15 @@ class OpTextStyle {
     ),
   );
 
+  static TextStyle? titleMedium(BuildContext context) => _getStyle(
+    context,
+    material: (data) => data.textTheme.titleMedium,
+    cupertino: (data) => data.textTheme.textStyle.copyWith(
+      fontWeight: FontWeight.w600,
+      fontSize: (data.textTheme.textStyle.fontSize ?? 17) * 1.15,
+    ),
+  );
+
   static TextStyle? titleSmall(BuildContext context) => _getStyle(
     context,
     material: (data) => data.textTheme.titleSmall,

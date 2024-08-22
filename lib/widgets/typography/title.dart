@@ -1,21 +1,15 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
-import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/styles/text.dart';
 
 class OpTitle extends StatelessWidget {
   final Widget? leading;
   final String title;
-  final String? trailingText;
-  final VoidCallback? trailingOnPressed;
 
   const OpTitle(
     this.title, {
     super.key,
     this.leading,
-    this.trailingText,
-    this.trailingOnPressed,
   });
 
   @override
@@ -25,9 +19,6 @@ class OpTitle extends StatelessWidget {
       child: Column(
         children: [
           Row(
-            mainAxisAlignment: trailingText != null
-                ? MainAxisAlignment.spaceBetween
-                : MainAxisAlignment.start,
             children: [
               Row(
                 children: [
@@ -43,17 +34,6 @@ class OpTitle extends StatelessWidget {
                   ),
                 ],
               ),
-              if (trailingText != null)
-                RichText(
-                  text: TextSpan(
-                    text: trailingText,
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () => trailingOnPressed,
-                    style: OpTextStyle.titleSmall(context).bold().copyWith(
-                          color: OpDynamicColor.primary(context),
-                        ),
-                  ),
-                ),
             ],
           ),
           const SizedBox(height: OpSpacing.xs),

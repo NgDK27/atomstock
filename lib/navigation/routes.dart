@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:oppenhomies/navigation/extensions/fade_transition.dart';
 import 'package:oppenhomies/pages/ai/screens/ai.dart';
 import 'package:oppenhomies/pages/authentication/landing/screens/sign_in_landing.dart';
 import 'package:oppenhomies/pages/authentication/landing/screens/sign_up_landing.dart';
@@ -48,41 +49,36 @@ class OpRoutes {
   static final home = RouteModel(
     path: '/home',
     name: 'home',
-    // pageBuilder: (context, state) => buildPageWithFadeTransition(
-    //     context: context, state: state, child: const Home(),),
-    builder: (context, state) => const Home(),
+    pageBuilder: (context, state) => buildPageWithFadeTransition(
+        context: context, state: state, child: const Home(),),
   );
 
   static final ai = RouteModel(
     path: '/ai',
     name: 'ai',
-    // pageBuilder: (context, state) => buildPageWithFadeTransition(
-    // context: context, state: state, child: const Ai(),),
-    builder: (context, state) => const Ai(),
+    pageBuilder: (context, state) => buildPageWithFadeTransition(
+    context: context, state: state, child: const Ai(),),
   );
 
   static final automations = RouteModel(
     path: '/automations',
     name: 'automations',
-    // pageBuilder: (context, state) => buildPageWithFadeTransition(
-    //     context: context, state: state, child: const Automations(),),
-    builder: (context, state) => const Automations(),
+    pageBuilder: (context, state) => buildPageWithFadeTransition(
+        context: context, state: state, child: const Automations(),),
   );
 
   static final market = RouteModel(
     path: '/market',
     name: 'market',
-    // pageBuilder: (context, state) => buildPageWithFadeTransition(
-    //     context: context, state: state, child: const Market(),),
-    builder: (context, state) => const Market(),
+    pageBuilder: (context, state) => buildPageWithFadeTransition(
+        context: context, state: state, child: const Market(),),
   );
 
   static final portfolio = RouteModel(
     path: '/portfolio',
     name: 'portfolio',
-    // pageBuilder: (context, state) => buildPageWithFadeTransition(
-    //     context: context, state: state, child: const Portfolio(),),
-    builder: (context, state) => const Portfolio(),
+    pageBuilder: (context, state) => buildPageWithFadeTransition(
+        context: context, state: state, child: const Portfolio(),),
   );
 
   // Onboarding routes
@@ -108,9 +104,8 @@ class OpRoutes {
   static final settings = RouteModel(
     path: '/settings',
     name: 'settings',
-    // pageBuilder: (context, state) => buildPageWithFadeTransition(
-    //   context: context, state: state, child: const Settings(),),
-    builder: (context, state) => const Settings(),
+    pageBuilder: (context, state) => buildPageWithFadeTransition(
+      context: context, state: state, child: const Settings(),),
   );
 
   static final automationDetails = RouteModel(
