@@ -63,6 +63,14 @@ class OpDynamicColor {
     );
   }
 
+  static Color onPrimary(context) {
+    return platformThemeData(
+      context,
+      material: (ThemeData data) => data.colorScheme.onPrimary,
+      cupertino: (_) => OpLightDarkColor.onSurfacePrimary,
+    );
+  }
+
   static Color surface(context) {
     return platformThemeData(
       context,
