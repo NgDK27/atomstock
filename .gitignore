@@ -11,6 +11,7 @@
 migrate_working_dir/
 .env
 *.venv
+.lock
 
 # IntelliJ related
 *.iml
@@ -54,3 +55,4 @@ venv
 .fvm/
 /.fvmrc
 /server/cmd/dump.rdb
+!/ai_backend/tmp/
