@@ -6,7 +6,7 @@ class OpRouter {
   OpRouter._();
 
   static final router = GoRouter(
-    initialLocation: OpRoutes.home.path,
+    initialLocation: "${OpRoutes.onboarding.path}/${OpRoutes.signInLanding.path}/${OpRoutes.signIn.path}",
     routes: [
       OpRoutes.onboarding.route(
         routes: [
