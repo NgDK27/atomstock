@@ -36,7 +36,7 @@ class VerifyCurrentEmail extends HookWidget {
   }
 
   void onCompleted(BuildContext context, String code,
-      TextEditingController textEditingController) {
+      TextEditingController textEditingController,) {
     showPlatformDialog(
       context: context,
       builder: (context) => PlatformAlertDialog(

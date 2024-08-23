@@ -13,10 +13,10 @@ class ChatInput extends HookWidget {
   final bool isWaitingForResponse;
 
   const ChatInput({
-    Key? key,
+    super.key,
     required this.onSend,
     required this.isWaitingForResponse,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

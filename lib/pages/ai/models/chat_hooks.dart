@@ -35,12 +35,12 @@ UseChat useChat(ScrollController scrollController) {
       messages.value = [...messages.value, MessageModel(message: response.trim(), sender: Sender.bot)];
       scrollToBottom();
     }
-  }, [messages, hasStartedChat, openAIService, isWaitingForResponse, scrollController]);
+  }, [messages, hasStartedChat, openAIService, isWaitingForResponse, scrollController],);
 
   final startNewConversation = useCallback(() {
     messages.value = [];
     hasStartedChat.value = false;
-  }, [messages, hasStartedChat]);
+  }, [messages, hasStartedChat],);
 
   return (
   messages: messages.value,

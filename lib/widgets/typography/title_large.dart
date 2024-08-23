@@ -77,7 +77,7 @@ class OpTitleLarge extends StatelessWidget {
                         color: platformThemeData(context,
                             material: (_) => OpDynamicColor.onSurface(context),
                             cupertino: (_) =>
-                                OpDynamicColor.onSurfaceVariant(context)),
+                                OpDynamicColor.onSurfaceVariant(context),),
                       ),
                     ],
                   ),

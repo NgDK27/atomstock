@@ -30,7 +30,7 @@ void useChatAutoScroll(ScrollController scrollController) {
     return () {
       WidgetsBinding.instance.removeObserver(observer);
     };
-  }, [scrollController]);
+  }, [scrollController],);
 }
 
 class _KeyboardVisibilityObserver extends WidgetsBindingObserver {
