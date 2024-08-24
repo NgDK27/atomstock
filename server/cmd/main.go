@@ -69,6 +69,11 @@ type UpdateBalanceInput struct {
 	Amount string  `json:"amount"`
 }
 
+type UserInfo struct {
+    Email     string  `json:"email"`
+    Balance   float64 `json:"balance"`
+}
+
 func calculateSecretHash(clientID, clientSecret, username string) string {
 	mac := hmac.New(sha256.New, []byte(clientSecret))
 	mac.Write([]byte(username + clientID))
@@ -252,26 +257,53 @@ func depositHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Balance updated successfully"})
 }
 
+func getUserInfoHandler(c *gin.Context) {
+    userID, exists := c.Get("userID")
+    if !exists {
+        c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+        return
+    }
+
+    var user UserInfo
+    err := db.QueryRow("SELECT email, balance FROM users WHERE id = $1", userID).Scan(
+        &user.Email, &user.Balance,
+    )
+
+    if err == sql.ErrNoRows {
+        c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+        return
+    } else if err != nil {
+        log.Printf("Failed to fetch user information: %v", err)
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch user information"})
+        return
+    }
+
+    c.JSON(http.StatusOK, user)
+}
+
 func AuthMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		tokenString := c.GetHeader("Authorization")
-		if tokenString == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "No token provided"})
-			c.Abort()
-			return
-		}
+    return func(c *gin.Context) {
+        tokenString := c.GetHeader("Authorization")
+        if tokenString == "" {
+            c.JSON(http.StatusUnauthorized, gin.H{"error": "No token provided"})
+            c.Abort()
+            return
+        }
 
-		tokenString = strings.TrimPrefix(tokenString, "Bearer ")
+        tokenString = strings.TrimPrefix(tokenString, "Bearer ")
 
-		_, err := extractUserIDFromToken(tokenString)
-		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
-			c.Abort()
-			return
-		}
+        userID, err := extractUserIDFromToken(tokenString)
+        if err != nil {
+            c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+            c.Abort()
+            return
+        }
 
-		c.Next()
-	}
+        // Set the user ID in the context
+        c.Set("userID", userID)
+
+        c.Next()
+    }
 }
 
 func ConnectDatabase() {
@@ -343,6 +375,7 @@ func main() {
 	protected.Use(AuthMiddleware())
 	protected.GET("/hello", helloWorldHandler)
 	protected.POST("/deposit", depositHandler) 
+	protected.GET("/user", getUserInfoHandler)
 
 	go func() {
         if err := r.Run(":2708"); err != nil {
