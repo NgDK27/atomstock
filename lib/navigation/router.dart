@@ -1,12 +1,27 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:oppenhomies/domain/providers/auth/auth_provider.dart';
 import 'package:oppenhomies/navigation/routes.dart';
 import 'package:oppenhomies/widgets/scaffolds/platform_sliver_tab_scaffold.dart';
 
 class OpRouter {
   OpRouter._();
 
-  static final router = GoRouter(
-    initialLocation: "${OpRoutes.onboarding.path}/${OpRoutes.signInLanding.path}/${OpRoutes.signIn.path}",
+  static router(WidgetRef ref) => GoRouter(
+    initialLocation: OpRoutes.onboarding.path,
+    redirect: (BuildContext context, GoRouterState state) async {
+      final authNotifier = ref.read(authProvider.notifier);
+      final isSignedIn = await authNotifier.isSignedIn();
+      final isOnboardingRoute = state.matchedLocation.startsWith(OpRoutes.onboarding.path);
+
+      if (!isSignedIn && !isOnboardingRoute) {
+        return OpRoutes.onboarding.path;
+      } else if (isSignedIn && isOnboardingRoute) {
+        return OpRoutes.home.path;
+      }
+      return null;
+    },
     routes: [
       OpRoutes.onboarding.route(
         routes: [

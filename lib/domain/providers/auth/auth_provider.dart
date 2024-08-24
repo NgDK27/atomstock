@@ -66,4 +66,14 @@ class Auth extends _$Auth {
       return false;
     }
   }
+
+  Future<void> signOut() async {
+    state = Status.initialized();
+    try {
+      await _storage.deleteAll();
+      state = Status.success();
+    } catch (e) {
+      state = Status.failed(message: 'Failed to sign out: ${e.toString()}');
+    }
+  }
 }
