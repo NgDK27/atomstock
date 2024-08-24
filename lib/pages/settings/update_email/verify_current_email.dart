@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:go_router/go_router.dart';
+
+
 import 'package:oppenhomies/navigation/routes.dart';
 import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/opacities.dart';
@@ -39,20 +41,20 @@ class VerifyCurrentEmail extends HookWidget {
       TextEditingController textEditingController) {
     showPlatformDialog(
       context: context,
-      builder: (context) => PlatformAlertDialog(
+      builder: (_) => PlatformAlertDialog(
         title: const Text("Verification code inputted"),
         content: Text("Verification code: $code"),
         actions: [
           PlatformDialogAction(
             onPressed: () {
               textEditingController.clear();
-              Navigator.of(context, rootNavigator: true).pop();
+              context.pop();
             },
             child: Text('Stay here', style: OpTextStyle.bold()),
           ),
           PlatformDialogAction(
             onPressed: () => {
-              Navigator.of(context, rootNavigator: true).pop(),
+              context.pop(),
               context.pushReplacementNamed(OpRoutes.inputNewEmail.name),
             },
             child: Text('Continue', style: OpTextStyle.bold()),

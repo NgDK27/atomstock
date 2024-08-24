@@ -203,7 +203,6 @@ class OpRoutes {
   );
   //endregion
 
-  // region Settings sub-routes
   static final addFunds = RouteModel(
     path: '/add_funds',
     name: 'add_funds',
@@ -217,6 +216,7 @@ class OpRoutes {
         const WithdrawFunds(), // Replace with actual widget
   );
 
+  // region Settings sub-routes
   static final connectedAccounts = RouteModel(
     path: 'connected_accounts',
     name: 'connected_accounts',
@@ -231,7 +231,7 @@ class OpRoutes {
   );
 
   static final verifyCurrentEmail = RouteModel(
-    path: 'verify_current_email',
+    path: '/verify_current_email',
     name: 'verify_current_email',
     builder: (context, state) => const VerifyCurrentEmail(),
   );
@@ -255,7 +255,7 @@ class OpRoutes {
   );
 
   static final verifyCurrentPassword = RouteModel(
-    path: 'verify_current_password',
+    path: '/verify_current_password',
     name: 'verify_current_password',
     builder: (context, state) =>
         const VerifyCurrentPassword(), // Replace with actual widget

@@ -23,7 +23,7 @@ class UpdateCompletedLayout extends StatelessWidget {
               [
                 OpFilledNeutralButton(
                   text: "Back to Settings",
-                  onPressed: () => context.pushReplacementNamed(OpRoutes.settings.name),
+                  onPressed: () => context.goNamed(OpRoutes.settings.name),
                 ),
               ],
             ),

@@ -44,7 +44,7 @@ class OpRouter {
       ),
       ShellRoute(
         builder: (context, state, child) {
-          return OpPlatformSliverTabScaffold(child: child);
+          return OpPlatformSliverTabScaffold(child: child,);
         },
         routes: [
           OpRoutes.home.route(
@@ -73,26 +73,6 @@ class OpRouter {
             routes: [
               OpRoutes.connectedAccounts.route(),
               OpRoutes.yourName.route(),
-              OpRoutes.verifyCurrentEmail.route(
-                routes: [
-                  OpRoutes.inputNewEmail.route(
-                    routes: [
-                      OpRoutes.verifyNewEmail.route(
-                        routes: [OpRoutes.updateEmailCompleted.route()],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              OpRoutes.verifyCurrentPassword.route(
-                routes: [
-                  OpRoutes.inputNewPassword.route(
-                    routes: [
-                      OpRoutes.updatePasswordCompleted.route(),
-                    ],
-                  ),
-                ],
-              ),
               OpRoutes.thirdPartySignIn.route(),
               OpRoutes.appearance.route(),
               OpRoutes.language.route(),
@@ -105,6 +85,26 @@ class OpRouter {
       OpRoutes.notifications.route(),
       OpRoutes.addFunds.route(),
       OpRoutes.withdrawFunds.route(),
+      OpRoutes.verifyCurrentEmail.route(
+        routes: [
+          OpRoutes.inputNewEmail.route(
+            routes: [
+              OpRoutes.verifyNewEmail.route(
+                routes: [OpRoutes.updateEmailCompleted.route()],
+              ),
+            ],
+          ),
+        ],
+      ),
+      OpRoutes.verifyCurrentPassword.route(
+        routes: [
+          OpRoutes.inputNewPassword.route(
+            routes: [
+              OpRoutes.updatePasswordCompleted.route(),
+            ],
+          ),
+        ],
+      ),
     ],
   );
 }

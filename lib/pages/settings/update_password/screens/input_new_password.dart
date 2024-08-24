@@ -160,7 +160,7 @@ class InputNewPassword extends HookConsumerWidget {
       ],
       floatingBottomWidget: BottomBar(
         child: OpFilledPrimaryButton(
-          text: "Sign up",
+          text: "Save",
           onPressed: isFormValid.value
               ? () => handleInputNewPassword(
                     context,

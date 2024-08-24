@@ -114,7 +114,6 @@ class Settings extends HookConsumerWidget {
       );
     }
 
-
     return OpPlatformSliverScaffold(
       title: "Settings",
       transitionBetweenRoutes: false,
