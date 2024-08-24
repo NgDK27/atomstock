@@ -24,11 +24,13 @@ class SignIn extends HookConsumerWidget {
   }
 
   Future<void> _handleSignIn(BuildContext context, WidgetRef ref, String email,
-      String password) async {
+      String password, ValueNotifier<UiState> uiState) async {
+    uiState.value = UiState.loading();
     final authNotifier = ref.read(authProvider.notifier);
     final result = await authNotifier.signIn(email: email, password: password);
 
     if (context.mounted) {
+      uiState.value = result;
       switch (result.state) {
         case UiStates.success:
           context.goNamed(OpRoutes.home.name);
@@ -38,7 +40,7 @@ class SignIn extends HookConsumerWidget {
             context: context,
             builder: (_) => PlatformAlertDialog(
               title: const Text("Sign in unsuccessful"),
-              content: const Text("Please check your credentials and try again."),
+              content: Text(result.message ?? "Please check your credentials and try again."),
               actions: <Widget>[
                 PlatformDialogAction(
                   child: const Text('OK'),
@@ -52,86 +54,6 @@ class SignIn extends HookConsumerWidget {
           break;
       }
     }
-  }
-  (
-    TextEditingController,
-    TextEditingController,
-    ValueNotifier<bool>,
-    GlobalKey<FormState>,
-    ValueNotifier<bool>,
-    ValueNotifier<AutovalidateMode>,
-    ValueNotifier<AutovalidateMode>
-  ) _useFormState() {
-    final emailController =
-        useTextEditingController(text: "quan@quanhoangdo.com");
-    final passwordController = useTextEditingController(text: "Quan@12345");
-    final showPassword = useState(false);
-    final formKey = useMemoized(GlobalKey<FormState>.new, const []);
-    final isFormValid = useState(false);
-    final emailValidationMode = useState(AutovalidateMode.disabled);
-    final passwordValidationMode = useState(AutovalidateMode.disabled);
-
-    _useValidation(
-      emailController: emailController,
-      passwordController: passwordController,
-      emailValidationMode: emailValidationMode,
-      passwordValidationMode: passwordValidationMode,
-      isFormValid: isFormValid,
-      formKey: formKey,
-    );
-
-    return (
-      emailController,
-      passwordController,
-      showPassword,
-      formKey,
-      isFormValid,
-      emailValidationMode,
-      passwordValidationMode
-    );
-  }
-
-  void _useValidation({
-    required TextEditingController emailController,
-    required TextEditingController passwordController,
-    required ValueNotifier<AutovalidateMode> emailValidationMode,
-    required ValueNotifier<AutovalidateMode> passwordValidationMode,
-    required ValueNotifier<bool> isFormValid,
-    required GlobalKey<FormState> formKey,
-  }) {
-    const int validationDelay = 2;
-
-    final email = useValueListenable(emailController);
-    final password = useValueListenable(passwordController);
-
-    final emailDebounced =
-        useDebounced(email.text, const Duration(seconds: validationDelay));
-    final passwordDebounced =
-        useDebounced(password.text, const Duration(seconds: validationDelay));
-
-    useEffect(() {
-      if (emailDebounced?.isNotEmpty == true) {
-        emailValidationMode.value = AutovalidateMode.always;
-      }
-      return null;
-    }, [emailDebounced]);
-
-    useEffect(() {
-      if (passwordDebounced?.isNotEmpty == true) {
-        passwordValidationMode.value = AutovalidateMode.always;
-      }
-      return null;
-    }, [passwordDebounced]);
-
-    useEffect(() {
-      if (email.text.isNotEmpty && password.text.isNotEmpty) {
-        final isValid = formKey.currentState?.validate() ?? false;
-        isFormValid.value = isValid;
-      } else {
-        isFormValid.value = false;
-      }
-      return null;
-    }, [email, password]);
   }
 
   @override
@@ -228,7 +150,9 @@ class SignIn extends HookConsumerWidget {
                     ref,
                     emailController.text,
                     passwordController.text,
-                  )
+            uiState,
+
+          )
               : null,
           child: uiState.value.state == UiStates.loading
               ? SizedBox(
@@ -240,5 +164,87 @@ class SignIn extends HookConsumerWidget {
         ),
       ),
     );
+  }
+
+
+  (
+  TextEditingController,
+  TextEditingController,
+  ValueNotifier<bool>,
+  GlobalKey<FormState>,
+  ValueNotifier<bool>,
+  ValueNotifier<AutovalidateMode>,
+  ValueNotifier<AutovalidateMode>
+  ) _useFormState() {
+    final emailController =
+    useTextEditingController(text: "quan@quanhoangdo.com");
+    final passwordController = useTextEditingController(text: "Quan@12345");
+    final showPassword = useState(false);
+    final formKey = useMemoized(GlobalKey<FormState>.new, const []);
+    final isFormValid = useState(false);
+    final emailValidationMode = useState(AutovalidateMode.disabled);
+    final passwordValidationMode = useState(AutovalidateMode.disabled);
+
+    _useValidation(
+      emailController: emailController,
+      passwordController: passwordController,
+      emailValidationMode: emailValidationMode,
+      passwordValidationMode: passwordValidationMode,
+      isFormValid: isFormValid,
+      formKey: formKey,
+    );
+
+    return (
+    emailController,
+    passwordController,
+    showPassword,
+    formKey,
+    isFormValid,
+    emailValidationMode,
+    passwordValidationMode
+    );
+  }
+
+  void _useValidation({
+    required TextEditingController emailController,
+    required TextEditingController passwordController,
+    required ValueNotifier<AutovalidateMode> emailValidationMode,
+    required ValueNotifier<AutovalidateMode> passwordValidationMode,
+    required ValueNotifier<bool> isFormValid,
+    required GlobalKey<FormState> formKey,
+  }) {
+    const int validationDelay = 2;
+
+    final email = useValueListenable(emailController);
+    final password = useValueListenable(passwordController);
+
+    final emailDebounced =
+    useDebounced(email.text, const Duration(seconds: validationDelay));
+    final passwordDebounced =
+    useDebounced(password.text, const Duration(seconds: validationDelay));
+
+    useEffect(() {
+      if (emailDebounced?.isNotEmpty == true) {
+        emailValidationMode.value = AutovalidateMode.always;
+      }
+      return null;
+    }, [emailDebounced]);
+
+    useEffect(() {
+      if (passwordDebounced?.isNotEmpty == true) {
+        passwordValidationMode.value = AutovalidateMode.always;
+      }
+      return null;
+    }, [passwordDebounced]);
+
+    useEffect(() {
+      if (email.text.isNotEmpty && password.text.isNotEmpty) {
+        final isValid = formKey.currentState?.validate() ?? false;
+        isFormValid.value = isValid;
+      } else {
+        isFormValid.value = false;
+      }
+      return null;
+    }, [email, password]);
   }
 }

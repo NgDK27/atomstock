@@ -11,6 +11,7 @@ part 'auth_provider.g.dart';
 @riverpod
 class Auth extends _$Auth {
   late final AuthRepository _repository;
+  String? _tempPassword;
 
   @override
   AuthState build() {
@@ -49,6 +50,7 @@ class Auth extends _$Auth {
     try {
       await _repository.signUp(email: email, password: password);
       state = state.copyWith(email: email);
+      _tempPassword = password;
       return UiState.success();
     } on DioException catch (e) {
       final errorMessage = e.response != null && e.response?.data is Map<String, dynamic>

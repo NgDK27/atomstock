@@ -5,8 +5,8 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:oppenhomies/domain/helpers/string_extensions.dart';
-import 'package:oppenhomies/domain/helpers/use_post_frame_effect.dart';
 import 'package:oppenhomies/domain/helpers/validators.dart';
+import 'package:oppenhomies/domain/models/status/ui_state.dart';
 import 'package:oppenhomies/domain/models/status/ui_states_enum.dart';
 import 'package:oppenhomies/domain/providers/auth/auth_provider.dart';
 import 'package:oppenhomies/navigation/routes.dart';
@@ -21,11 +21,167 @@ import 'package:oppenhomies/widgets/textfields/platform_animated_text_form_field
 class SignUp extends HookConsumerWidget {
   const SignUp({super.key});
 
-  void _handleSignUp(WidgetRef ref, String email, String password) {
-    ref.read(authProvider.notifier).signUp(
-          email: email,
-          password: password,
-        );
+  Future<void> _handleSignUp(BuildContext context, WidgetRef ref, String email,
+      String password, ValueNotifier<UiState> uiState) async {
+    uiState.value = UiState.loading();
+    final authNotifier = ref.read(authProvider.notifier);
+    final result = await authNotifier.signUp(email: email, password: password);
+
+    if (context.mounted) {
+      uiState.value = result;
+      switch (result.state) {
+        case UiStates.success:
+          context.goNamed(OpRoutes.signUpVerify.name);
+          break;
+        case UiStates.failed:
+          showPlatformDialog(
+            context: context,
+            builder: (_) => PlatformAlertDialog(
+              title: const Text("Sign up unsuccessful"),
+              content: Text(result.message ??
+                  "Please check your credentials and try again."),
+              actions: <Widget>[
+                PlatformDialogAction(
+                  child: const Text('OK'),
+                  onPressed: () => context.pop(),
+                ),
+              ],
+            ),
+          );
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final (
+      emailController,
+      passwordController,
+      nameController,
+      showPassword,
+      formKey,
+      isFormValid,
+      emailValidationMode,
+      passwordValidationMode,
+      nameValidationMode
+    ) = _useFormState();
+
+    final uiState = useState<UiState>(UiState.initialized());
+
+    return OpPlatformSliverScaffold(
+      scrollable: true,
+      title: "Sign up",
+      slivers: [
+        SliverSafeArea(
+          top: false,
+          minimum: const EdgeInsets.symmetric(horizontal: OpSpacing.md),
+          sliver: SliverToBoxAdapter(
+            child: Column(
+              children: [
+                const SizedBox(height: OpSpacing.lg),
+                Form(
+                  key: formKey,
+                  child: AutofillGroup(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        PlatformTextFormField(
+                          keyboardType: TextInputType.text,
+                          autovalidateMode: nameValidationMode.value,
+                          enabled: true,
+                          autofocus: true,
+                          textCapitalization: TextCapitalization.words,
+                          enableSuggestions: true,
+                          controller: nameController,
+                          textInputAction: TextInputAction.next,
+                          validator: AuthenticationValidator.fullNameValidator,
+                          hintText: AutofillHints.name.sentenceCase(),
+                          autofillHints: const [AutofillHints.name],
+                        ).animated(),
+                        const SizedBox(height: OpSpacing.md),
+                        PlatformTextFormField(
+                          keyboardType: TextInputType.emailAddress,
+                          autovalidateMode: emailValidationMode.value,
+                          enabled: true,
+                          autofocus: false,
+                          enableSuggestions: true,
+                          autocorrect: false,
+                          controller: emailController,
+                          textInputAction: TextInputAction.next,
+                          validator: AuthenticationValidator.emailValidator,
+                          hintText: AutofillHints.email.sentenceCase(),
+                          autofillHints: const [AutofillHints.email],
+                        ).animated(),
+                        const SizedBox(height: OpSpacing.xs),
+                        Text(
+                          "We'll send a verification code to this email address",
+                          style: OpTextStyle.labelMedium(context)?.copyWith(
+                            color: OpDynamicColor.onSurfaceVariant(context),
+                          ),
+                          textAlign: TextAlign.start,
+                        ),
+                        const SizedBox(height: OpSpacing.md),
+                        PlatformTextFormField(
+                          keyboardType: TextInputType.visiblePassword,
+                          autovalidateMode: passwordValidationMode.value,
+                          enabled: true,
+                          obscureText: !showPassword.value,
+                          autofocus: false,
+                          enableSuggestions: false,
+                          autocorrect: false,
+                          controller: passwordController,
+                          textInputAction: TextInputAction.done,
+                          validator: AuthenticationValidator.passwordValidator,
+                          hintText: AutofillHints.password.sentenceCase(),
+                          autofillHints: const [AutofillHints.password],
+                        ).animated(),
+                        const SizedBox(height: OpSpacing.md),
+                        Row(
+                          children: [
+                            const Text("Show password"),
+                            const Spacer(),
+                            PlatformSwitch(
+                              value: showPassword.value,
+                              onChanged: (bool value) =>
+                                  showPassword.value = value,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+      floatingBottomWidget: BottomBar(
+        child: OpFilledPrimaryButton(
+          text: "Sign up",
+          onPressed:
+              isFormValid.value && uiState.value.state != UiStates.loading
+                  ? () => _handleSignUp(
+                        context,
+                        ref,
+                        emailController.text,
+                        passwordController.text,
+                        uiState,
+                      )
+                  : null,
+          child: uiState.value.state == UiStates.loading
+              ? SizedBox(
+                  height: OpSpacing.md,
+                  width: OpSpacing.md,
+                  child: PlatformCircularProgressIndicator(),
+                )
+              : null,
+        ),
+      ),
+    );
   }
 
   (
@@ -129,171 +285,5 @@ class SignUp extends HookConsumerWidget {
       }
       return null;
     }, [email, password, name]);
-  }
-
-  // UiStates _handleStatusChange({
-  //   required BuildContext context,
-  //   required WidgetRef ref,
-  // }) {
-  //   final auth = ref.watch(authProvider);
-  //   usePostFrameEffect(
-  //     () {
-  //       switch (auth.status) {
-  //         case UiStates.success:
-  //           context.goNamed(
-  //             OpRoutes.signUpVerify.name,
-  //             // extra: {'email': email, 'password': password},
-  //           );
-  //           break;
-  //         case UiStates.failed:
-  //           showPlatformDialog(
-  //             context: context,
-  //             builder: (_) => PlatformAlertDialog(
-  //               title: Text("Sign up unsuccessful"),
-  //               content: Text(auth.message!),
-  //               actions: <Widget>[
-  //                 PlatformDialogAction(
-  //                   child: Text('OK'),
-  //                   onPressed: () => context.pop(),
-  //                 ),
-  //               ],
-  //             ),
-  //           );
-  //           break;
-  //         case UiStates.loading:
-  //         case UiStates.initialized:
-  //         case UiStates.awaitingUpdate:
-  //           break;
-  //       }
-  //     },
-  //     [auth.status],
-  //   );
-  //   return auth.status;
-  // }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final (
-      emailController,
-      passwordController,
-      nameController,
-      showPassword,
-      formKey,
-      isFormValid,
-      emailValidationMode,
-      passwordValidationMode,
-      nameValidationMode
-    ) = _useFormState();
-
-    // final authStatus = _handleStatusChange(context: context, ref: ref);
-
-    return OpPlatformSliverScaffold(
-      scrollable: true,
-      title: "Sign up",
-      slivers: [
-        SliverSafeArea(
-          top: false,
-          minimum: const EdgeInsets.symmetric(horizontal: OpSpacing.md),
-          sliver: SliverToBoxAdapter(
-            child: Column(
-              children: [
-                const SizedBox(height: OpSpacing.lg),
-                Form(
-                  key: formKey,
-                  child: AutofillGroup(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        PlatformTextFormField(
-                          keyboardType: TextInputType.text,
-                          autovalidateMode: nameValidationMode.value,
-                          enabled: true,
-                          autofocus: true,
-                          textCapitalization: TextCapitalization.words,
-                          enableSuggestions: true,
-                          controller: nameController,
-                          textInputAction: TextInputAction.next,
-                          validator: AuthenticationValidator.fullNameValidator,
-                          hintText: AutofillHints.name.sentenceCase(),
-                          autofillHints: const [AutofillHints.name],
-                        ).animated(),
-                        const SizedBox(height: OpSpacing.md),
-                        PlatformTextFormField(
-                          keyboardType: TextInputType.emailAddress,
-                          autovalidateMode: emailValidationMode.value,
-                          enabled: true,
-                          autofocus: false,
-                          enableSuggestions: true,
-                          autocorrect: false,
-                          controller: emailController,
-                          textInputAction: TextInputAction.next,
-                          validator: AuthenticationValidator.emailValidator,
-                          hintText: AutofillHints.email.sentenceCase(),
-                          autofillHints: const [AutofillHints.email],
-                        ).animated(),
-                        const SizedBox(height: OpSpacing.xs),
-                        Text(
-                          "We'll send a verification code to this email address",
-                          style: OpTextStyle.labelMedium(context)?.copyWith(
-                            color: OpDynamicColor.onSurfaceVariant(context),
-                          ),
-                          textAlign: TextAlign.start,
-                        ),
-                        const SizedBox(height: OpSpacing.md),
-                        PlatformTextFormField(
-                          keyboardType: TextInputType.visiblePassword,
-                          autovalidateMode: passwordValidationMode.value,
-                          enabled: true,
-                          obscureText: !showPassword.value,
-                          autofocus: false,
-                          enableSuggestions: false,
-                          autocorrect: false,
-                          controller: passwordController,
-                          textInputAction: TextInputAction.done,
-                          validator: AuthenticationValidator.passwordValidator,
-                          hintText: AutofillHints.password.sentenceCase(),
-                          autofillHints: const [AutofillHints.password],
-                        ).animated(),
-                        const SizedBox(height: OpSpacing.md),
-                        Row(
-                          children: [
-                            const Text("Show password"),
-                            const Spacer(),
-                            PlatformSwitch(
-                              value: showPassword.value,
-                              onChanged: (bool value) =>
-                                  showPassword.value = value,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-      floatingBottomWidget: BottomBar(
-        child: OpFilledPrimaryButton(
-          text: "Sign up",
-          // onPressed: isFormValid.value && authStatus != UiStates.loading
-          //     ? () => _handleSignUp(
-          //           ref,
-          //           emailController.text,
-          //           passwordController.text,
-          //         )
-          //     : null,
-          // child: authStatus == UiStates.loading
-          //     ? SizedBox(
-          //         height: OpSpacing.md,
-          //         width: OpSpacing.md,
-          //         child: PlatformCircularProgressIndicator(),
-          //       )
-          //     : null,
-        ),
-      ),
-    );
   }
 }
