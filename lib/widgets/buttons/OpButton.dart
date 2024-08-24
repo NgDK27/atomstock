@@ -25,7 +25,7 @@ abstract class OpButton extends ConsumerWidget {
           style: TextButton.styleFrom(
               alignment: alignment,
               padding: padding,
-              minimumSize: Size.zero,
+              // minimumSize: Size.square(dimension),
               disabledBackgroundColor:
                   Theme.of(context).colorScheme.onSurface.withOpacity(0.12),
               // From M3 doc

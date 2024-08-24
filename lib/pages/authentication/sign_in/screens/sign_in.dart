@@ -1,11 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:oppenhomies/domain/helpers/string_extensions.dart';
+import 'package:oppenhomies/domain/helpers/use_post_frame_effect.dart';
 import 'package:oppenhomies/domain/helpers/validators.dart';
+import 'package:oppenhomies/domain/models/state/states.dart';
 import 'package:oppenhomies/domain/providers/auth/auth_provider.dart';
 import 'package:oppenhomies/navigation/routes.dart';
 import 'package:oppenhomies/styles/spacings.dart';
@@ -18,95 +19,136 @@ import 'package:oppenhomies/widgets/textfields/platform_animated_text_form_field
 class SignIn extends HookConsumerWidget {
   const SignIn({super.key});
 
-  void navigateForgotPassword(BuildContext context) {
+  void _navigateForgotPassword(BuildContext context) {
     context.goNamed(OpRoutes.resetPassword.name);
   }
 
-  // void handleSignIn(BuildContext context, String email, String password) {
-  //   // Show a dialog with the entered values
-  //   showPlatformDialog(
-  //     context: context,
-  //     builder: (context) => PlatformAlertDialog(
-  //       title: const Text('Sign In Attempted'),
-  //       content: Column(
-  //         mainAxisSize: MainAxisSize.min,
-  //         crossAxisAlignment: CrossAxisAlignment.start,
-  //         children: [
-  //           Text('Email: $email'),
-  //           const SizedBox(height: 8),
-  //           Text('Password: $password'),
-  //         ],
-  //       ),
-  //       actions: [
-  //         PlatformDialogAction(
-  //           onPressed: () => context.pop(),
-  //           child: const Text('Close'),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  //
-  //   // Optional: Log to console
-  //   if (kDebugMode) {
-  //     print('Sign in attempted - Email: $email, Password: $password');
-  //   }
-  // }
+  void _handleSignIn(WidgetRef ref, String email, String password) {
+    ref.read(authProvider.notifier).signIn(
+          email: email,
+          password: password,
+        );
+  }
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final emailController = useTextEditingController(text: "quan@quanhoangdo.com");
+  (
+    TextEditingController,
+    TextEditingController,
+    ValueNotifier<bool>,
+    GlobalKey<FormState>,
+    ValueNotifier<bool>,
+    ValueNotifier<AutovalidateMode>,
+    ValueNotifier<AutovalidateMode>
+  ) _useFormState() {
+    final emailController =
+        useTextEditingController(text: "quan@quanhoangdo.com");
     final passwordController = useTextEditingController(text: "Quan@12345");
+    final showPassword = useState(false);
+    final formKey = useMemoized(GlobalKey<FormState>.new, const []);
+    final isFormValid = useState(false);
+    final emailValidationMode = useState(AutovalidateMode.disabled);
+    final passwordValidationMode = useState(AutovalidateMode.disabled);
+
+    _useValidation(
+      emailController: emailController,
+      passwordController: passwordController,
+      emailValidationMode: emailValidationMode,
+      passwordValidationMode: passwordValidationMode,
+      isFormValid: isFormValid,
+      formKey: formKey,
+    );
+
+    return (
+      emailController,
+      passwordController,
+      showPassword,
+      formKey,
+      isFormValid,
+      emailValidationMode,
+      passwordValidationMode
+    );
+  }
+
+  void _useValidation({
+    required TextEditingController emailController,
+    required TextEditingController passwordController,
+    required ValueNotifier<AutovalidateMode> emailValidationMode,
+    required ValueNotifier<AutovalidateMode> passwordValidationMode,
+    required ValueNotifier<bool> isFormValid,
+    required GlobalKey<FormState> formKey,
+  }) {
+    const int validationDelay = 2;
 
     final email = useValueListenable(emailController);
     final password = useValueListenable(passwordController);
 
-    final showPassword = useState(false);
-
-    final formKey = useMemoized(GlobalKey<FormState>.new, const []);
-    final isFormValid = useState(false);
-
-    const int validationDelay = 2;
-
-    final emailValidationMode = useState(AutovalidateMode.disabled);
     final emailDebounced =
         useDebounced(email.text, const Duration(seconds: validationDelay));
-
-    final passwordValidationMode = useState(AutovalidateMode.disabled);
     final passwordDebounced =
         useDebounced(password.text, const Duration(seconds: validationDelay));
 
-    useEffect(
-      () {
-        if (emailDebounced?.isNotEmpty == true) {
-          emailValidationMode.value = AutovalidateMode.always;
-        }
-        return null;
-      },
-      [emailDebounced],
-    );
+    useEffect(() {
+      if (emailDebounced?.isNotEmpty == true) {
+        emailValidationMode.value = AutovalidateMode.always;
+      }
+      return null;
+    }, [emailDebounced]);
 
-    useEffect(
-      () {
-        if (passwordDebounced?.isNotEmpty == true) {
-          passwordValidationMode.value = AutovalidateMode.always;
-        }
-        return null;
-      },
-      [passwordDebounced],
-    );
+    useEffect(() {
+      if (passwordDebounced?.isNotEmpty == true) {
+        passwordValidationMode.value = AutovalidateMode.always;
+      }
+      return null;
+    }, [passwordDebounced]);
 
-    useEffect(
-      () {
-        if (email.text.isNotEmpty && password.text.isNotEmpty) {
-          final isValid = formKey.currentState?.validate() ?? false;
-          isFormValid.value = isValid;
-        } else {
-          isFormValid.value = false;
-        }
-        return null;
-      },
-      [email, password],
-    );
+    useEffect(() {
+      if (email.text.isNotEmpty && password.text.isNotEmpty) {
+        final isValid = formKey.currentState?.validate() ?? false;
+        isFormValid.value = isValid;
+      } else {
+        isFormValid.value = false;
+      }
+      return null;
+    }, [email, password]);
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final (
+      emailController,
+      passwordController,
+      showPassword,
+      formKey,
+      isFormValid,
+      emailValidationMode,
+      passwordValidationMode
+    ) = _useFormState();
+
+    final auth = ref.watch(authProvider);
+
+    usePostFrameEffect(() {
+      switch (auth.state) {
+        case States.success:
+          context.goNamed(OpRoutes.home.name);
+        case States.failed:
+          showPlatformDialog(
+            context: context,
+            builder: (_) => PlatformAlertDialog(
+              title: Text("Sign in unsuccessful"),
+              content: Text(auth.message ?? "LOL"),
+              actions: <Widget>[
+                PlatformDialogAction(
+                  child: Text('OK'),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
+            ),
+          );
+        case States.loading:
+        case States.initialized:
+        case States.awaitingUpdate:
+          break;
+      }
+    }, [auth.state],);
 
     return OpPlatformSliverScaffold(
       scrollable: true,
@@ -119,6 +161,7 @@ class SignIn extends HookConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                Text(ref.read(authProvider).state.toString()),
                 const SizedBox(height: OpSpacing.lg),
                 Form(
                   key: formKey,
@@ -136,16 +179,14 @@ class SignIn extends HookConsumerWidget {
                           textInputAction: TextInputAction.next,
                           validator: AuthenticationValidator.emailValidator,
                           hintText: AutofillHints.email.sentenceCase(),
-                          autofillHints: const [
-                            AutofillHints.email,
-                          ],
+                          autofillHints: const [AutofillHints.email],
                         ).animated(),
                         const SizedBox(height: OpSpacing.md),
                         PlatformTextFormField(
                           keyboardType: TextInputType.visiblePassword,
                           autovalidateMode: passwordValidationMode.value,
                           enabled: true,
-                          obscureText: showPassword.value ? false : true,
+                          obscureText: !showPassword.value,
                           autofocus: false,
                           enableSuggestions: false,
                           autocorrect: false,
@@ -153,9 +194,7 @@ class SignIn extends HookConsumerWidget {
                           textInputAction: TextInputAction.done,
                           validator: AuthenticationValidator.passwordValidator,
                           hintText: AutofillHints.password.sentenceCase(),
-                          autofillHints: const [
-                            AutofillHints.password,
-                          ],
+                          autofillHints: const [AutofillHints.password],
                         ).animated(),
                       ],
                     ),
@@ -176,7 +215,7 @@ class SignIn extends HookConsumerWidget {
                 OpNeutralTextButton(
                   leftAligned: true,
                   text: "Forgot your password?",
-                  onPressed: () => navigateForgotPassword(context),
+                  onPressed: () => _navigateForgotPassword(context),
                 ),
               ],
             ),
@@ -186,13 +225,19 @@ class SignIn extends HookConsumerWidget {
       floatingBottomWidget: BottomBar(
         child: OpFilledPrimaryButton(
           text: "Sign in",
-          onPressed: isFormValid.value
-              ? () => {
-                    ref.read(authProvider.notifier).signIn(
-                          email: emailController.text,
-                          password: passwordController.text,
-                        ),
-                  }
+          onPressed: isFormValid.value && auth.state != States.loading
+              ? () => _handleSignIn(
+                    ref,
+                    emailController.text,
+                    passwordController.text,
+                  )
+              : null,
+          child: auth.state == States.loading
+              ? SizedBox(
+                  height: OpSpacing.md,
+                  width: OpSpacing.md,
+                  child: PlatformCircularProgressIndicator(),
+                )
               : null,
         ),
       ),

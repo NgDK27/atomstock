@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:oppenhomies/domain/helpers/extract_server_response.dart';
 import 'package:oppenhomies/domain/models/auth/auth_token_response.dart';
-import 'package:oppenhomies/domain/models/state/status.dart';
+import 'package:oppenhomies/domain/models/state/state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'dart:developer' as dev;
 
 part 'auth_provider.g.dart';
 
@@ -13,9 +15,11 @@ class Auth extends _$Auth {
   final String _apiEndpoint = 'http://192.168.25.229:2708';
 
   @override
-  Status build() => Status.initialized();
+  State build() => State.initialized();
 
   Future<void> signIn({required String email, required String password}) async {
+    state = State.loading();
+
     try {
       final response = await _dio.post(
         '$_apiEndpoint/signin',
@@ -25,10 +29,25 @@ class Auth extends _$Auth {
         },
       );
 
+      dev.log('Response: ${response.toString()}');
       final authTokenResponse = AuthTokenResponse.fromJson(response.data);
-      print(authTokenResponse);
+      state = State.success();
+    } on DioException catch (e) {
+      if (e.response != null) {
+        dev.log('Error Response: ${e.response?.data}');
+
+        String errorMessage = 'An error occurred';
+        if (e.response?.data is Map<String, dynamic>) {
+          errorMessage = extractErrorResponse(e.response!.data, 'NotAuthorizedException');
+        }
+
+        state = State.failed(message: errorMessage);
+      } else {
+        state = State.failed(message: 'Network error occurred');
+      }
     } catch (e) {
-      print(e);
+      dev.log('Unexpected error: ${e.toString()}');
+      state = State.failed(message: 'An unexpected error occurred');
     }
   }
 }
