@@ -40,6 +40,7 @@ class OpPlatformSliverTabScaffold extends HookWidget {
     }
 
     return PlatformTabScaffold(
+      widgetKey: ValueKey(getCurrentIndex(context)),
       tabController: tabController,
       items: items,
       bodyBuilder: (context, _) => child,

@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:go_router/go_router.dart';
-import 'package:oppenhomies/domain/models/state/status.dart';
+import 'package:oppenhomies/domain/models/status/status.dart';
 import 'package:oppenhomies/domain/models/stock/stock_model.dart';
 import 'package:oppenhomies/navigation/routes.dart';
 import 'package:oppenhomies/styles/colors.dart';
@@ -15,12 +15,12 @@ import 'package:oppenhomies/widgets/typography/stock_price_change_text.dart';
 
 class StockListTile extends HookWidget {
   final StockModel stock;
-  final Status status;
+  // final Status status;
 
   const StockListTile({
     super.key,
     required this.stock,
-    this.status = const Status.success(),
+    // this.status = Status,
   });
 
   void navigateDetails({required BuildContext context}) {

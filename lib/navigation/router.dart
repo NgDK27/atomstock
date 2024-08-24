@@ -9,102 +9,100 @@ class OpRouter {
   OpRouter._();
 
   static router(WidgetRef ref) => GoRouter(
-    initialLocation: OpRoutes.onboarding.path,
-    redirect: (BuildContext context, GoRouterState state) async {
-      final authNotifier = ref.read(authProvider.notifier);
-      final isSignedIn = await authNotifier.isSignedIn();
-      final isOnboardingRoute = state.matchedLocation.startsWith(OpRoutes.onboarding.path);
+        initialLocation: OpRoutes.onboarding.path,
+        redirect: (BuildContext context, GoRouterState state) async {
+          final authNotifier = ref.read(authProvider.notifier);
+          final isSignedIn = await authNotifier.isSignedIn();
+          final isOnboardingRoute =
+              state.matchedLocation.startsWith(OpRoutes.onboarding.path);
 
-      if (!isSignedIn && !isOnboardingRoute) {
-        return OpRoutes.onboarding.path;
-      } else if (isSignedIn && isOnboardingRoute) {
-        return OpRoutes.home.path;
-      }
-      return null;
-    },
-    routes: [
-      OpRoutes.onboarding.route(
+          if (!isSignedIn && !isOnboardingRoute) {
+            return OpRoutes.onboarding.path;
+          } else if (isSignedIn && isOnboardingRoute) {
+            return OpRoutes.home.path;
+          }
+          return null;
+        },
         routes: [
-          OpRoutes.signInLanding.route(
+          OpRoutes.onboarding.route(
             routes: [
-              OpRoutes.signIn.route(routes: [OpRoutes.resetPassword.route()]),
+              OpRoutes.signInLanding.route(
+                routes: [
+                  OpRoutes.signIn
+                      .route(routes: [OpRoutes.resetPassword.route()]),
+                ],
+              ),
+              OpRoutes.aiSelect.route(
+                routes: [
+                  OpRoutes.signUpLanding.route(
+                    routes: [
+                      OpRoutes.signUp
+                          .route(routes: [OpRoutes.signUpVerify.route()]),
+                    ],
+                  ),
+                ],
+              ),
             ],
           ),
-          OpRoutes.aiSelect.route(
+          ShellRoute(
+            builder: (context, state, child) {
+              return OpPlatformSliverTabScaffold(
+                child: child,
+              );
+            },
             routes: [
-              OpRoutes.signUpLanding.route(
+              OpRoutes.home.route(),
+              OpRoutes.ai.route(),
+              OpRoutes.automations.route(
                 routes: [
-                  OpRoutes.signUp
-                      .route(routes: [OpRoutes.signUpVerify.route()]),
+                  OpRoutes.automationDetails.route(),
+                  OpRoutes.newAutomation.route(),
+                ],
+              ),
+              OpRoutes.market.route(
+                routes: [
+                  OpRoutes.search.route(),
+                ],
+              ),
+              OpRoutes.portfolio.route(),
+              OpRoutes.settings.route(),
+              OpRoutes.indexes.route(),
+              OpRoutes.topPerformers.route(),
+              OpRoutes.topDecliners.route(),
+              OpRoutes.topMovers.route(),
+              OpRoutes.notifications.route(),
+              OpRoutes.stockDetails.route(),
+            ],
+          ),
+          OpRoutes.addFunds.route(),
+          OpRoutes.withdrawFunds.route(),
+          OpRoutes.connectedAccounts.route(),
+          OpRoutes.yourName.route(),
+          OpRoutes.thirdPartySignIn.route(),
+          OpRoutes.appearance.route(),
+          OpRoutes.language.route(),
+          OpRoutes.faq.route(),
+          OpRoutes.contactSupport.route(),
+          OpRoutes.verifyCurrentEmail.route(
+            routes: [
+              OpRoutes.inputNewEmail.route(
+                routes: [
+                  OpRoutes.verifyNewEmail.route(
+                    routes: [OpRoutes.updateEmailCompleted.route()],
+                  ),
+                ],
+              ),
+            ],
+          ),
+          OpRoutes.verifyCurrentPassword.route(
+            routes: [
+              OpRoutes.inputNewPassword.route(
+                routes: [
+                  OpRoutes.updatePasswordCompleted.route(),
                 ],
               ),
             ],
           ),
         ],
-      ),
-      ShellRoute(
-        builder: (context, state, child) {
-          return OpPlatformSliverTabScaffold(child: child,);
-        },
-        routes: [
-          OpRoutes.home.route(
-            routes: [
-              OpRoutes.indexes.route(),
-              OpRoutes.topPerformers.route(),
-              OpRoutes.topDecliners.route(),
-              OpRoutes.topMovers.route(),
-            ],
-          ),
-          OpRoutes.ai.route(),
-          OpRoutes.automations.route(
-            routes: [
-              OpRoutes.automationDetails.route(),
-              OpRoutes.newAutomation.route(),
-            ],
-          ),
-          OpRoutes.market.route(
-            routes: [
-              OpRoutes.search.route(),
-              OpRoutes.stockDetails.route(),
-            ],
-          ),
-          OpRoutes.portfolio.route(),
-          OpRoutes.settings.route(
-            routes: [
-              OpRoutes.connectedAccounts.route(),
-              OpRoutes.yourName.route(),
-              OpRoutes.thirdPartySignIn.route(),
-              OpRoutes.appearance.route(),
-              OpRoutes.language.route(),
-              OpRoutes.faq.route(),
-              OpRoutes.contactSupport.route(),
-            ],
-          ),
-        ],
-      ),
-      OpRoutes.notifications.route(),
-      OpRoutes.addFunds.route(),
-      OpRoutes.withdrawFunds.route(),
-      OpRoutes.verifyCurrentEmail.route(
-        routes: [
-          OpRoutes.inputNewEmail.route(
-            routes: [
-              OpRoutes.verifyNewEmail.route(
-                routes: [OpRoutes.updateEmailCompleted.route()],
-              ),
-            ],
-          ),
-        ],
-      ),
-      OpRoutes.verifyCurrentPassword.route(
-        routes: [
-          OpRoutes.inputNewPassword.route(
-            routes: [
-              OpRoutes.updatePasswordCompleted.route(),
-            ],
-          ),
-        ],
-      ),
-    ],
-  );
+      );
 }

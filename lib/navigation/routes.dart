@@ -131,7 +131,7 @@ class OpRoutes {
   );
 
   static final stockDetails = RouteModel(
-    path: 'stock_details',
+    path: '/stock_details',
     name: 'stock_details',
     builder: (context, state) => const StockDetails(),
   );
@@ -175,28 +175,28 @@ class OpRoutes {
 
   //region Home sub-routes
   static final indexes = RouteModel(
-    path: 'indexes',
+    path: '/indexes',
     name: 'indexes',
     builder: (context, state) =>
     const Indexes(), // Replace with actual widget
   );
 
   static final topPerformers = RouteModel(
-    path: 'top_performers',
+    path: '/top_performers',
     name: 'top_performers',
     builder: (context, state) =>
     const TopPerformers(), // Replace with actual widget
   );
 
   static final topDecliners = RouteModel(
-    path: 'top_decliners',
+    path: '/top_decliners',
     name: 'top_decliners',
     builder: (context, state) =>
     const TopDecliners(), // Replace with actual widget
   );
 
   static final topMovers = RouteModel(
-    path: 'top_movers',
+    path: '/top_movers',
     name: 'top_movers',
     builder: (context, state) =>
     const TopMovers(), // Replace with actual widget
@@ -218,14 +218,14 @@ class OpRoutes {
 
   // region Settings sub-routes
   static final connectedAccounts = RouteModel(
-    path: 'connected_accounts',
+    path: '/connected_accounts',
     name: 'connected_accounts',
     builder: (context, state) =>
         const ConnectedAccounts(), // Replace with actual widget
   );
 
   static final yourName = RouteModel(
-    path: 'your_name',
+    path: '/your_name',
     name: 'your_name',
     builder: (context, state) => const YourName(), // Replace with actual widget
   );
@@ -276,33 +276,33 @@ class OpRoutes {
   );
 
   static final thirdPartySignIn = RouteModel(
-    path: 'third_party_sign_in',
+    path: '/third_party_sign_in',
     name: 'third_party_sign_in',
     builder: (context, state) =>
         const ThirdPartySignIn(), // Replace with actual widget
   );
 
   static final appearance = RouteModel(
-    path: 'appearance',
+    path: '/appearance',
     name: 'appearance',
     builder: (context, state) =>
         const Appearance(), // Replace with actual widget
   );
 
   static final language = RouteModel(
-    path: 'language',
+    path: '/language',
     name: 'language',
     builder: (context, state) => const Language(), // Replace with actual widget
   );
 
   static final faq = RouteModel(
-    path: 'faq',
+    path: '/faq',
     name: 'faq',
     builder: (context, state) => const Faq(), // Replace with actual widget
   );
 
   static final contactSupport = RouteModel(
-    path: 'contact_support',
+    path: '/contact_support',
     name: 'contact_support',
     builder: (context, state) =>
         const ContactSupport(), // Replace with actual widget
