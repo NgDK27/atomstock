@@ -4,9 +4,9 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:oppenhomies/domain/helpers/string_extensions.dart';
-import 'package:oppenhomies/domain/helpers/use_post_frame_effect.dart';
 import 'package:oppenhomies/domain/helpers/validators.dart';
-import 'package:oppenhomies/domain/models/status/statuses.dart';
+import 'package:oppenhomies/domain/models/status/ui_state.dart';
+import 'package:oppenhomies/domain/models/status/ui_states_enum.dart';
 import 'package:oppenhomies/domain/providers/auth/auth_provider.dart';
 import 'package:oppenhomies/navigation/routes.dart';
 import 'package:oppenhomies/styles/spacings.dart';
@@ -23,13 +23,36 @@ class SignIn extends HookConsumerWidget {
     context.goNamed(OpRoutes.resetPassword.name);
   }
 
-  void _handleSignIn(WidgetRef ref, String email, String password) {
-    ref.read(authProvider.notifier).signIn(
-          email: email,
-          password: password,
-        );
-  }
+  Future<void> _handleSignIn(BuildContext context, WidgetRef ref, String email,
+      String password) async {
+    final authNotifier = ref.read(authProvider.notifier);
+    final result = await authNotifier.signIn(email: email, password: password);
 
+    if (context.mounted) {
+      switch (result.state) {
+        case UiStates.success:
+          context.goNamed(OpRoutes.home.name);
+          break;
+        case UiStates.failed:
+          showPlatformDialog(
+            context: context,
+            builder: (_) => PlatformAlertDialog(
+              title: const Text("Sign in unsuccessful"),
+              content: const Text("Please check your credentials and try again."),
+              actions: <Widget>[
+                PlatformDialogAction(
+                  child: const Text('OK'),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
+            ),
+          );
+          break;
+        default:
+          break;
+      }
+    }
+  }
   (
     TextEditingController,
     TextEditingController,
@@ -111,38 +134,6 @@ class SignIn extends HookConsumerWidget {
     }, [email, password]);
   }
 
-  Statuses _handleStatusChange({
-    required BuildContext context,
-    required  WidgetRef ref,
-}) {
-    final auth = ref.watch(authProvider);
-    usePostFrameEffect(() {
-      switch (auth.status) {
-        case Statuses.success:
-          context.goNamed(OpRoutes.home.name);
-        case Statuses.failed:
-          showPlatformDialog(
-            context: context,
-            builder: (_) => PlatformAlertDialog(
-              title: Text("Sign in unsuccessful"),
-              content: Text(auth.message!),
-              actions: <Widget>[
-                PlatformDialogAction(
-                  child: Text('OK'),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ],
-            ),
-          );
-        case Statuses.loading:
-        case Statuses.initialized:
-        case Statuses.awaitingUpdate:
-          break;
-      }
-    }, [auth.status],);
-    return auth.status;
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final (
@@ -155,7 +146,7 @@ class SignIn extends HookConsumerWidget {
       passwordValidationMode
     ) = _useFormState();
 
-    final authStatus = _handleStatusChange(context: context, ref: ref);
+    final uiState = useState<UiState>(UiState.initialized());
 
     return OpPlatformSliverScaffold(
       scrollable: true,
@@ -231,14 +222,15 @@ class SignIn extends HookConsumerWidget {
       floatingBottomWidget: BottomBar(
         child: OpFilledPrimaryButton(
           text: "Sign in",
-          onPressed: isFormValid.value && authStatus != Statuses.loading
+          onPressed: isFormValid.value && uiState.value.state != UiStates.loading
               ? () => _handleSignIn(
+                    context,
                     ref,
                     emailController.text,
                     passwordController.text,
                   )
               : null,
-          child: authStatus == Statuses.loading
+          child: uiState.value.state == UiStates.loading
               ? SizedBox(
                   height: OpSpacing.md,
                   width: OpSpacing.md,

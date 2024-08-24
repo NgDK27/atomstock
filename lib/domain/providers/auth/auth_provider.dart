@@ -1,79 +1,78 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:oppenhomies/domain/helpers/extract_server_response.dart';
-import 'package:oppenhomies/domain/models/auth/auth_token_response.dart';
-import 'package:oppenhomies/domain/models/status/status.dart';
+import 'package:oppenhomies/domain/models/auth/auth_state.dart';
+import 'package:oppenhomies/domain/models/status/ui_state.dart';
+import 'package:oppenhomies/domain/providers/auth/auth_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_provider.g.dart';
 
 @riverpod
 class Auth extends _$Auth {
-  final Dio _dio = Dio();
-  final FlutterSecureStorage _storage = FlutterSecureStorage();
-  final String _apiEndpoint = 'http://192.168.25.229:2708';
+  late final AuthRepository _repository;
 
   @override
-  Status build() => Status.initialized();
+  AuthState build() {
+    _repository = AuthRepository(
+      dio: Dio(),
+      storage: const FlutterSecureStorage(),
+      apiEndpoint: 'http://192.168.25.229:2708',
+    );
+    return const AuthState();
+  }
 
-  Future<void> signIn({required String email, required String password}) async {
-    state = Status.loading();
-
+  Future<UiState> signIn({required String email, required String password}) async {
     try {
-      final response = await _dio.post(
-        '$_apiEndpoint/signin',
-        data: {
-          "email": email,
-          "password": password,
-        },
+      final authTokenResponse = await _repository.signIn(email: email, password: password);
+      await _repository.saveTokens(authTokenResponse);
+
+      state = state.copyWith(
+        isAuthenticated: true,
+        accessToken: authTokenResponse.accessToken,
+        idToken: authTokenResponse.idToken,
+        refreshToken: authTokenResponse.refreshToken,
+        email: email,
       );
-
-      final authTokenResponse = AuthTokenResponse.fromJson(response.data);
-
-      // Save tokens to secure storage
-      await _saveTokens(authTokenResponse);
-
-      state = Status.success();
+      return UiState.success();
     } on DioException catch (e) {
-      if (e.response != null) {
-
-        String errorMessage = 'An error occurred';
-        if (e.response?.data is Map<String, dynamic>) {
-          errorMessage = extractErrorResponse(e.response!.data, 'NotAuthorizedException');
-        }
-
-        state = Status.failed(message: errorMessage);
-      } else {
-        state = Status.failed(message: 'Network error occurred');
-      }
+      final errorMessage = e.response != null && e.response?.data is Map<String, dynamic>
+          ? extractErrorResponse(e.response!.data, "NotAuthorizedException")
+          : 'Network error occurred';
+      return UiState.failed(message: errorMessage);
     } catch (e) {
-      state = Status.failed(message: 'An unexpected error occurred');
+      return UiState.failed(message: "An unknown error happened");
     }
   }
 
-  Future<void> _saveTokens(AuthTokenResponse tokens) async {
-    await _storage.write(key: 'access_token', value: tokens.accessToken);
-    await _storage.write(key: 'id_token', value: tokens.idToken);
-    await _storage.write(key: 'refresh_token', value: tokens.refreshToken);
+  Future<UiState> signUp({required String email, required String password}) async {
+    try {
+      await _repository.signUp(email: email, password: password);
+      state = state.copyWith(email: email);
+      return UiState.success();
+    } on DioException catch (e) {
+      final errorMessage = e.response != null && e.response?.data is Map<String, dynamic>
+          ? extractUserFriendlyErrorMessage(e.response!.data)
+          : 'Network error occurred';
+      return UiState.failed(message: errorMessage);
+    } catch (e) {
+      return UiState.failed(message: "An unknown error happened");
+    }
   }
 
   Future<bool> isSignedIn() async {
-    try {
-      final accessToken = await _storage.read(key: 'access_token');
-      return accessToken != null && accessToken.isNotEmpty;
-    } catch (e) {
-      // dev.log('Error checking sign-in status: ${e.toString()}');
-      return false;
-    }
+    final hasValidToken = await _repository.hasValidToken();
+    state = state.copyWith(isAuthenticated: hasValidToken);
+    return hasValidToken;
   }
 
-  Future<void> signOut() async {
-    state = Status.initialized();
+  Future<UiState> signOut() async {
     try {
-      await _storage.deleteAll();
-      state = Status.success();
+      await _repository.clearTokens();
+      state = const AuthState();
+      return UiState.success();
     } catch (e) {
-      state = Status.failed(message: 'Failed to sign out: ${e.toString()}');
+      return UiState.failed();
     }
   }
 }

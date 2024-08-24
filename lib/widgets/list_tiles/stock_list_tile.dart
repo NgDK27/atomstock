@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:go_router/go_router.dart';
-import 'package:oppenhomies/domain/models/status/status.dart';
+import 'package:oppenhomies/domain/models/status/ui_state.dart';
 import 'package:oppenhomies/domain/models/stock/stock_model.dart';
 import 'package:oppenhomies/navigation/routes.dart';
 import 'package:oppenhomies/styles/colors.dart';
