@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'state.dart';
+part of 'status.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,47 +15,47 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
-mixin _$State {
-  States get state => throw _privateConstructorUsedError;
+mixin _$Status {
+  Statuses get status => throw _privateConstructorUsedError;
   String? get message => throw _privateConstructorUsedError;
 
-  /// Create a copy of State
+  /// Create a copy of Status
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $StateCopyWith<State> get copyWith => throw _privateConstructorUsedError;
+  $StatusCopyWith<Status> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $StateCopyWith<$Res> {
-  factory $StateCopyWith(State value, $Res Function(State) then) =
-      _$StateCopyWithImpl<$Res, State>;
+abstract class $StatusCopyWith<$Res> {
+  factory $StatusCopyWith(Status value, $Res Function(Status) then) =
+      _$StatusCopyWithImpl<$Res, Status>;
   @useResult
-  $Res call({States state, String? message});
+  $Res call({Statuses status, String? message});
 }
 
 /// @nodoc
-class _$StateCopyWithImpl<$Res, $Val extends State>
-    implements $StateCopyWith<$Res> {
-  _$StateCopyWithImpl(this._value, this._then);
+class _$StatusCopyWithImpl<$Res, $Val extends Status>
+    implements $StatusCopyWith<$Res> {
+  _$StatusCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of State
+  /// Create a copy of Status
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? state = null,
+    Object? status = null,
     Object? message = freezed,
   }) {
     return _then(_value.copyWith(
-      state: null == state
-          ? _value.state
-          : state // ignore: cast_nullable_to_non_nullable
-              as States,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as Statuses,
       message: freezed == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
@@ -65,36 +65,36 @@ class _$StateCopyWithImpl<$Res, $Val extends State>
 }
 
 /// @nodoc
-abstract class _$$StateImplCopyWith<$Res> implements $StateCopyWith<$Res> {
-  factory _$$StateImplCopyWith(
-          _$StateImpl value, $Res Function(_$StateImpl) then) =
-      __$$StateImplCopyWithImpl<$Res>;
+abstract class _$$StatusImplCopyWith<$Res> implements $StatusCopyWith<$Res> {
+  factory _$$StatusImplCopyWith(
+          _$StatusImpl value, $Res Function(_$StatusImpl) then) =
+      __$$StatusImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({States state, String? message});
+  $Res call({Statuses status, String? message});
 }
 
 /// @nodoc
-class __$$StateImplCopyWithImpl<$Res>
-    extends _$StateCopyWithImpl<$Res, _$StateImpl>
-    implements _$$StateImplCopyWith<$Res> {
-  __$$StateImplCopyWithImpl(
-      _$StateImpl _value, $Res Function(_$StateImpl) _then)
+class __$$StatusImplCopyWithImpl<$Res>
+    extends _$StatusCopyWithImpl<$Res, _$StatusImpl>
+    implements _$$StatusImplCopyWith<$Res> {
+  __$$StatusImplCopyWithImpl(
+      _$StatusImpl _value, $Res Function(_$StatusImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of State
+  /// Create a copy of Status
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? state = null,
+    Object? status = null,
     Object? message = freezed,
   }) {
-    return _then(_$StateImpl(
-      state: null == state
-          ? _value.state
-          : state // ignore: cast_nullable_to_non_nullable
-              as States,
+    return _then(_$StatusImpl(
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as Statuses,
       message: freezed == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
@@ -105,26 +105,26 @@ class __$$StateImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$StateImpl with DiagnosticableTreeMixin implements _State {
-  const _$StateImpl({this.state = States.initialized, this.message});
+class _$StatusImpl with DiagnosticableTreeMixin implements _Status {
+  const _$StatusImpl({this.status = Statuses.initialized, this.message});
 
   @override
   @JsonKey()
-  final States state;
+  final Statuses status;
   @override
   final String? message;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'State(state: $state, message: $message)';
+    return 'Status(status: $status, message: $message)';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-      ..add(DiagnosticsProperty('type', 'State'))
-      ..add(DiagnosticsProperty('state', state))
+      ..add(DiagnosticsProperty('type', 'Status'))
+      ..add(DiagnosticsProperty('status', status))
       ..add(DiagnosticsProperty('message', message));
   }
 
@@ -132,36 +132,36 @@ class _$StateImpl with DiagnosticableTreeMixin implements _State {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$StateImpl &&
-            (identical(other.state, state) || other.state == state) &&
+            other is _$StatusImpl &&
+            (identical(other.status, status) || other.status == status) &&
             (identical(other.message, message) || other.message == message));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, state, message);
+  int get hashCode => Object.hash(runtimeType, status, message);
 
-  /// Create a copy of State
+  /// Create a copy of Status
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$StateImplCopyWith<_$StateImpl> get copyWith =>
-      __$$StateImplCopyWithImpl<_$StateImpl>(this, _$identity);
+  _$$StatusImplCopyWith<_$StatusImpl> get copyWith =>
+      __$$StatusImplCopyWithImpl<_$StatusImpl>(this, _$identity);
 }
 
-abstract class _State implements State {
-  const factory _State({final States state, final String? message}) =
-      _$StateImpl;
+abstract class _Status implements Status {
+  const factory _Status({final Statuses status, final String? message}) =
+      _$StatusImpl;
 
   @override
-  States get state;
+  Statuses get status;
   @override
   String? get message;
 
-  /// Create a copy of State
+  /// Create a copy of Status
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$StateImplCopyWith<_$StateImpl> get copyWith =>
+  _$$StatusImplCopyWith<_$StatusImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

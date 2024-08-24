@@ -6,7 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:oppenhomies/domain/helpers/string_extensions.dart';
 import 'package:oppenhomies/domain/helpers/use_post_frame_effect.dart';
 import 'package:oppenhomies/domain/helpers/validators.dart';
-import 'package:oppenhomies/domain/models/state/states.dart';
+import 'package:oppenhomies/domain/models/status/statuses.dart';
 import 'package:oppenhomies/domain/providers/auth/auth_provider.dart';
 import 'package:oppenhomies/navigation/routes.dart';
 import 'package:oppenhomies/styles/spacings.dart';
@@ -111,6 +111,38 @@ class SignIn extends HookConsumerWidget {
     }, [email, password]);
   }
 
+  Statuses _handleStatusChange({
+    required BuildContext context,
+    required  WidgetRef ref,
+}) {
+    final auth = ref.watch(authProvider);
+    usePostFrameEffect(() {
+      switch (auth.status) {
+        case Statuses.success:
+          context.goNamed(OpRoutes.home.name);
+        case Statuses.failed:
+          showPlatformDialog(
+            context: context,
+            builder: (_) => PlatformAlertDialog(
+              title: Text("Sign in unsuccessful"),
+              content: Text(auth.message!),
+              actions: <Widget>[
+                PlatformDialogAction(
+                  child: Text('OK'),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
+            ),
+          );
+        case Statuses.loading:
+        case Statuses.initialized:
+        case Statuses.awaitingUpdate:
+          break;
+      }
+    }, [auth.status],);
+    return auth.status;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final (
@@ -123,32 +155,7 @@ class SignIn extends HookConsumerWidget {
       passwordValidationMode
     ) = _useFormState();
 
-    final auth = ref.watch(authProvider);
-
-    usePostFrameEffect(() {
-      switch (auth.state) {
-        case States.success:
-          context.goNamed(OpRoutes.home.name);
-        case States.failed:
-          showPlatformDialog(
-            context: context,
-            builder: (_) => PlatformAlertDialog(
-              title: Text("Sign in unsuccessful"),
-              content: Text(auth.message ?? "LOL"),
-              actions: <Widget>[
-                PlatformDialogAction(
-                  child: Text('OK'),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ],
-            ),
-          );
-        case States.loading:
-        case States.initialized:
-        case States.awaitingUpdate:
-          break;
-      }
-    }, [auth.state],);
+    final authStatus = _handleStatusChange(context: context, ref: ref);
 
     return OpPlatformSliverScaffold(
       scrollable: true,
@@ -161,7 +168,6 @@ class SignIn extends HookConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(ref.read(authProvider).state.toString()),
                 const SizedBox(height: OpSpacing.lg),
                 Form(
                   key: formKey,
@@ -225,14 +231,14 @@ class SignIn extends HookConsumerWidget {
       floatingBottomWidget: BottomBar(
         child: OpFilledPrimaryButton(
           text: "Sign in",
-          onPressed: isFormValid.value && auth.state != States.loading
+          onPressed: isFormValid.value && authStatus != Statuses.loading
               ? () => _handleSignIn(
                     ref,
                     emailController.text,
                     passwordController.text,
                   )
               : null,
-          child: auth.state == States.loading
+          child: authStatus == Statuses.loading
               ? SizedBox(
                   height: OpSpacing.md,
                   width: OpSpacing.md,
