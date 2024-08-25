@@ -111,7 +111,7 @@ class SignUpVerify extends HookConsumerWidget {
     final codeController = useTextEditingController();
 
     final signUpState = ref.watch(signUpProvider);
-    final uiState = useState(UiState());
+    final uiState = useState(const UiState());
 
     return Stack(
       children: [

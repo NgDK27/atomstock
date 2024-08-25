@@ -59,7 +59,7 @@ class OpTitleLarge extends StatelessWidget {
                 if (onPressed != null)
                   Row(
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         width: OpSpacing.xs3,
                       ),
                       Icon(

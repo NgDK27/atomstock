@@ -32,13 +32,13 @@ class ChatWelcomeScreen extends StatelessWidget {
             "Ask your AI Advisor about",
             style: OpTextStyle.titleMedium(context).bold(),
           ),
-          SizedBox(height: OpSpacing.xs),
+          const SizedBox(height: OpSpacing.xs),
           for (final hint in promptHints)
             Text(
               "\"$hint\"",
               style: OpTextStyle.labelLarge(context),
             ),
-          SizedBox(height: OpSpacing.sm),
+          const SizedBox(height: OpSpacing.sm),
         ],
       ),
     );

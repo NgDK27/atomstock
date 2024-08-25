@@ -5,12 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oppenhomies/domain/models/stock/stock_model.dart';
 import 'package:oppenhomies/navigation/routes.dart';
-import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/spacings.dart';
-import 'package:oppenhomies/styles/text.dart';
-import 'package:oppenhomies/widgets/list_tiles/stock_list_tile.dart';
 import 'package:oppenhomies/widgets/scaffolds/platform_sliver_scaffold.dart';
-import 'package:oppenhomies/widgets/typography/title.dart';
 
 class Market extends ConsumerWidget {
   const Market({super.key});
@@ -21,14 +17,6 @@ class Market extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
-    final sampleStocks = [
-      StockModel.sample(),
-      StockModel.positiveSample(),
-      StockModel.negativeSample(),
-      StockModel.detailedSample(),
-    ];
-
     return OpPlatformSliverScaffold(
       title: "Explore",
       transitionBetweenRoutes: false,

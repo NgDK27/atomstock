@@ -7,7 +7,6 @@ import 'package:oppenhomies/domain/helpers/string_extensions.dart';
 import 'package:oppenhomies/domain/helpers/validators.dart';
 import 'package:oppenhomies/domain/models/status/ui_state.dart';
 import 'package:oppenhomies/domain/models/status/ui_states_enum.dart';
-import 'package:oppenhomies/domain/providers/auth/auth_provider.dart';
 import 'package:oppenhomies/domain/providers/auth/sign_in_provider.dart';
 import 'package:oppenhomies/navigation/routes.dart';
 import 'package:oppenhomies/styles/spacings.dart';

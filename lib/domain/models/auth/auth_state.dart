@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:oppenhomies/domain/models/status/ui_state.dart';
 
 part 'auth_state.freezed.dart';
 

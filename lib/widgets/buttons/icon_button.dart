@@ -37,7 +37,7 @@ class OpIconButton extends HookWidget {
                 ),
               ),
               color: OpDynamicColor.primaryContainer(context),
-              padding: EdgeInsets.all(OpSpacing.sm),
+              padding: const EdgeInsets.all(OpSpacing.sm),
               onPressed: onPressed,
               material: (_, __) => MaterialIconButtonData(
                 color: OpDynamicColor.primary(context),
@@ -49,7 +49,7 @@ class OpIconButton extends HookWidget {
               ),
               cupertino: (_, __) => CupertinoIconButtonData(
                 color: OpDynamicColor.primaryContainer(context),
-                borderRadius: BorderRadius.all(Radius.circular(OpRadius.full)),
+                borderRadius: const BorderRadius.all(Radius.circular(OpRadius.full)),
               ),
             ),
           ],
@@ -57,7 +57,7 @@ class OpIconButton extends HookWidget {
         GestureDetector(
           onTap: onPressed,
           child: Padding(
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               horizontal: OpSpacing.sm,
               vertical: OpSpacing.xs,
             ),

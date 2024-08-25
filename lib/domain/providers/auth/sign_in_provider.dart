@@ -14,7 +14,7 @@ class SignIn extends _$SignIn {
   @override
   UiState build() {
     _repository = ref.read(authRepositoryProvider);
-    return UiState();
+    return const UiState();
   }
 
   Future<UiState> signIn(

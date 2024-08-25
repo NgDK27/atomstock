@@ -95,7 +95,7 @@ class Portfolio extends HookConsumerWidget {
             delegate: SliverChildListDelegate([
               //region Funds heading
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: OpSpacing.md),
+                padding: const EdgeInsets.symmetric(horizontal: OpSpacing.md),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -143,20 +143,20 @@ class Portfolio extends HookConsumerWidget {
               //endregion
 
               //region Funds
-              OpTitle("Funds"),
+              const OpTitle("Funds"),
               PortfolioListTile(
                 leadingText: "VND",
                 subtitleText: 'Vietnam Dong',
                 topTrailingText: vndFund.value.vndFormat(),
                 bottomTrailingText: "",
               ),
-              SizedBox(
+              const SizedBox(
                 height: OpSpacing.xl,
               ),
               //endregion
 
               //region Holdings
-              OpTitle("Holdings"),
+              const OpTitle("Holdings"),
               // Generate alphabetical sections
               ...groupedStocks.entries.map((entry) {
                 final letter = entry.key;
@@ -164,7 +164,7 @@ class Portfolio extends HookConsumerWidget {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: OpSpacing.lg),
+                    const SizedBox(height: OpSpacing.lg),
                     OpTitleSmall(letter),
                     ...stocks.map(
                       (stock) => PortfolioListTile(

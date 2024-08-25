@@ -28,7 +28,7 @@ class StockCollectionsLayout extends HookConsumerWidget {
                 if (stocks != null)
                   ...stocks!.map((stock) => StockListTile(stock: stock))
                 else
-                  Text("No data"),
+                  const Text("No data"),
               ],
             ),
           ),

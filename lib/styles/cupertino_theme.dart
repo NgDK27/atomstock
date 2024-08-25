@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/fonts.dart';
-import 'package:oppenhomies/styles/opacities.dart';
-import 'package:oppenhomies/styles/opacities.dart';
 
 final opCupertinoLightTheme = const CupertinoThemeData().copyWith(
   textTheme: opCupertinoTextTheme,

@@ -1,10 +1,8 @@
-import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:oppenhomies/domain/helpers/extract_server_response.dart';
 import 'package:oppenhomies/domain/models/status/ui_state.dart';
-import 'package:oppenhomies/domain/providers/auth/auth_provider.dart';
 import 'package:oppenhomies/domain/providers/auth/auth_repository.dart';
 import 'package:oppenhomies/domain/providers/auth/sign_in_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -29,7 +27,7 @@ class SignUp extends _$SignUp {
   @override
   SignUpState build() {
     _repository = ref.read(authRepositoryProvider);
-    return SignUpState();
+    return const SignUpState();
   }
 
   void setTempEmail(String email) {

@@ -23,7 +23,7 @@ class OpenAIService {
       }
     } catch (e) {
       print('Error occurred: $e');
-      throw e;
+      rethrow;
     }
   }
 }
