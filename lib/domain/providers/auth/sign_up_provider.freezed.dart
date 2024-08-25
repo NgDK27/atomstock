@@ -1,0 +1,198 @@
+// coverage:ignore-file
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
+
+part of 'sign_up_provider.dart';
+
+// **************************************************************************
+// FreezedGenerator
+// **************************************************************************
+
+T _$identity<T>(T value) => value;
+
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+
+/// @nodoc
+mixin _$SignUpState {
+  UiState get uiState => throw _privateConstructorUsedError;
+  String? get tempEmail => throw _privateConstructorUsedError;
+  String? get tempPassword => throw _privateConstructorUsedError;
+
+  /// Create a copy of SignUpState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $SignUpStateCopyWith<SignUpState> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SignUpStateCopyWith<$Res> {
+  factory $SignUpStateCopyWith(
+          SignUpState value, $Res Function(SignUpState) then) =
+      _$SignUpStateCopyWithImpl<$Res, SignUpState>;
+  @useResult
+  $Res call({UiState uiState, String? tempEmail, String? tempPassword});
+
+  $UiStateCopyWith<$Res> get uiState;
+}
+
+/// @nodoc
+class _$SignUpStateCopyWithImpl<$Res, $Val extends SignUpState>
+    implements $SignUpStateCopyWith<$Res> {
+  _$SignUpStateCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of SignUpState
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? uiState = null,
+    Object? tempEmail = freezed,
+    Object? tempPassword = freezed,
+  }) {
+    return _then(_value.copyWith(
+      uiState: null == uiState
+          ? _value.uiState
+          : uiState // ignore: cast_nullable_to_non_nullable
+              as UiState,
+      tempEmail: freezed == tempEmail
+          ? _value.tempEmail
+          : tempEmail // ignore: cast_nullable_to_non_nullable
+              as String?,
+      tempPassword: freezed == tempPassword
+          ? _value.tempPassword
+          : tempPassword // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+
+  /// Create a copy of SignUpState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $UiStateCopyWith<$Res> get uiState {
+    return $UiStateCopyWith<$Res>(_value.uiState, (value) {
+      return _then(_value.copyWith(uiState: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$SignUpStateImplCopyWith<$Res>
+    implements $SignUpStateCopyWith<$Res> {
+  factory _$$SignUpStateImplCopyWith(
+          _$SignUpStateImpl value, $Res Function(_$SignUpStateImpl) then) =
+      __$$SignUpStateImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({UiState uiState, String? tempEmail, String? tempPassword});
+
+  @override
+  $UiStateCopyWith<$Res> get uiState;
+}
+
+/// @nodoc
+class __$$SignUpStateImplCopyWithImpl<$Res>
+    extends _$SignUpStateCopyWithImpl<$Res, _$SignUpStateImpl>
+    implements _$$SignUpStateImplCopyWith<$Res> {
+  __$$SignUpStateImplCopyWithImpl(
+      _$SignUpStateImpl _value, $Res Function(_$SignUpStateImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of SignUpState
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? uiState = null,
+    Object? tempEmail = freezed,
+    Object? tempPassword = freezed,
+  }) {
+    return _then(_$SignUpStateImpl(
+      uiState: null == uiState
+          ? _value.uiState
+          : uiState // ignore: cast_nullable_to_non_nullable
+              as UiState,
+      tempEmail: freezed == tempEmail
+          ? _value.tempEmail
+          : tempEmail // ignore: cast_nullable_to_non_nullable
+              as String?,
+      tempPassword: freezed == tempPassword
+          ? _value.tempPassword
+          : tempPassword // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$SignUpStateImpl implements _SignUpState {
+  const _$SignUpStateImpl(
+      {this.uiState = const UiState(), this.tempEmail, this.tempPassword});
+
+  @override
+  @JsonKey()
+  final UiState uiState;
+  @override
+  final String? tempEmail;
+  @override
+  final String? tempPassword;
+
+  @override
+  String toString() {
+    return 'SignUpState(uiState: $uiState, tempEmail: $tempEmail, tempPassword: $tempPassword)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SignUpStateImpl &&
+            (identical(other.uiState, uiState) || other.uiState == uiState) &&
+            (identical(other.tempEmail, tempEmail) ||
+                other.tempEmail == tempEmail) &&
+            (identical(other.tempPassword, tempPassword) ||
+                other.tempPassword == tempPassword));
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, uiState, tempEmail, tempPassword);
+
+  /// Create a copy of SignUpState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SignUpStateImplCopyWith<_$SignUpStateImpl> get copyWith =>
+      __$$SignUpStateImplCopyWithImpl<_$SignUpStateImpl>(this, _$identity);
+}
+
+abstract class _SignUpState implements SignUpState {
+  const factory _SignUpState(
+      {final UiState uiState,
+      final String? tempEmail,
+      final String? tempPassword}) = _$SignUpStateImpl;
+
+  @override
+  UiState get uiState;
+  @override
+  String? get tempEmail;
+  @override
+  String? get tempPassword;
+
+  /// Create a copy of SignUpState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SignUpStateImplCopyWith<_$SignUpStateImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}

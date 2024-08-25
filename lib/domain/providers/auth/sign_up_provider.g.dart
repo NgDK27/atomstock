@@ -1,24 +1,25 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'auth_provider.dart';
+part of 'sign_up_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$authHash() => r'ea8a91479531007eaca8332c9ce59e8bf1637777';
+String _$signUpHash() => r'6156fdb325af0801ad93774ab01a360766f53d68';
 
-/// See also [Auth].
-@ProviderFor(Auth)
-final authProvider = AutoDisposeAsyncNotifierProvider<Auth, bool>.internal(
-  Auth.new,
-  name: r'authProvider',
+/// See also [SignUp].
+@ProviderFor(SignUp)
+final signUpProvider =
+    AutoDisposeNotifierProvider<SignUp, SignUpState>.internal(
+  SignUp.new,
+  name: r'signUpProvider',
   debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$authHash,
+      const bool.fromEnvironment('dart.vm.product') ? null : _$signUpHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$Auth = AutoDisposeAsyncNotifier<bool>;
+typedef _$SignUp = AutoDisposeNotifier<SignUpState>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

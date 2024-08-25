@@ -8,6 +8,7 @@ import 'package:oppenhomies/domain/helpers/validators.dart';
 import 'package:oppenhomies/domain/models/status/ui_state.dart';
 import 'package:oppenhomies/domain/models/status/ui_states_enum.dart';
 import 'package:oppenhomies/domain/providers/auth/auth_provider.dart';
+import 'package:oppenhomies/domain/providers/auth/sign_in_provider.dart';
 import 'package:oppenhomies/navigation/routes.dart';
 import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/widgets/bars/bottom_bar.dart';
@@ -26,8 +27,8 @@ class SignIn extends HookConsumerWidget {
   Future<void> _handleSignIn(BuildContext context, WidgetRef ref, String email,
       String password, ValueNotifier<UiState> uiState) async {
     uiState.value = UiState.loading();
-    final authNotifier = ref.read(authProvider.notifier);
-    final result = await authNotifier.signIn(email: email, password: password);
+    final signInNotifier = ref.read(signInProvider.notifier);
+    final result = await signInNotifier.signIn(email: email, password: password);
 
     if (context.mounted) {
       uiState.value = result;

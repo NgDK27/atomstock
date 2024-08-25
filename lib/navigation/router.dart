@@ -11,8 +11,7 @@ class OpRouter {
   static router(WidgetRef ref) => GoRouter(
         initialLocation: OpRoutes.onboarding.path,
         redirect: (BuildContext context, GoRouterState state) async {
-          final authNotifier = ref.read(authProvider.notifier);
-          final isSignedIn = await authNotifier.isSignedIn();
+          final isSignedIn = await ref.read(authProvider.future);
           final isOnboardingRoute =
               state.matchedLocation.startsWith(OpRoutes.onboarding.path);
 

@@ -16,7 +16,6 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$AuthState {
-  bool get isAuthenticated => throw _privateConstructorUsedError;
   String? get accessToken => throw _privateConstructorUsedError;
   String? get idToken => throw _privateConstructorUsedError;
   String? get refreshToken => throw _privateConstructorUsedError;
@@ -35,8 +34,7 @@ abstract class $AuthStateCopyWith<$Res> {
       _$AuthStateCopyWithImpl<$Res, AuthState>;
   @useResult
   $Res call(
-      {bool isAuthenticated,
-      String? accessToken,
+      {String? accessToken,
       String? idToken,
       String? refreshToken,
       String? email});
@@ -57,17 +55,12 @@ class _$AuthStateCopyWithImpl<$Res, $Val extends AuthState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? isAuthenticated = null,
     Object? accessToken = freezed,
     Object? idToken = freezed,
     Object? refreshToken = freezed,
     Object? email = freezed,
   }) {
     return _then(_value.copyWith(
-      isAuthenticated: null == isAuthenticated
-          ? _value.isAuthenticated
-          : isAuthenticated // ignore: cast_nullable_to_non_nullable
-              as bool,
       accessToken: freezed == accessToken
           ? _value.accessToken
           : accessToken // ignore: cast_nullable_to_non_nullable
@@ -97,8 +90,7 @@ abstract class _$$AuthStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {bool isAuthenticated,
-      String? accessToken,
+      {String? accessToken,
       String? idToken,
       String? refreshToken,
       String? email});
@@ -117,17 +109,12 @@ class __$$AuthStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? isAuthenticated = null,
     Object? accessToken = freezed,
     Object? idToken = freezed,
     Object? refreshToken = freezed,
     Object? email = freezed,
   }) {
     return _then(_$AuthStateImpl(
-      isAuthenticated: null == isAuthenticated
-          ? _value.isAuthenticated
-          : isAuthenticated // ignore: cast_nullable_to_non_nullable
-              as bool,
       accessToken: freezed == accessToken
           ? _value.accessToken
           : accessToken // ignore: cast_nullable_to_non_nullable
@@ -152,15 +139,8 @@ class __$$AuthStateImplCopyWithImpl<$Res>
 
 class _$AuthStateImpl implements _AuthState {
   const _$AuthStateImpl(
-      {this.isAuthenticated = false,
-      this.accessToken,
-      this.idToken,
-      this.refreshToken,
-      this.email});
+      {this.accessToken, this.idToken, this.refreshToken, this.email});
 
-  @override
-  @JsonKey()
-  final bool isAuthenticated;
   @override
   final String? accessToken;
   @override
@@ -172,7 +152,7 @@ class _$AuthStateImpl implements _AuthState {
 
   @override
   String toString() {
-    return 'AuthState(isAuthenticated: $isAuthenticated, accessToken: $accessToken, idToken: $idToken, refreshToken: $refreshToken, email: $email)';
+    return 'AuthState(accessToken: $accessToken, idToken: $idToken, refreshToken: $refreshToken, email: $email)';
   }
 
   @override
@@ -180,8 +160,6 @@ class _$AuthStateImpl implements _AuthState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AuthStateImpl &&
-            (identical(other.isAuthenticated, isAuthenticated) ||
-                other.isAuthenticated == isAuthenticated) &&
             (identical(other.accessToken, accessToken) ||
                 other.accessToken == accessToken) &&
             (identical(other.idToken, idToken) || other.idToken == idToken) &&
@@ -191,8 +169,8 @@ class _$AuthStateImpl implements _AuthState {
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType, isAuthenticated, accessToken, idToken, refreshToken, email);
+  int get hashCode =>
+      Object.hash(runtimeType, accessToken, idToken, refreshToken, email);
 
   /// Create a copy of AuthState
   /// with the given fields replaced by the non-null parameter values.
@@ -205,14 +183,11 @@ class _$AuthStateImpl implements _AuthState {
 
 abstract class _AuthState implements AuthState {
   const factory _AuthState(
-      {final bool isAuthenticated,
-      final String? accessToken,
+      {final String? accessToken,
       final String? idToken,
       final String? refreshToken,
       final String? email}) = _$AuthStateImpl;
 
-  @override
-  bool get isAuthenticated;
   @override
   String? get accessToken;
   @override

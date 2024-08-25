@@ -1,6 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:oppenhomies/domain/models/auth/auth_token_response.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'auth_repository.g.dart';
 
 class AuthRepository {
   final Dio _dio;
@@ -50,4 +53,13 @@ class AuthRepository {
   Future<void> clearTokens() async {
     await _storage.deleteAll();
   }
+}
+
+@riverpod
+AuthRepository authRepository(AuthRepositoryRef ref) {
+  return AuthRepository(
+    dio: Dio(),
+    storage: const FlutterSecureStorage(),
+    apiEndpoint: 'http://192.168.25.229:2708',
+  );
 }

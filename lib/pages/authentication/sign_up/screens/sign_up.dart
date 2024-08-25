@@ -8,7 +8,7 @@ import 'package:oppenhomies/domain/helpers/string_extensions.dart';
 import 'package:oppenhomies/domain/helpers/validators.dart';
 import 'package:oppenhomies/domain/models/status/ui_state.dart';
 import 'package:oppenhomies/domain/models/status/ui_states_enum.dart';
-import 'package:oppenhomies/domain/providers/auth/auth_provider.dart';
+import 'package:oppenhomies/domain/providers/auth/sign_up_provider.dart';
 import 'package:oppenhomies/navigation/routes.dart';
 import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/spacings.dart';
@@ -24,12 +24,13 @@ class SignUp extends HookConsumerWidget {
   Future<void> _handleSignUp(BuildContext context, WidgetRef ref, String email,
       String password, ValueNotifier<UiState> uiState) async {
     uiState.value = UiState.loading();
-    final authNotifier = ref.read(authProvider.notifier);
-    final result = await authNotifier.signUp(email: email, password: password);
+    final signUpNotifier = ref.read(signUpProvider.notifier);
+    final result =
+        await signUpNotifier.signUp(tempEmail: email, tempPassword: password);
 
     if (context.mounted) {
-      uiState.value = result;
-      switch (result.state) {
+      uiState.value = result.uiState;
+      switch (result.uiState.state) {
         case UiStates.success:
           context.goNamed(OpRoutes.signUpVerify.name);
           break;
@@ -38,7 +39,7 @@ class SignUp extends HookConsumerWidget {
             context: context,
             builder: (_) => PlatformAlertDialog(
               title: const Text("Sign up unsuccessful"),
-              content: Text(result.message ??
+              content: Text(result.uiState.message ??
                   "Please check your credentials and try again."),
               actions: <Widget>[
                 PlatformDialogAction(
