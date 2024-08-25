@@ -18,38 +18,44 @@ class StockPricePoints with _$StockPricePoints {
 
   // TODO: Query backend for data spots
 
-  double get minPrice => points.isEmpty ? 0 : points.map((p) => p.price).reduce((a, b) => a < b ? a : b);
-  double get maxPrice => points.isEmpty ? 0 : points.map((p) => p.price).reduce((a, b) => a > b ? a : b);
-  DateTime get startDate => points.isEmpty ? DateTime.now() : points.first.timestamp;
-  DateTime get endDate => points.isEmpty ? DateTime.now() : points.last.timestamp;
+  // double get minPrice => points.isEmpty ? 0 : points.map((p) => p.price).reduce((a, b) => a < b ? a : b);
+  // double get maxPrice => points.isEmpty ? 0 : points.map((p) => p.price).reduce((a, b) => a > b ? a : b);
+  // DateTime get startDate => points.isEmpty ? DateTime.now() : points.first.timestamp;
+  // DateTime get endDate => points.isEmpty ? DateTime.now() : points.last.timestamp;
 
-  factory StockPricePoints.sample() {
-    final random = Random();
-    final startDate = DateTime(2024, 3, 10);
-    final endDate = DateTime(2024, 8, 19);
-    const interval = Duration(hours: 24);
+  // factory StockPricePoints.sample() {
+  //   final random = Random();
+  //   final startDate = DateTime(2024, 3, 10);
+  //   final endDate = DateTime(2024, 8, 19);
+  //   const interval = Duration(hours: 24);
 
-    List<StockPricePoint> samplePoints = [];
-    DateTime currentDate = startDate;
-    double basePrice = 100000;
+  //   List<StockPricePoint> samplePoints = [];
+  //   DateTime currentDate = startDate;
+  //   double basePrice = 100000;
 
-    while (currentDate.isBefore(endDate)) {
-      samplePoints.add(StockPricePoint(
-        timestamp: currentDate,
-        price: basePrice,
-      ),);
+  //   while (currentDate.isBefore(endDate)) {
+  //     samplePoints.add(StockPricePoint(
+  //       timestamp: currentDate,
+  //       price: basePrice,
+  //     ),);
 
-      // More volatile price movement simulation
-      double priceChange = random.nextDouble() * 5000 + 5000; // Random value between 5 and 10
-      priceChange *= random.nextBool() ? 1 : -1; // Randomly make it positive or negative
-      basePrice += priceChange;
+  //     // More volatile price movement simulation
+  //     double priceChange = random.nextDouble() * 5000 + 5000; // Random value between 5 and 10
+  //     priceChange *= random.nextBool() ? 1 : -1; // Randomly make it positive or negative
+  //     basePrice += priceChange;
 
-      // Ensure price doesn't go negative
-      basePrice = max(basePrice, 1.0);
+  //     // Ensure price doesn't go negative
+  //     basePrice = max(basePrice, 1.0);
 
-      currentDate = currentDate.add(interval);
-    }
+  //     currentDate = currentDate.add(interval);
+  //   }
 
-    return StockPricePoints(points: samplePoints);
+  //   return StockPricePoints(points: samplePoints);
+  // }
+
+  factory StockPricePoints.fromHistoricalData(List<dynamic> data) {
+    return StockPricePoints(
+      points: data.map((e) => StockPricePoint.fromJson(e)).toList(),
+    );
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:oppenhomies/domain/models/chat/message_model.dart';
 import 'package:oppenhomies/domain/models/chat/sender_enum.dart';
-import 'package:oppenhomies/domain/services/services.dart';
+import 'package:oppenhomies/domain/services/ai_services.dart';
 
 UseChat useChat(ScrollController scrollController) {
   final openAIService = useState(OpenAIService());
