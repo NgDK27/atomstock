@@ -39,6 +39,16 @@ class AuthRepository {
     );
   }
 
+  Future<void> verifySignUp({
+    required String email,
+    required String otp,
+  }) async {
+    await _dio.post(
+      '$_apiEndpoint/confirm_signup',
+      data: {"email": email, "otp": otp},
+    );
+  }
+
   Future<void> saveTokens(AuthTokenResponse tokens) async {
     await _storage.write(key: 'access_token', value: tokens.accessToken);
     await _storage.write(key: 'id_token', value: tokens.idToken);

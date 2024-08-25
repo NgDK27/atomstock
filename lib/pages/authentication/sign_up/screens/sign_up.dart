@@ -197,9 +197,9 @@ class SignUp extends HookConsumerWidget {
     ValueNotifier<AutovalidateMode>
   ) _useFormState() {
     final emailController =
-        useTextEditingController(text: "work@quanhoangdo.com");
-    final passwordController = useTextEditingController(text: "abcABC123!@#");
-    final nameController = useTextEditingController(text: "Quan Do");
+        useTextEditingController();
+    final passwordController = useTextEditingController();
+    final nameController = useTextEditingController();
     final showPassword = useState(false);
     final formKey = useMemoized(GlobalKey<FormState>.new, const []);
     final isFormValid = useState(false);
