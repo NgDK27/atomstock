@@ -31,6 +31,22 @@ class OpGradient {
         OpDynamicColor.surface(context).withOpacity(OpOpacity.none),
       ];
 
+  static List<Color> fadeOutGradientStrong(
+      BuildContext context, {
+        required Color beginColor,
+      }) =>
+      [
+        beginColor.withOpacity(OpOpacity.tertiary),
+        beginColor.withOpacity(OpOpacity.tertiary * 0.4),
+        beginColor.withOpacity(OpOpacity.tertiary * 0.3),
+        beginColor.withOpacity(OpOpacity.tertiary * 0.2),
+        beginColor.withOpacity(OpOpacity.tertiary * 0.1),
+        beginColor.withOpacity(OpOpacity.tertiary * 0),
+
+      ];
+
+
+
   static List<double> fadeOutStops() =>
       [
         0.0,

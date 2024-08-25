@@ -6,6 +6,6 @@ class UpdatePasswordCompleted extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return UpdateCompletedLayout(updatedField: "Password");
+    return const UpdateCompletedLayout(updatedField: "Password");
   }
 }

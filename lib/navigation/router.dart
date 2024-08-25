@@ -6,7 +6,7 @@ class OpRouter {
   OpRouter._();
 
   static final router = GoRouter(
-    initialLocation: OpRoutes.market.path,
+    initialLocation: OpRoutes.home.path,
     routes: [
       OpRoutes.onboarding.route(
         routes: [
@@ -32,10 +32,15 @@ class OpRouter {
           return OpPlatformSliverTabScaffold(child: child);
         },
         routes: [
-          OpRoutes.home.route(),
-          OpRoutes.ai.route(
-
+          OpRoutes.home.route(
+            routes: [
+              OpRoutes.indexes.route(),
+              OpRoutes.topPerformers.route(),
+              OpRoutes.topDecliners.route(),
+              OpRoutes.topMovers.route(),
+            ],
           ),
+          OpRoutes.ai.route(),
           OpRoutes.automations.route(
             routes: [
               OpRoutes.automationDetails.route(),
@@ -49,38 +54,37 @@ class OpRouter {
             ],
           ),
           OpRoutes.portfolio.route(),
-        ],
-      ),
-      OpRoutes.settings.route(
-        routes: [
-          OpRoutes.connectedAccounts.route(),
-          OpRoutes.yourName.route(),
-          OpRoutes.verifyCurrentEmail.route(
+          OpRoutes.settings.route(
             routes: [
-              OpRoutes.inputNewEmail.route(
+              OpRoutes.connectedAccounts.route(),
+              OpRoutes.yourName.route(),
+              OpRoutes.verifyCurrentEmail.route(
                 routes: [
-                  OpRoutes.verifyNewEmail.route(
-                    routes: [OpRoutes.updateEmailCompleted.route()],
+                  OpRoutes.inputNewEmail.route(
+                    routes: [
+                      OpRoutes.verifyNewEmail.route(
+                        routes: [OpRoutes.updateEmailCompleted.route()],
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
-          OpRoutes.verifyCurrentPassword.route(
-            routes: [
-              OpRoutes.inputNewPassword.route(
+              OpRoutes.verifyCurrentPassword.route(
                 routes: [
-                  OpRoutes.updatePasswordCompleted.route(
+                  OpRoutes.inputNewPassword.route(
+                    routes: [
+                      OpRoutes.updatePasswordCompleted.route(),
+                    ],
                   ),
                 ],
               ),
+              OpRoutes.thirdPartySignIn.route(),
+              OpRoutes.appearance.route(),
+              OpRoutes.language.route(),
+              OpRoutes.faq.route(),
+              OpRoutes.contactSupport.route(),
             ],
           ),
-          OpRoutes.thirdPartySignIn.route(),
-          OpRoutes.appearance.route(),
-          OpRoutes.language.route(),
-          OpRoutes.faq.route(),
-          OpRoutes.contactSupport.route(),
         ],
       ),
       OpRoutes.notifications.route(),

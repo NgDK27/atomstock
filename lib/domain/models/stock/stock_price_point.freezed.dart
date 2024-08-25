@@ -14,10 +14,17 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
+StockPricePoint _$StockPricePointFromJson(Map<String, dynamic> json) {
+  return _StockPricePoint.fromJson(json);
+}
+
 /// @nodoc
 mixin _$StockPricePoint {
   DateTime get timestamp => throw _privateConstructorUsedError;
   double get price => throw _privateConstructorUsedError;
+
+  /// Serializes this StockPricePoint to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
   /// Create a copy of StockPricePoint
   /// with the given fields replaced by the non-null parameter values.
@@ -107,9 +114,12 @@ class __$$StockPricePointImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
+@JsonSerializable()
 class _$StockPricePointImpl implements _StockPricePoint {
   const _$StockPricePointImpl({required this.timestamp, required this.price});
+
+  factory _$StockPricePointImpl.fromJson(Map<String, dynamic> json) =>
+      _$$StockPricePointImplFromJson(json);
 
   @override
   final DateTime timestamp;
@@ -131,6 +141,7 @@ class _$StockPricePointImpl implements _StockPricePoint {
             (identical(other.price, price) || other.price == price));
   }
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, timestamp, price);
 
@@ -142,12 +153,22 @@ class _$StockPricePointImpl implements _StockPricePoint {
   _$$StockPricePointImplCopyWith<_$StockPricePointImpl> get copyWith =>
       __$$StockPricePointImplCopyWithImpl<_$StockPricePointImpl>(
           this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$StockPricePointImplToJson(
+      this,
+    );
+  }
 }
 
 abstract class _StockPricePoint implements StockPricePoint {
   const factory _StockPricePoint(
       {required final DateTime timestamp,
       required final double price}) = _$StockPricePointImpl;
+
+  factory _StockPricePoint.fromJson(Map<String, dynamic> json) =
+      _$StockPricePointImpl.fromJson;
 
   @override
   DateTime get timestamp;

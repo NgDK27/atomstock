@@ -50,7 +50,7 @@ class OpNeutralTextButton extends OpButton {
     if (leftAligned) {
       return EdgeInsets.zero;
     } else if (tightPadding) {
-      return EdgeInsets.symmetric(horizontal: OpSpacing.xs2);
+      return const EdgeInsets.symmetric(horizontal: OpSpacing.xs2);
     } else {
       return super.padding;
     }

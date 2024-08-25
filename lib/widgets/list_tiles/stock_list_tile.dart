@@ -36,7 +36,7 @@ class StockListTile extends HookWidget {
 
     return PlatformListTile(
       onTap: () => navigateDetails(context: context),
-      title: Text(stock.ticker.toUpperCase(), style: titleStyle),
+      title: Text(stock.symbol.toUpperCase(), style: titleStyle),
       subtitle: Text(stock.name, style: subtitleStyle),
       trailing: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -55,7 +55,7 @@ class StockListTile extends HookWidget {
         ],
       ),
       cupertino: (_, __) =>
-          CupertinoListTileData(padding: EdgeInsets.all(OpSpacing.md)),
+          CupertinoListTileData(padding: const EdgeInsets.all(OpSpacing.md)),
     );
   }
 }

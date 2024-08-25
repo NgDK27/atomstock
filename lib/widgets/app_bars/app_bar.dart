@@ -62,7 +62,7 @@ class OpPlatformSliverAppBar extends HookWidget {
                 stretch: true,
                 leading: leading,
                 trailing: trailing,
-                padding: EdgeInsetsDirectional.symmetric(horizontal: OpSpacing.xs),
+                padding: const EdgeInsetsDirectional.symmetric(horizontal: OpSpacing.xs),
                 automaticallyImplyLeading: true,
               );
             },

@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 class OpenAIService {
   final String apiUrl =
-      'http://192.168.1.193:5000/api/generate_response'; // local machine
+      'http://192.168.25.153:5000/generate_response'; // local machine
   Future<String> generateResponse(String prompt, String userId) async {
     try {
       final response = await http.post(
@@ -19,11 +19,11 @@ class OpenAIService {
         print('Server responded with error: ${response.statusCode}');
         print('Response body: ${response.body}');
         throw Exception(
-            'Failed to generate response: ${response.statusCode} ${response.body}');
+            'Failed to generate response: ${response.statusCode} ${response.body}',);
       }
     } catch (e) {
       print('Error occurred: $e');
-      throw e;
+      rethrow;
     }
   }
 }

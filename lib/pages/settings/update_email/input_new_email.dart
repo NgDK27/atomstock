@@ -20,14 +20,14 @@ class InputNewEmail extends HookWidget {
   const InputNewEmail({super.key});
 
   void handleSignUp(
-      BuildContext context, String email) {
+      BuildContext context, String email,) {
     // Optional: Log to console
     if (kDebugMode) {
       print(
-        'Sign up attempted - Email: $email');
+        'Sign up attempted - Email: $email',);
     }
 
-    context.goNamed(OpRoutes.verifyNewEmail.name);
+    context.pushReplacementNamed(OpRoutes.verifyNewEmail.name);
   }
 
   @override

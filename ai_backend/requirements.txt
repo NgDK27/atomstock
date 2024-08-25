@@ -3,4 +3,3 @@ langfuse
 python-dotenv
 requests
 flask-cors
-psycopg2-binary

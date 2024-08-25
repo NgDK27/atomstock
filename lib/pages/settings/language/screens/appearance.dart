@@ -34,8 +34,8 @@ class Language extends HookConsumerWidget {
                   trailing: value == currentLanguage
                       ? Icon(PlatformIcons(context).checkMark)
                       : null,
-                )
-              ]
+                ),
+              ],
             ]),
           ),
         ),

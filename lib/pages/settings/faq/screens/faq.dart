@@ -13,7 +13,7 @@ class Faq extends StatelessWidget {
       title: "FAQ",
       slivers: [
         SliverSafeArea(
-          minimum: EdgeInsets.symmetric(horizontal: OpSpacing.md),
+          minimum: const EdgeInsets.symmetric(horizontal: OpSpacing.md),
           top: false,
           sliver: SliverList(
             delegate: SliverChildListDelegate(
@@ -23,7 +23,7 @@ class Faq extends StatelessWidget {
                   style: OpTextStyle.titleLarge(context),
                 ),
                 const SizedBox(height: OpSpacing.xs),
-                Text(
+                const Text(
                   "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisi vel consectetur interdum, nisl nunc egestas nunc, vitae tincidunt nisl nunc eu nisi. Sed euismod, nisi vel consectetur interdum, nisl nunc egestas nunc, vitae tincidunt nisl nunc eu nisi.",
                 ),
               ],

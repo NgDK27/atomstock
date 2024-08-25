@@ -9,7 +9,6 @@ import 'package:oppenhomies/domain/helpers/validators.dart';
 import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/widgets/bars/bottom_bar.dart';
 import 'package:oppenhomies/widgets/buttons/neutral/OpFilledNeutralButton.dart';
-import 'package:oppenhomies/widgets/buttons/primary/OpFilledGlowPrimaryButton.dart';
 import 'package:oppenhomies/widgets/scaffolds/platform_sliver_scaffold.dart';
 import 'package:oppenhomies/widgets/textfields/platform_animated_text_form_field.dart';
 
@@ -73,7 +72,7 @@ class YourName extends HookConsumerWidget {
       slivers: [
         SliverSafeArea(
           top: false,
-          minimum: EdgeInsets.symmetric(horizontal: OpSpacing.md),
+          minimum: const EdgeInsets.symmetric(horizontal: OpSpacing.md),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
               Form(
@@ -99,7 +98,7 @@ class YourName extends HookConsumerWidget {
                       const SizedBox(height: OpSpacing.md),
                     ],
                   ),
-                )
+                ),
               ),
             ]),
           ),

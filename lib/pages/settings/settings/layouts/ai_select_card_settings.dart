@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:oppenhomies/pages/onboarding/ai_select/models/AiSelectCardModel.dart';
 import 'package:oppenhomies/styles/colors.dart';
@@ -11,7 +10,6 @@ import 'package:oppenhomies/widgets/chip/chip_base.dart';
 import 'package:oppenhomies/widgets/gradients/gradient.dart';
 import 'package:oppenhomies/widgets/icons/sparkle_filled.dart';
 
-import '/widgets/divider/divider_variant.dart';
 
 class AiSelectCardSettings extends ConsumerWidget {
   final AiSelectCardModel model;

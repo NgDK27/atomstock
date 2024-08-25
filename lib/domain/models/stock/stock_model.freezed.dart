@@ -22,7 +22,7 @@ StockModel _$StockModelFromJson(Map<String, dynamic> json) {
 mixin _$StockModel {
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  String get ticker => throw _privateConstructorUsedError;
+  String get symbol => throw _privateConstructorUsedError;
   double get currentPrice => throw _privateConstructorUsedError;
   set currentPrice(double value) => throw _privateConstructorUsedError;
   double get priceChange => throw _privateConstructorUsedError;
@@ -45,6 +45,11 @@ mixin _$StockModel {
   set high(double? value) => throw _privateConstructorUsedError;
   double? get low => throw _privateConstructorUsedError;
   set low(double? value) => throw _privateConstructorUsedError;
+  ExchangeModel? get exchange => throw _privateConstructorUsedError;
+  set exchange(ExchangeModel? value) => throw _privateConstructorUsedError;
+  StockPricePoints? get pricePoints => throw _privateConstructorUsedError;
+  set pricePoints(StockPricePoints? value) =>
+      throw _privateConstructorUsedError;
 
   /// Serializes this StockModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -65,7 +70,7 @@ abstract class $StockModelCopyWith<$Res> {
   $Res call(
       {String id,
       String name,
-      String ticker,
+      String symbol,
       double currentPrice,
       double priceChange,
       double percentChange,
@@ -76,7 +81,12 @@ abstract class $StockModelCopyWith<$Res> {
       double? open,
       double? close,
       double? high,
-      double? low});
+      double? low,
+      ExchangeModel? exchange,
+      StockPricePoints? pricePoints});
+
+  $ExchangeModelCopyWith<$Res>? get exchange;
+  $StockPricePointsCopyWith<$Res>? get pricePoints;
 }
 
 /// @nodoc
@@ -96,7 +106,7 @@ class _$StockModelCopyWithImpl<$Res, $Val extends StockModel>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? ticker = null,
+    Object? symbol = null,
     Object? currentPrice = null,
     Object? priceChange = null,
     Object? percentChange = null,
@@ -108,6 +118,8 @@ class _$StockModelCopyWithImpl<$Res, $Val extends StockModel>
     Object? close = freezed,
     Object? high = freezed,
     Object? low = freezed,
+    Object? exchange = freezed,
+    Object? pricePoints = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -118,9 +130,9 @@ class _$StockModelCopyWithImpl<$Res, $Val extends StockModel>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      ticker: null == ticker
-          ? _value.ticker
-          : ticker // ignore: cast_nullable_to_non_nullable
+      symbol: null == symbol
+          ? _value.symbol
+          : symbol // ignore: cast_nullable_to_non_nullable
               as String,
       currentPrice: null == currentPrice
           ? _value.currentPrice
@@ -166,7 +178,43 @@ class _$StockModelCopyWithImpl<$Res, $Val extends StockModel>
           ? _value.low
           : low // ignore: cast_nullable_to_non_nullable
               as double?,
+      exchange: freezed == exchange
+          ? _value.exchange
+          : exchange // ignore: cast_nullable_to_non_nullable
+              as ExchangeModel?,
+      pricePoints: freezed == pricePoints
+          ? _value.pricePoints
+          : pricePoints // ignore: cast_nullable_to_non_nullable
+              as StockPricePoints?,
     ) as $Val);
+  }
+
+  /// Create a copy of StockModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $ExchangeModelCopyWith<$Res>? get exchange {
+    if (_value.exchange == null) {
+      return null;
+    }
+
+    return $ExchangeModelCopyWith<$Res>(_value.exchange!, (value) {
+      return _then(_value.copyWith(exchange: value) as $Val);
+    });
+  }
+
+  /// Create a copy of StockModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $StockPricePointsCopyWith<$Res>? get pricePoints {
+    if (_value.pricePoints == null) {
+      return null;
+    }
+
+    return $StockPricePointsCopyWith<$Res>(_value.pricePoints!, (value) {
+      return _then(_value.copyWith(pricePoints: value) as $Val);
+    });
   }
 }
 
@@ -181,7 +229,7 @@ abstract class _$$StockModelImplCopyWith<$Res>
   $Res call(
       {String id,
       String name,
-      String ticker,
+      String symbol,
       double currentPrice,
       double priceChange,
       double percentChange,
@@ -192,7 +240,14 @@ abstract class _$$StockModelImplCopyWith<$Res>
       double? open,
       double? close,
       double? high,
-      double? low});
+      double? low,
+      ExchangeModel? exchange,
+      StockPricePoints? pricePoints});
+
+  @override
+  $ExchangeModelCopyWith<$Res>? get exchange;
+  @override
+  $StockPricePointsCopyWith<$Res>? get pricePoints;
 }
 
 /// @nodoc
@@ -210,7 +265,7 @@ class __$$StockModelImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? ticker = null,
+    Object? symbol = null,
     Object? currentPrice = null,
     Object? priceChange = null,
     Object? percentChange = null,
@@ -222,6 +277,8 @@ class __$$StockModelImplCopyWithImpl<$Res>
     Object? close = freezed,
     Object? high = freezed,
     Object? low = freezed,
+    Object? exchange = freezed,
+    Object? pricePoints = freezed,
   }) {
     return _then(_$StockModelImpl(
       id: null == id
@@ -232,9 +289,9 @@ class __$$StockModelImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      ticker: null == ticker
-          ? _value.ticker
-          : ticker // ignore: cast_nullable_to_non_nullable
+      symbol: null == symbol
+          ? _value.symbol
+          : symbol // ignore: cast_nullable_to_non_nullable
               as String,
       currentPrice: null == currentPrice
           ? _value.currentPrice
@@ -280,6 +337,14 @@ class __$$StockModelImplCopyWithImpl<$Res>
           ? _value.low
           : low // ignore: cast_nullable_to_non_nullable
               as double?,
+      exchange: freezed == exchange
+          ? _value.exchange
+          : exchange // ignore: cast_nullable_to_non_nullable
+              as ExchangeModel?,
+      pricePoints: freezed == pricePoints
+          ? _value.pricePoints
+          : pricePoints // ignore: cast_nullable_to_non_nullable
+              as StockPricePoints?,
     ));
   }
 }
@@ -290,7 +355,7 @@ class _$StockModelImpl extends _StockModel with DiagnosticableTreeMixin {
   _$StockModelImpl(
       {required this.id,
       required this.name,
-      required this.ticker,
+      required this.symbol,
       required this.currentPrice,
       required this.priceChange,
       required this.percentChange,
@@ -301,7 +366,9 @@ class _$StockModelImpl extends _StockModel with DiagnosticableTreeMixin {
       this.open,
       this.close,
       this.high,
-      this.low})
+      this.low,
+      this.exchange,
+      this.pricePoints})
       : super._();
 
   factory _$StockModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -312,7 +379,7 @@ class _$StockModelImpl extends _StockModel with DiagnosticableTreeMixin {
   @override
   final String name;
   @override
-  final String ticker;
+  final String symbol;
   @override
   double currentPrice;
   @override
@@ -335,10 +402,14 @@ class _$StockModelImpl extends _StockModel with DiagnosticableTreeMixin {
   double? high;
   @override
   double? low;
+  @override
+  ExchangeModel? exchange;
+  @override
+  StockPricePoints? pricePoints;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'StockModel(id: $id, name: $name, ticker: $ticker, currentPrice: $currentPrice, priceChange: $priceChange, percentChange: $percentChange, floor: $floor, ceiling: $ceiling, totalVolume: $totalVolume, totalValue: $totalValue, open: $open, close: $close, high: $high, low: $low)';
+    return 'StockModel(id: $id, name: $name, symbol: $symbol, currentPrice: $currentPrice, priceChange: $priceChange, percentChange: $percentChange, floor: $floor, ceiling: $ceiling, totalVolume: $totalVolume, totalValue: $totalValue, open: $open, close: $close, high: $high, low: $low, exchange: $exchange, pricePoints: $pricePoints)';
   }
 
   @override
@@ -348,7 +419,7 @@ class _$StockModelImpl extends _StockModel with DiagnosticableTreeMixin {
       ..add(DiagnosticsProperty('type', 'StockModel'))
       ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('name', name))
-      ..add(DiagnosticsProperty('ticker', ticker))
+      ..add(DiagnosticsProperty('symbol', symbol))
       ..add(DiagnosticsProperty('currentPrice', currentPrice))
       ..add(DiagnosticsProperty('priceChange', priceChange))
       ..add(DiagnosticsProperty('percentChange', percentChange))
@@ -359,7 +430,9 @@ class _$StockModelImpl extends _StockModel with DiagnosticableTreeMixin {
       ..add(DiagnosticsProperty('open', open))
       ..add(DiagnosticsProperty('close', close))
       ..add(DiagnosticsProperty('high', high))
-      ..add(DiagnosticsProperty('low', low));
+      ..add(DiagnosticsProperty('low', low))
+      ..add(DiagnosticsProperty('exchange', exchange))
+      ..add(DiagnosticsProperty('pricePoints', pricePoints));
   }
 
   /// Create a copy of StockModel
@@ -382,7 +455,7 @@ abstract class _StockModel extends StockModel {
   factory _StockModel(
       {required final String id,
       required final String name,
-      required final String ticker,
+      required final String symbol,
       required double currentPrice,
       required double priceChange,
       required double percentChange,
@@ -393,7 +466,9 @@ abstract class _StockModel extends StockModel {
       double? open,
       double? close,
       double? high,
-      double? low}) = _$StockModelImpl;
+      double? low,
+      ExchangeModel? exchange,
+      StockPricePoints? pricePoints}) = _$StockModelImpl;
   _StockModel._() : super._();
 
   factory _StockModel.fromJson(Map<String, dynamic> json) =
@@ -404,7 +479,7 @@ abstract class _StockModel extends StockModel {
   @override
   String get name;
   @override
-  String get ticker;
+  String get symbol;
   @override
   double get currentPrice;
   set currentPrice(double value);
@@ -438,6 +513,12 @@ abstract class _StockModel extends StockModel {
   @override
   double? get low;
   set low(double? value);
+  @override
+  ExchangeModel? get exchange;
+  set exchange(ExchangeModel? value);
+  @override
+  StockPricePoints? get pricePoints;
+  set pricePoints(StockPricePoints? value);
 
   /// Create a copy of StockModel
   /// with the given fields replaced by the non-null parameter values.

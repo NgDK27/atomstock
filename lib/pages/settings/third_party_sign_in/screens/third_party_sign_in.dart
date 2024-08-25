@@ -23,15 +23,15 @@ class ThirdPartySignIn extends StatelessWidget {
             delegate: SliverChildListDelegate(
               [
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: OpSpacing.md),
+                  padding: const EdgeInsets.symmetric(horizontal: OpSpacing.md),
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius:
-                      BorderRadius.all(Radius.circular(OpRadius.md)),
+                      const BorderRadius.all(Radius.circular(OpRadius.md)),
                       color: OpDynamicColor.surfaceContainer(context),
                     ),
                     child: Padding(
-                      padding: EdgeInsets.all(OpSpacing.md),
+                      padding: const EdgeInsets.all(OpSpacing.md),
                       child: Column(
                         children: [
                           Row(
@@ -49,7 +49,7 @@ class ThirdPartySignIn extends StatelessWidget {
                             ],
                           ),
                           const SizedBox(height: OpSpacing.sm),
-                          Text(
+                          const Text(
                             "This feature will be supported in a future update. Please check back soon.",
                           ),
                         ],
@@ -59,8 +59,8 @@ class ThirdPartySignIn extends StatelessWidget {
                 ),
                 const SizedBox(height: OpSpacing.md),
                 PlatformListTile(
-                  title: Text("Email"),
-                  trailing: Text("example@email.com"),
+                  title: const Text("Email"),
+                  trailing: const Text("example@email.com"),
                 ),
               ],
             ),

@@ -34,8 +34,8 @@ class Appearance extends HookConsumerWidget {
                   trailing: value == currentAppearance
                       ? Icon(PlatformIcons(context).checkMark)
                       : null,
-                )
-              ]
+                ),
+              ],
             ]),
           ),
         ),

@@ -80,6 +80,13 @@ cd home/kafka/kafka_2.13-3.7.0
 
 
 **AI-Feature**
+## Install dependencies
+
+Install poetry https://python-poetry.org/
+```aiignore
+cd ./ai_backend
+poetry install
+```
 
 ## Initialize API Keys
 1. Create a .env in the root folder
@@ -92,6 +99,8 @@ LANGFUSE_PUBLIC_KEY="YOUR_LANGFUSE_PUBLIC_KEY"
 LANGFUSE_HOST="https://cloud.langfuse.com"
 
 OPENAI_API_KEY='YOUR_OPENAI_API_KEY'
+
+VOYAGE_API_KEY ='YOUR_VOYAGE_API_KEY'
 
 ## Back-end
 ### Install dependencies

@@ -8,6 +8,6 @@ class WithdrawFunds extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return MoveFunds(type: MoveFundsType.withdraw,);
+    return const MoveFunds(type: MoveFundsType.withdraw,);
   }
 }

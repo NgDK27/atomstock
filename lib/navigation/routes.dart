@@ -11,6 +11,10 @@ import 'package:oppenhomies/pages/automations/screens/automations.dart';
 import 'package:oppenhomies/pages/funds/add_funds/screens/add_funds.dart';
 import 'package:oppenhomies/pages/funds/withdraw_funds/screens/withdraw_funds.dart';
 import 'package:oppenhomies/pages/home/screens/home.dart';
+import 'package:oppenhomies/pages/home/screens/indexes.dart';
+import 'package:oppenhomies/pages/home/screens/top_decliners.dart';
+import 'package:oppenhomies/pages/home/screens/top_movers.dart';
+import 'package:oppenhomies/pages/home/screens/top_performers.dart';
 import 'package:oppenhomies/pages/market/screens/market.dart';
 import 'package:oppenhomies/pages/market/stock_details/screens/stock_details_tab_scaffold.dart';
 import 'package:oppenhomies/pages/notifications/screens/notifications.dart';
@@ -50,35 +54,35 @@ class OpRoutes {
     path: '/home',
     name: 'home',
     pageBuilder: (context, state) => buildPageWithFadeTransition(
-        context: context, state: state, child: const Home()),
+        context: context, state: state, child: const Home(),),
   );
 
   static final ai = RouteModel(
     path: '/ai',
     name: 'ai',
     pageBuilder: (context, state) => buildPageWithFadeTransition(
-        context: context, state: state, child: const Ai()),
+    context: context, state: state, child: const Ai(),),
   );
 
   static final automations = RouteModel(
     path: '/automations',
     name: 'automations',
     pageBuilder: (context, state) => buildPageWithFadeTransition(
-        context: context, state: state, child: const Automations()),
+        context: context, state: state, child: const Automations(),),
   );
 
   static final market = RouteModel(
     path: '/market',
     name: 'market',
     pageBuilder: (context, state) => buildPageWithFadeTransition(
-        context: context, state: state, child: const Market()),
+        context: context, state: state, child: const Market(),),
   );
 
   static final portfolio = RouteModel(
     path: '/portfolio',
     name: 'portfolio',
     pageBuilder: (context, state) => buildPageWithFadeTransition(
-        context: context, state: state, child: const Portfolio()),
+        context: context, state: state, child: const Portfolio(),),
   );
 
   // Onboarding routes
@@ -104,7 +108,8 @@ class OpRoutes {
   static final settings = RouteModel(
     path: '/settings',
     name: 'settings',
-    builder: (context, state) => const Settings(),
+    pageBuilder: (context, state) => buildPageWithFadeTransition(
+      context: context, state: state, child: const Settings(),),
   );
 
   static final automationDetails = RouteModel(
@@ -166,6 +171,37 @@ class OpRoutes {
     name: 'reset_password',
     builder: (context, state) => const ResetPassword(),
   );
+
+
+  //region Home sub-routes
+  static final indexes = RouteModel(
+    path: 'indexes',
+    name: 'indexes',
+    builder: (context, state) =>
+    const Indexes(), // Replace with actual widget
+  );
+
+  static final topPerformers = RouteModel(
+    path: 'top_performers',
+    name: 'top_performers',
+    builder: (context, state) =>
+    const TopPerformers(), // Replace with actual widget
+  );
+
+  static final topDecliners = RouteModel(
+    path: 'top_decliners',
+    name: 'top_decliners',
+    builder: (context, state) =>
+    const TopDecliners(), // Replace with actual widget
+  );
+
+  static final topMovers = RouteModel(
+    path: 'top_movers',
+    name: 'top_movers',
+    builder: (context, state) =>
+    const TopMovers(), // Replace with actual widget
+  );
+  //endregion
 
   // region Settings sub-routes
   static final addFunds = RouteModel(
@@ -229,14 +265,14 @@ class OpRoutes {
     path: 'input_new_password',
     name: 'input_new_password',
     builder: (context, state) =>
-    const InputNewPassword(), // Replace with actual widget
+        const InputNewPassword(), // Replace with actual widget
   );
 
   static final updatePasswordCompleted = RouteModel(
     path: 'update_password_completed',
     name: 'update_password_completed',
     builder: (context, state) =>
-    const UpdatePasswordCompleted(), // Replace with actual widget
+        const UpdatePasswordCompleted(), // Replace with actual widget
   );
 
   static final thirdPartySignIn = RouteModel(

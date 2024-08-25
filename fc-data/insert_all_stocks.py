@@ -33,9 +33,9 @@ def get_securities_list(market: str):
     
     # Connect to the database
     conn = psycopg2.connect(
-        host=DB_HOST,
-        dbname=DB_NAME,
-        user=DB_USER,
+        host='localhost',
+        dbname='capstone',
+        user='quando',
         password=DB_PASSWORD
     )
     

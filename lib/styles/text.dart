@@ -47,6 +47,15 @@ class OpTextStyle {
     ),
   );
 
+  static TextStyle? titleMedium(BuildContext context) => _getStyle(
+    context,
+    material: (data) => data.textTheme.titleMedium,
+    cupertino: (data) => data.textTheme.textStyle.copyWith(
+      fontWeight: FontWeight.w600,
+      fontSize: (data.textTheme.textStyle.fontSize ?? 17) * 1.15,
+    ),
+  );
+
   static TextStyle? titleSmall(BuildContext context) => _getStyle(
     context,
     material: (data) => data.textTheme.titleSmall,
@@ -56,7 +65,7 @@ class OpTextStyle {
   static TextStyle? bodyLarge(BuildContext context) => _getStyle(
     context,
     material: (data) => data.textTheme.bodyLarge,
-    cupertino: (data) => data.textTheme.textStyle.bold(),
+    cupertino: (data) => data.textTheme.textStyle,
   );
 
   static TextStyle? body(BuildContext context) => _getStyle(
@@ -86,7 +95,7 @@ class OpTextStyle {
     context,
     material: (data) => data.textTheme.labelSmall,
     cupertino: (data) => data.textTheme.tabLabelTextStyle.copyWith(
-      fontSize: (data.textTheme.tabLabelTextStyle.fontSize ?? 10) * 1.3,
+      fontSize: (data.textTheme.tabLabelTextStyle.fontSize ?? 10) * 1.1,
     ),
   );
 
@@ -94,7 +103,7 @@ class OpTextStyle {
     context,
     material: (data) => data.textTheme.labelMedium,
     cupertino: (data) => data.textTheme.tabLabelTextStyle.copyWith(
-      fontSize: (data.textTheme.tabLabelTextStyle.fontSize ?? 10) * 1.1,
+      fontSize: (data.textTheme.tabLabelTextStyle.fontSize ?? 10) * 1.3,
       letterSpacing: 0.8,
     ),
   );

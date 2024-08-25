@@ -5,99 +5,148 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:oppenhomies/styles/opacities.dart';
 
 extension OpHarmonizedColors on Color {
-  Color harmonized(BuildContext context) => platformThemeData(context,
-      material: (ThemeData data) => harmonizeWith(data.colorScheme.primary),
-      cupertino: (CupertinoThemeData data) => this,);
+  Color harmonized(BuildContext context) => platformThemeData(
+        context,
+        material: (ThemeData data) => harmonizeWith(data.colorScheme.primary),
+        cupertino: (CupertinoThemeData data) => this,
+      );
 }
 
 class OpDynamicColor {
   OpDynamicColor._();
 
   static Color primary(context) {
-    return platformThemeData(context,
-        material: (ThemeData data) => data.colorScheme.primary,
-        cupertino: (_) => OpLightDarkColor.primary,);
+    return platformThemeData(
+      context,
+      material: (ThemeData data) => data.colorScheme.primary,
+      cupertino: (_) => OpLightDarkColor.primary,
+    );
   }
 
   static Color primaryVariant(context) {
-    return platformThemeData(context,
-        material: (ThemeData data) => data.colorScheme.primaryFixedDim,
-        cupertino: (_) => OpLightDarkColor.primaryQuarternary,);
+    return platformThemeData(
+      context,
+      material: (ThemeData data) => data.colorScheme.primaryFixedDim,
+      cupertino: (_) => OpLightDarkColor.primaryQuarternary,
+    );
   }
 
-
   static Color surfaceContainerHigh(context) {
-    return platformThemeData(context,
-        material: (ThemeData data) => data.colorScheme.surfaceContainerHigh,
-        cupertino: (_) => OpLightDarkColor.containerNeutralLv2,);
+    return platformThemeData(
+      context,
+      material: (ThemeData data) => data.colorScheme.surfaceContainerHigh,
+      cupertino: (_) => OpLightDarkColor.containerNeutralLv1,
+    );
   }
 
   static Color surfaceContainer(context) {
-    return platformThemeData(context,
+    return platformThemeData(
+      context,
       material: (ThemeData data) => data.colorScheme.surfaceContainer,
-      cupertino: (_) => OpLightDarkColor.containerNeutralLv1,);
+      cupertino: (_) => OpLightDarkColor.containerNeutralLv1,
+    );
   }
 
   static Color primaryContainer(context) {
-    return platformThemeData(context,
-        material: (ThemeData data) => data.colorScheme.primaryContainer,
-        cupertino: (_) => OpLightDarkColor.primaryContainer,);
+    return platformThemeData(
+      context,
+      material: (ThemeData data) => data.colorScheme.primaryContainer,
+      cupertino: (_) => OpLightDarkColor.primaryContainer,
+    );
   }
 
   static Color onPrimaryContainer(context) {
-    return platformThemeData(context,
-        material: (ThemeData data) => data.colorScheme.onPrimaryContainer,
-        cupertino: (_) => OpLightDarkColor.onSurface,);
+    return platformThemeData(
+      context,
+      material: (ThemeData data) => data.colorScheme.onPrimaryContainer,
+      cupertino: (_) => OpLightDarkColor.onSurfacePrimaryContainer,
+    );
+  }
+
+  static Color onPrimary(context) {
+    return platformThemeData(
+      context,
+      material: (ThemeData data) => data.colorScheme.onPrimary,
+      cupertino: (_) => OpLightDarkColor.onSurfacePrimary,
+    );
   }
 
   static Color surface(context) {
-    return platformThemeData(context,
-        material: (ThemeData data) => data.colorScheme.surface,
-        cupertino: (_) => OpLightDarkColor.surface,);
+    return platformThemeData(
+      context,
+      material: (ThemeData data) => data.colorScheme.surface,
+      cupertino: (_) => OpLightDarkColor.surface,
+    );
   }
 
   static Color onSurface(context) {
-    return platformThemeData(context,
-        material: (ThemeData data) => data.colorScheme.onSurface,
-        cupertino: (CupertinoThemeData data) =>
-            data.textTheme.textStyle.color ??
-            OpDynamicColor.onSurface(context),);
+    return platformThemeData(
+      context,
+      material: (ThemeData data) => data.colorScheme.onSurface,
+      cupertino: (CupertinoThemeData data) =>
+          data.textTheme.textStyle.color ?? OpDynamicColor.onSurface(context),
+    );
+  }
+
+  static Color inverseSurface(context) {
+    return platformThemeData(
+      context,
+      material: (ThemeData data) => data.colorScheme.inverseSurface,
+      cupertino: (_) => OpLightDarkColor.surfaceInverse,
+    );
+  }
+
+  static Color onInverseSurface(context) {
+    return platformThemeData(
+      context,
+      material: (ThemeData data) => data.colorScheme.inverseSurface,
+      cupertino: (_) => OpLightDarkColor.onSurfaceInverse,
+    );
   }
 
   static Color onSurfaceVariant(context) {
-    return platformThemeData(context,
-        material: (ThemeData data) => data.colorScheme.onSurfaceVariant,
-        cupertino: (CupertinoThemeData data) =>
-            OpLightDarkColor.onSurfaceVariant,).withOpacity(OpOpacity.secondary);
+    return platformThemeData(
+      context,
+      material: (ThemeData data) => data.colorScheme.onSurfaceVariant,
+      cupertino: (CupertinoThemeData data) => OpLightDarkColor.onSurfaceVariant,
+    ).withOpacity(OpOpacity.secondary);
   }
 
   static Color outlineVariant(context) {
-    return platformThemeData(context,
-        material: (ThemeData data) => data.colorScheme.outlineVariant,
-        cupertino: (CupertinoThemeData data) => OpLightDarkColor
-            .onSurfaceVariantStrokes
-            .withOpacity(OpOpacity.secondary),);
+    return platformThemeData(
+      context,
+      material: (ThemeData data) => data.colorScheme.outlineVariant,
+      cupertino: (CupertinoThemeData data) => OpLightDarkColor
+          .onSurfaceVariantStrokes
+          .withOpacity(OpOpacity.secondary),
+    );
   }
 
   static Color aiHarmonized(context) {
-    return platformThemeData(context,
-        material: (ThemeData data) =>
-            OpLightDarkColor.ai.harmonizeWith(data.colorScheme.primary),
-        cupertino: (CupertinoThemeData data) => OpLightDarkColor.ai,);
+    return platformThemeData(
+      context,
+      material: (ThemeData data) =>
+          OpLightDarkColor.ai.harmonizeWith(data.colorScheme.primary),
+      cupertino: (CupertinoThemeData data) => OpLightDarkColor.ai,
+    );
   }
 
   static Color aquaHarmonized(context) {
-    return platformThemeData(context,
-        material: (ThemeData data) =>
-            OpLightDarkColor.primary.harmonizeWith(data.colorScheme.primary),
-        cupertino: (CupertinoThemeData data) => OpLightDarkColor.primary,);
+    return platformThemeData(
+      context,
+      material: (ThemeData data) =>
+          OpLightDarkColor.primary.harmonizeWith(data.colorScheme.primary),
+      cupertino: (CupertinoThemeData data) => OpLightDarkColor.primary,
+    );
   }
 
   static Color cherryHarmonized(context) {
-    return platformThemeData(context,
-        material: (ThemeData data) =>
-            OpLightDarkColor.stockFall.harmonizeWith(data.colorScheme.primary),
-        cupertino: (CupertinoThemeData data) => OpLightDarkColor.stockFall,);
+    return platformThemeData(
+      context,
+      material: (ThemeData data) =>
+          OpLightDarkColor.stockFall.harmonizeWith(data.colorScheme.primary),
+      cupertino: (CupertinoThemeData data) => OpLightDarkColor.stockFall,
+    );
   }
 }
 
@@ -107,6 +156,7 @@ class OpLightDarkColor {
   // Functions
   static Brightness get _platformBrightness =>
       WidgetsBinding.instance.platformDispatcher.platformBrightness;
+
   static bool get _isLightMode => _platformBrightness == Brightness.light;
 
   static Color _getDynamicColor(Color lightColor, Color darkColor) =>
@@ -115,12 +165,14 @@ class OpLightDarkColor {
   // Primary
   static const Color _primaryLight = OpColor.aqua120;
   static const Color _primaryDark = OpColor.aqua100;
+
   static Color get primary => _getDynamicColor(_primaryLight, _primaryDark);
 
   static final Color _primarySecondaryLight =
       OpColor.aqua140.withOpacity(OpOpacity.secondary);
   static final Color _primarySecondaryDark =
       OpColor.aqua100.withOpacity(OpOpacity.secondary);
+
   static Color get primarySecondary =>
       _getDynamicColor(_primarySecondaryLight, _primarySecondaryDark);
 
@@ -128,17 +180,20 @@ class OpLightDarkColor {
       OpColor.aqua140.withOpacity(OpOpacity.quaternary);
   static final Color _primaryQuarternaryDark =
       OpColor.aqua100.withOpacity(OpOpacity.quaternary);
+
   static Color get primaryQuarternary =>
       _getDynamicColor(_primaryQuarternaryLight, _primaryQuarternaryDark);
 
   // Stock
   static const Color _stockFallLight = OpColor.cherry120;
   static const Color _stockFallDark = OpColor.cherry80;
+
   static Color get stockFall =>
       _getDynamicColor(_stockFallLight, _stockFallDark);
 
   static const Color _stockRiseLight = OpColor.aqua120;
   static const Color _stockRiseDark = OpColor.aqua80;
+
   static Color get stockRise =>
       _getDynamicColor(_stockRiseLight, _stockRiseDark);
 
@@ -146,12 +201,14 @@ class OpLightDarkColor {
       OpColor.cherry120.withOpacity(102);
   static final Color _stockFallGradientInDark =
       OpColor.cherry80.withOpacity(102);
+
   static Color get stockFallGradientIn =>
       _getDynamicColor(_stockFallGradientInLight, _stockFallGradientInDark);
 
   static final Color _stockRiseGradientInLight =
       OpColor.aqua120.withOpacity(102);
   static final Color _stockRiseGradientInDark = OpColor.aqua80.withOpacity(102);
+
   static Color get stockRiseGradientIn =>
       _getDynamicColor(_stockRiseGradientInLight, _stockRiseGradientInDark);
 
@@ -159,6 +216,7 @@ class OpLightDarkColor {
       OpColor.cherry120.withOpacity(OpOpacity.none);
   static final Color _stockFallGradientOutDark =
       OpColor.cherry80.withOpacity(OpOpacity.none);
+
   static Color get stockFallGradientOut =>
       _getDynamicColor(_stockFallGradientOutLight, _stockFallGradientOutDark);
 
@@ -166,6 +224,7 @@ class OpLightDarkColor {
       OpColor.aqua120.withOpacity(OpOpacity.none);
   static final Color _stockRiseGradientOutDark =
       OpColor.aqua80.withOpacity(OpOpacity.none);
+
   static Color get stockRiseGradientOut =>
       _getDynamicColor(_stockRiseGradientOutLight, _stockRiseGradientOutDark);
 
@@ -174,6 +233,7 @@ class OpLightDarkColor {
       OpColor.grape120.withOpacity(OpOpacity.secondary);
   static final Color _aiGradientInDark =
       OpColor.grape80.withOpacity(OpOpacity.secondary);
+
   static Color get aiGradientIn =>
       _getDynamicColor(_aiGradientInLight, _aiGradientInDark);
 
@@ -181,25 +241,30 @@ class OpLightDarkColor {
       OpColor.grape120.withOpacity(OpOpacity.none);
   static final Color _aiGradientOutDark =
       OpColor.grape80.withOpacity(OpOpacity.none);
+
   static Color get aiGradientOut =>
       _getDynamicColor(_aiGradientOutLight, _aiGradientOutDark);
 
   static const Color _aiLight = OpColor.grape120;
   static const Color _aiDark = OpColor.grape60;
+
   static Color get ai => _getDynamicColor(_aiLight, _aiDark);
 
   // Error
   static const Color _errorLight = OpColor.cherry120;
   static const Color _errorDark = OpColor.cherry40;
+
   static Color get error => _getDynamicColor(_errorLight, _errorDark);
 
   // Surfaces
   static const Color _surfaceLight = OpColor.mono100;
   static const Color _surfaceDark = OpColor.charcoal120;
+
   static Color get surface => _getDynamicColor(_surfaceLight, _surfaceDark);
 
   static const Color _surfaceInverseLight = OpColor.charcoal120;
   static const Color _surfaceInverseDark = OpColor.mono100;
+
   static Color get surfaceInverse =>
       _getDynamicColor(_surfaceInverseLight, _surfaceInverseDark);
 
@@ -207,6 +272,7 @@ class OpLightDarkColor {
       OpColor.charcoal120.withOpacity(OpOpacity.secondary);
   static final Color _surfaceSecondaryDark =
       OpColor.charcoal20.withOpacity(OpOpacity.tertiary);
+
   static Color get surfaceSecondary =>
       _getDynamicColor(_surfaceSecondaryLight, _surfaceSecondaryDark);
 
@@ -214,68 +280,87 @@ class OpLightDarkColor {
       OpColor.charcoal120.withOpacity(OpOpacity.quaternary);
   static final Color _surfaceQuarternaryDark =
       OpColor.charcoal20.withOpacity(OpOpacity.quaternary);
+
   static Color get surfaceQuarternary =>
       _getDynamicColor(_surfaceQuarternaryLight, _surfaceQuarternaryDark);
 
   static const Color _surfaceVariantLight = OpColor.mono99;
   static const Color _surfaceVariantDark = OpColor.mono10;
+
   static Color get surfaceVariant =>
       _getDynamicColor(_surfaceVariantLight, _surfaceVariantDark);
 
   // On Surfaces
   static const Color _onSurfaceLight = OpColor.charcoal120;
   static const Color _onSurfaceDark = OpColor.mono100;
+
   static Color get onSurface =>
       _getDynamicColor(_onSurfaceLight, _onSurfaceDark);
 
   static const Color _onSurfaceVariantLight = OpColor.charcoal100;
   static const Color _onSurfaceVariantDark = OpColor.mono99;
+
   static Color get onSurfaceVariant =>
       _getDynamicColor(_onSurfaceVariantLight, _onSurfaceVariantDark);
 
   static const Color _onSurfacePrimaryLight = OpColor.mono100;
   static const Color _onSurfacePrimaryDark = OpColor.charcoal120;
+
   static Color get onSurfacePrimary =>
       _getDynamicColor(_onSurfacePrimaryLight, _onSurfacePrimaryDark);
 
   static const Color _onSurfaceInverseLight = OpColor.mono100;
   static const Color _onSurfaceInverseDark = OpColor.charcoal120;
+
   static Color get onSurfaceInverse =>
       _getDynamicColor(_onSurfaceInverseLight, _onSurfaceInverseDark);
 
   static const Color _onSurfaceStrokesLight = OpColor.charcoal100;
   static const Color _onSurfaceStrokesDark = OpColor.mono95;
+
   static Color get onSurfaceStrokes =>
       _getDynamicColor(_onSurfaceStrokesLight, _onSurfaceStrokesDark);
 
   static const Color _onSurfaceVariantStrokesLight = OpColor.mono95;
   static const Color _onSurfaceVariantStrokesDark = OpColor.mono50;
+
   static Color get onSurfaceVariantStrokes => _getDynamicColor(
-      _onSurfaceVariantStrokesLight, _onSurfaceVariantStrokesDark,);
+        _onSurfaceVariantStrokesLight,
+        _onSurfaceVariantStrokesDark,
+      );
 
   static const Color _onSurfaceNeutralContainerLight = _onSurfaceLight;
   static const Color _onSurfaceNeutralContainerDark = _onSurfaceDark;
+
   static Color get onSurfaceNeutralContainer => _getDynamicColor(
-      _onSurfaceNeutralContainerLight, _onSurfaceNeutralContainerDark,);
+        _onSurfaceNeutralContainerLight,
+        _onSurfaceNeutralContainerDark,
+      );
 
   static const Color _onSurfacePrimaryContainerLight = OpColor.aqua140;
   static const Color _onSurfacePrimaryContainerDark = OpColor.aqua60;
+
   static Color get onSurfacePrimaryContainer => _getDynamicColor(
-      _onSurfacePrimaryContainerLight, _onSurfacePrimaryContainerDark,);
+        _onSurfacePrimaryContainerLight,
+        _onSurfacePrimaryContainerDark,
+      );
 
   // Containers
   static const Color _containerNeutralLv1Light = OpColor.mono98;
   static const Color _containerNeutralLv1Dark = OpColor.mono40;
+
   static Color get containerNeutralLv1 =>
       _getDynamicColor(_containerNeutralLv1Light, _containerNeutralLv1Dark);
 
   static const Color _containerNeutralLv2Light = OpColor.mono100;
   static const Color _containerNeutralLv2Dark = OpColor.mono60;
+
   static Color get containerNeutralLv2 =>
       _getDynamicColor(_containerNeutralLv2Light, _containerNeutralLv2Dark);
 
   static const Color _primaryContainerLight = OpColor.aqua60;
   static const Color _primaryContainerDark = OpColor.aqua140;
+
   static Color get primaryContainer =>
       _getDynamicColor(_primaryContainerLight, _primaryContainerDark);
 
@@ -283,6 +368,7 @@ class OpLightDarkColor {
       OpColor.aqua80.withOpacity(OpOpacity.tertiary);
   static final Color _secondaryContainerDark =
       OpColor.aqua140.withOpacity(OpOpacity.tertiary);
+
   static Color get secondaryContainer =>
       _getDynamicColor(_secondaryContainerLight, _secondaryContainerDark);
 }

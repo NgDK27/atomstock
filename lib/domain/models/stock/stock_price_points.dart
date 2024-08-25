@@ -4,6 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'stock_price_point.dart';
 
 part 'stock_price_points.freezed.dart';
+part 'stock_price_points.g.dart';
 
 @freezed
 class StockPricePoints with _$StockPricePoints {
@@ -12,6 +13,10 @@ class StockPricePoints with _$StockPricePoints {
   const factory StockPricePoints({
     @Default([]) List<StockPricePoint> points,
   }) = _StockPricePoints;
+
+  factory StockPricePoints.fromJson(Map<String, dynamic> json) => _$StockPricePointsFromJson(json);
+
+  // TODO: Query backend for data spots
 
   double get minPrice => points.isEmpty ? 0 : points.map((p) => p.price).reduce((a, b) => a < b ? a : b);
   double get maxPrice => points.isEmpty ? 0 : points.map((p) => p.price).reduce((a, b) => a > b ? a : b);
@@ -32,7 +37,7 @@ class StockPricePoints with _$StockPricePoints {
       samplePoints.add(StockPricePoint(
         timestamp: currentDate,
         price: basePrice,
-      ));
+      ),);
 
       // More volatile price movement simulation
       double priceChange = random.nextDouble() * 5000 + 5000; // Random value between 5 and 10

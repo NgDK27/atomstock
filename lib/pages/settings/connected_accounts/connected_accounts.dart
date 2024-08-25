@@ -23,15 +23,15 @@ class ConnectedAccounts extends StatelessWidget {
             delegate: SliverChildListDelegate(
               [
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: OpSpacing.md),
+                  padding: const EdgeInsets.symmetric(horizontal: OpSpacing.md),
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius:
-                          BorderRadius.all(Radius.circular(OpRadius.md)),
+                          const BorderRadius.all(Radius.circular(OpRadius.md)),
                       color: OpDynamicColor.surfaceContainer(context),
                     ),
                     child: Padding(
-                      padding: EdgeInsets.all(OpSpacing.md),
+                      padding: const EdgeInsets.all(OpSpacing.md),
                       child: Column(
                         children: [
                           Row(
@@ -49,7 +49,7 @@ class ConnectedAccounts extends StatelessWidget {
                             ],
                           ),
                           const SizedBox(height: OpSpacing.sm),
-                          Text(
+                          const Text(
                             "During this testing phase, adding bank accounts or cards is not supported. Please use the provided free account to add and withdraw money.",
                           ),
                         ],
@@ -59,8 +59,8 @@ class ConnectedAccounts extends StatelessWidget {
                 ),
                 const SizedBox(height: OpSpacing.md),
                 PlatformListTile(
-                  title: Text("TymeX • Free Testing Account"),
-                  trailing: Text("•••• 1234"),
+                  title: const Text("TymeX • Free Testing Account"),
+                  trailing: const Text("•••• 1234"),
                 ),
               ],
             ),
