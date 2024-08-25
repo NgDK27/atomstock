@@ -23,6 +23,7 @@ String extractUserFriendlyErrorMessage(Map<String, dynamic> errorData) {
     'InvalidPasswordException',
     'UsernameExistsException',
     'InvalidParameterException',
+    'CodeMismatchException'
   ];
 
   for (var errorType in knownErrors) {
