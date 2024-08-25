@@ -1,29 +1,29 @@
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:oppenhomies/domain/providers/auth/auth_repository.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_provider.g.dart';
 
 @riverpod
 class Auth extends _$Auth {
-  final _storage = const FlutterSecureStorage();
+  late final AuthRepository _repository;
+  // final _storage = const FlutterSecureStorage();
 
   @override
   Future<bool> build() async {
+    _repository = ref.read(authRepositoryProvider);
     return _checkAuthStatus();
   }
 
   Future<bool> _checkAuthStatus() async {
-    final accessToken = await _storage.read(key: 'access_token');
-    return accessToken != null && accessToken.isNotEmpty;
+    return await _repository.hasValidToken();
   }
 
   Future<bool> notifySignedIn() async {
-    final accessToken = await _storage.read(key: 'access_token');
-    return accessToken != null && accessToken.isNotEmpty;
+    return await _repository.hasValidToken();
   }
 
   Future<void> signOut() async {
-    await _storage.deleteAll();
-    state = const AsyncValue.data(false);
+    await _repository.clearTokens();
   }
 }
