@@ -1,4 +1,3 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:oppenhomies/domain/providers/auth/auth_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -7,7 +6,6 @@ part 'auth_provider.g.dart';
 @riverpod
 class Auth extends _$Auth {
   late final AuthRepository _repository;
-  // final _storage = const FlutterSecureStorage();
 
   @override
   Future<bool> build() async {
