@@ -80,13 +80,13 @@ class StockModel with _$StockModel {
 
   Map<String, double?> get detailFields {
     return {
-      'Floor': floor,
-      'Ceiling': ceiling,
       'Total Volume': totalVolume,
-      'Total Value': totalValue,
       'Open': open,
-      'Close': close,
+      'Ceiling': ceiling,
       'High': high,
+      'Total Value': totalValue,
+      'Close': close,
+      'Floor': floor,
       'Low': low,
     };
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:oppenhomies/domain/models/stock/stock_item_type.dart';
 import 'package:oppenhomies/domain/models/stock/stock_model.dart';
 import 'package:oppenhomies/navigation/routes.dart';
 import 'package:oppenhomies/widgets/helpers/money_formatter.dart';
@@ -15,7 +16,8 @@ class StockListTile extends StatelessWidget {
     context.pushNamed(
       OpRoutes.stockDetails.name,
       pathParameters: {
-        'symbol': stockSymbol,
+        'identifier': stockSymbol,
+        'type': StockItemType.stock.value
       },
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:oppenhomies/domain/models/stock/market_session.dart';
+import 'package:oppenhomies/domain/models/stock/stock_item_type.dart';
 import 'package:oppenhomies/domain/models/stock/stock_model.dart';
 import 'package:oppenhomies/domain/models/stock/stock_price_date_filters.dart';
 import 'package:oppenhomies/styles/colors.dart';
@@ -13,13 +14,19 @@ import 'package:oppenhomies/widgets/chip/chip_base.dart';
 import 'package:oppenhomies/widgets/helpers/money_formatter.dart';
 import 'package:oppenhomies/widgets/tables/simple_row.dart';
 import 'package:oppenhomies/widgets/typography/stock_percent_change_text.dart';
+import 'package:oppenhomies/widgets/typography/stock_point_change_text.dart';
 import 'package:oppenhomies/widgets/typography/stock_price_change_text.dart';
 
 class StockDetailsOverview extends HookWidget {
   final StockModel stock;
   final Color accentColor;
+  final StockItemType type;
 
-  const StockDetailsOverview({super.key, required this.stock, required this.accentColor});
+  const StockDetailsOverview(
+      {super.key,
+      required this.stock,
+      required this.accentColor,
+      required this.type});
 
   @override
   Widget build(BuildContext context) {
@@ -60,22 +67,31 @@ class StockDetailsOverview extends HookWidget {
                     style: OpTextStyle.titleLarge(context),
                   ),
                   const SizedBox(width: OpSpacing.xs),
-                  Text(
-                    '•',
-                    style: OpTextStyle.titleSmall(context),
-                  ),
-                  const SizedBox(width: OpSpacing.xs),
-                  Text(
-                    stock.name,
-                    style: OpTextStyle.titleLarge(context),
-                  ),
+                  if (type == StockItemType.stock)
+                    Row(
+                      children: [
+                        Text(
+                          '•',
+                          style: OpTextStyle.titleSmall(context),
+                        ),
+                        const SizedBox(width: OpSpacing.xs),
+                        Text(
+                          stock.name,
+                          style: OpTextStyle.titleLarge(context),
+                        ),
+                      ],
+                    )
                 ],
               ),
               const SizedBox(
                 height: OpSpacing.xs3,
               ),
               Text(
-                stock.currentPrice.vndFormat(),
+                switch (type) {
+                  StockItemType.idx => stock.currentPrice.toString(),
+                  // TODO: Handle this case.
+                  StockItemType.stock => stock.currentPrice.vndFormat(),
+                },
                 style: OpTextStyle.display(context).spacedOut(),
               ),
               const SizedBox(
@@ -83,9 +99,14 @@ class StockDetailsOverview extends HookWidget {
               ),
               Row(
                 children: [
-                  StockPriceChangeText(
-                    value: stock.priceChange,
-                  ),
+                  switch (type) {
+                    StockItemType.idx => StockPointChangeText(
+                        value: stock.priceChange,
+                      ),
+                    StockItemType.stock => StockPriceChangeText(
+                        value: stock.priceChange,
+                      ),
+                  },
                   const SizedBox(width: OpSpacing.sm),
                   StockPercentChangeText(
                     value: stock.percentChange,
@@ -133,19 +154,21 @@ class StockDetailsOverview extends HookWidget {
             ],
           )
         else
-          Column(children: [
-            const SizedBox(
-              height: OpSpacing.xl5,
-            ),
-            Text(
-              'No price data available',
-              style: OpTextStyle.labelLarge(context)
-                  ?.copyWith(color: OpDynamicColor.onSurfaceVariant(context)),
-            ),
-            const SizedBox(
-              height: OpSpacing.xl5,
-            ),
-          ],),
+          Column(
+            children: [
+              const SizedBox(
+                height: OpSpacing.xl5,
+              ),
+              Text(
+                'No price data available',
+                style: OpTextStyle.labelLarge(context)
+                    ?.copyWith(color: OpDynamicColor.onSurfaceVariant(context)),
+              ),
+              const SizedBox(
+                height: OpSpacing.xl5,
+              ),
+            ],
+          ),
         //region Date filters
 
         //endregion

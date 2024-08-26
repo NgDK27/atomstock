@@ -14,8 +14,8 @@ _$IndexModelImpl _$$IndexModelImplFromJson(Map<String, dynamic> json) =>
       priceChange: (json['Change'] as num).toDouble(),
       percentChange: (json['RatioChange'] as num).toDouble(),
       trade: (json['TotalTrade'] as num).toDouble(),
-      quantity: (json['TotalQtty'] as num).toInt(),
-      totalValue: (json['TotalValue'] as num).toInt(),
+      quantity: (json['TotalQtty'] as num).toDouble(),
+      totalValue: (json['TotalValue'] as num).toDouble(),
     );
 
 Map<String, dynamic> _$$IndexModelImplToJson(_$IndexModelImpl instance) =>

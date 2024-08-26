@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:oppenhomies/domain/helpers/stock_item_type_from_string.dart';
 import 'package:oppenhomies/domain/providers/stock/details/stock_details_provider.dart';
 import 'package:oppenhomies/pages/market/stock_details/models/stock_details_tab_destinations.dart';
 import 'package:oppenhomies/pages/market/stock_details/screens/stock_details_ai.dart';
@@ -17,14 +18,15 @@ import 'package:oppenhomies/widgets/gradients/gradient.dart';
 import 'package:oppenhomies/widgets/helpers/stock_formatter.dart';
 
 class StockDetails extends HookConsumerWidget {
-  final String? symbol;
+  final String? identifier;
+  final String type;
 
-  const StockDetails({super.key, required this.symbol});
+  const StockDetails({super.key, required this.identifier, required this.type});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Stock data
-    final provider = stockDetailsProvider(symbol!);
+    final provider = stockDetailsProvider(identifier!, type.toStockItemType()!);
     final stockDataAsync = ref.watch(provider);
 
     // Coloring based on change
@@ -91,7 +93,7 @@ class StockDetails extends HookConsumerWidget {
       material: (_, __) =>
           MaterialScaffoldData(backgroundColor: accentColorScheme.surface),
       appBar: PlatformAppBar(
-        title: Text(symbol ?? "PROBLEM"),
+        title: Text(identifier ?? "PROBLEM"),
         material: (_, __) => MaterialAppBarData(
           centerTitle: true,
           backgroundColor: accentColorScheme.surface,
@@ -136,7 +138,10 @@ class StockDetails extends HookConsumerWidget {
                     case DetailsTabDestinations.overview:
                       return stockDataAsync.when(
                           data: (data) => StockDetailsOverview(
-                              stock: data, accentColor: accentColor),
+                                stock: data,
+                                accentColor: accentColor,
+                                type: type.toStockItemType()!,
+                              ),
                           error: (_, __) => const Text("Failed to load data"),
                           loading: () => Center(
                                 child: SizedBox(

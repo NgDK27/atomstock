@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:oppenhomies/domain/models/stock/index_model.dart';
 import 'package:oppenhomies/domain/models/stock/market_list/stock_market_indexes_model.dart';
 import 'package:oppenhomies/domain/models/stock/market_list/stock_market_model.dart';
 import 'package:oppenhomies/domain/models/stock/market_list/stock_market_stocks_model.dart';
@@ -45,6 +46,11 @@ class StockRepository {
   Future<StockModel> fetchStockDetails({required String symbol}) async {
     final response = await _dio.get('$_apiEndpoint/stock/$symbol');
     return StockModel.fromJson(response.data);
+  }
+
+  Future<IndexModel> fetchIndexDetails({required String id}) async {
+    final response = await _dio.get('$_apiEndpoint/index/$id');
+    return IndexModel.fromJson(response.data);
   }
 }
 

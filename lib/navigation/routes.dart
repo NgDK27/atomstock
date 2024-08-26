@@ -54,35 +54,50 @@ class OpRoutes {
     path: '/home',
     name: 'home',
     pageBuilder: (context, state) => buildPageWithFadeTransition(
-        context: context, state: state, child: const Home(),),
+      context: context,
+      state: state,
+      child: const Home(),
+    ),
   );
 
   static final ai = RouteModel(
     path: '/ai',
     name: 'ai',
     pageBuilder: (context, state) => buildPageWithFadeTransition(
-    context: context, state: state, child: const Ai(),),
+      context: context,
+      state: state,
+      child: const Ai(),
+    ),
   );
 
   static final automations = RouteModel(
     path: '/automations',
     name: 'automations',
     pageBuilder: (context, state) => buildPageWithFadeTransition(
-        context: context, state: state, child: const Automations(),),
+      context: context,
+      state: state,
+      child: const Automations(),
+    ),
   );
 
   static final market = RouteModel(
     path: '/market',
     name: 'market',
     pageBuilder: (context, state) => buildPageWithFadeTransition(
-        context: context, state: state, child: const Market(),),
+      context: context,
+      state: state,
+      child: const Market(),
+    ),
   );
 
   static final portfolio = RouteModel(
     path: '/portfolio',
     name: 'portfolio',
     pageBuilder: (context, state) => buildPageWithFadeTransition(
-        context: context, state: state, child: const Portfolio(),),
+      context: context,
+      state: state,
+      child: const Portfolio(),
+    ),
   );
 
   // Onboarding routes
@@ -109,7 +124,10 @@ class OpRoutes {
     path: '/settings',
     name: 'settings',
     pageBuilder: (context, state) => buildPageWithFadeTransition(
-      context: context, state: state, child: const Settings(),),
+      context: context,
+      state: state,
+      child: const Settings(),
+    ),
   );
 
   static final automationDetails = RouteModel(
@@ -131,9 +149,12 @@ class OpRoutes {
   );
 
   static final stockDetails = RouteModel(
-    path: '/stock_details/:symbol',
+    path: '/stock_details/:type/:identifier',
     name: 'stock_details',
-    builder: (context, state) =>  StockDetails(symbol: state.pathParameters["symbol"] ?? ""),
+    builder: (context, state) => StockDetails(
+      identifier: state.pathParameters["identifier"],
+      type: state.pathParameters['type']!,
+    ),
   );
 
   static final signInLanding = RouteModel(
@@ -172,35 +193,34 @@ class OpRoutes {
     builder: (context, state) => const ResetPassword(),
   );
 
-
   //region Home sub-routes
   static final indexes = RouteModel(
     path: '/indexes',
     name: 'indexes',
-    builder: (context, state) =>
-    const Indexes(), // Replace with actual widget
+    builder: (context, state) => const Indexes(), // Replace with actual widget
   );
 
   static final topPerformers = RouteModel(
     path: '/top_performers',
     name: 'top_performers',
     builder: (context, state) =>
-    const TopPerformers(), // Replace with actual widget
+        const TopPerformers(), // Replace with actual widget
   );
 
   static final topDecliners = RouteModel(
     path: '/top_decliners',
     name: 'top_decliners',
     builder: (context, state) =>
-    const TopDecliners(), // Replace with actual widget
+        const TopDecliners(), // Replace with actual widget
   );
 
   static final topMovers = RouteModel(
     path: '/top_movers',
     name: 'top_movers',
     builder: (context, state) =>
-    const TopMovers(), // Replace with actual widget
+        const TopMovers(), // Replace with actual widget
   );
+
   //endregion
 
   static final addFunds = RouteModel(

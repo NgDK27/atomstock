@@ -43,13 +43,13 @@ mixin _$IndexModel {
   @JsonKey(name: "TotalTrade")
   set trade(double value) => throw _privateConstructorUsedError;
   @JsonKey(name: "TotalQtty")
-  int get quantity => throw _privateConstructorUsedError;
+  double get quantity => throw _privateConstructorUsedError;
   @JsonKey(name: "TotalQtty")
-  set quantity(int value) => throw _privateConstructorUsedError;
+  set quantity(double value) => throw _privateConstructorUsedError;
   @JsonKey(name: "TotalValue")
-  int get totalValue => throw _privateConstructorUsedError;
+  double get totalValue => throw _privateConstructorUsedError;
   @JsonKey(name: "TotalValue")
-  set totalValue(int value) => throw _privateConstructorUsedError;
+  set totalValue(double value) => throw _privateConstructorUsedError;
 
   /// Serializes this IndexModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -74,8 +74,8 @@ abstract class $IndexModelCopyWith<$Res> {
       @JsonKey(name: "Change") double priceChange,
       @JsonKey(name: "RatioChange") double percentChange,
       @JsonKey(name: "TotalTrade") double trade,
-      @JsonKey(name: "TotalQtty") int quantity,
-      @JsonKey(name: "TotalValue") int totalValue});
+      @JsonKey(name: "TotalQtty") double quantity,
+      @JsonKey(name: "TotalValue") double totalValue});
 }
 
 /// @nodoc
@@ -130,11 +130,11 @@ class _$IndexModelCopyWithImpl<$Res, $Val extends IndexModel>
       quantity: null == quantity
           ? _value.quantity
           : quantity // ignore: cast_nullable_to_non_nullable
-              as int,
+              as double,
       totalValue: null == totalValue
           ? _value.totalValue
           : totalValue // ignore: cast_nullable_to_non_nullable
-              as int,
+              as double,
     ) as $Val);
   }
 }
@@ -154,8 +154,8 @@ abstract class _$$IndexModelImplCopyWith<$Res>
       @JsonKey(name: "Change") double priceChange,
       @JsonKey(name: "RatioChange") double percentChange,
       @JsonKey(name: "TotalTrade") double trade,
-      @JsonKey(name: "TotalQtty") int quantity,
-      @JsonKey(name: "TotalValue") int totalValue});
+      @JsonKey(name: "TotalQtty") double quantity,
+      @JsonKey(name: "TotalValue") double totalValue});
 }
 
 /// @nodoc
@@ -208,18 +208,18 @@ class __$$IndexModelImplCopyWithImpl<$Res>
       quantity: null == quantity
           ? _value.quantity
           : quantity // ignore: cast_nullable_to_non_nullable
-              as int,
+              as double,
       totalValue: null == totalValue
           ? _value.totalValue
           : totalValue // ignore: cast_nullable_to_non_nullable
-              as int,
+              as double,
     ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$IndexModelImpl with DiagnosticableTreeMixin implements _IndexModel {
+class _$IndexModelImpl extends _IndexModel with DiagnosticableTreeMixin {
   _$IndexModelImpl(
       {@JsonKey(name: "IndexId") required this.indexId,
       this.name = "Index name",
@@ -228,7 +228,8 @@ class _$IndexModelImpl with DiagnosticableTreeMixin implements _IndexModel {
       @JsonKey(name: "RatioChange") required this.percentChange,
       @JsonKey(name: "TotalTrade") required this.trade,
       @JsonKey(name: "TotalQtty") required this.quantity,
-      @JsonKey(name: "TotalValue") required this.totalValue});
+      @JsonKey(name: "TotalValue") required this.totalValue})
+      : super._();
 
   factory _$IndexModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$IndexModelImplFromJson(json);
@@ -253,10 +254,10 @@ class _$IndexModelImpl with DiagnosticableTreeMixin implements _IndexModel {
   double trade;
   @override
   @JsonKey(name: "TotalQtty")
-  int quantity;
+  double quantity;
   @override
   @JsonKey(name: "TotalValue")
-  int totalValue;
+  double totalValue;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -294,16 +295,18 @@ class _$IndexModelImpl with DiagnosticableTreeMixin implements _IndexModel {
   }
 }
 
-abstract class _IndexModel implements IndexModel {
+abstract class _IndexModel extends IndexModel {
   factory _IndexModel(
-      {@JsonKey(name: "IndexId") required String indexId,
-      String name,
-      @JsonKey(name: "IndexValue") required double indexValue,
-      @JsonKey(name: "Change") required double priceChange,
-      @JsonKey(name: "RatioChange") required double percentChange,
-      @JsonKey(name: "TotalTrade") required double trade,
-      @JsonKey(name: "TotalQtty") required int quantity,
-      @JsonKey(name: "TotalValue") required int totalValue}) = _$IndexModelImpl;
+          {@JsonKey(name: "IndexId") required String indexId,
+          String name,
+          @JsonKey(name: "IndexValue") required double indexValue,
+          @JsonKey(name: "Change") required double priceChange,
+          @JsonKey(name: "RatioChange") required double percentChange,
+          @JsonKey(name: "TotalTrade") required double trade,
+          @JsonKey(name: "TotalQtty") required double quantity,
+          @JsonKey(name: "TotalValue") required double totalValue}) =
+      _$IndexModelImpl;
+  _IndexModel._() : super._();
 
   factory _IndexModel.fromJson(Map<String, dynamic> json) =
       _$IndexModelImpl.fromJson;
@@ -338,14 +341,14 @@ abstract class _IndexModel implements IndexModel {
   set trade(double value);
   @override
   @JsonKey(name: "TotalQtty")
-  int get quantity;
+  double get quantity;
   @JsonKey(name: "TotalQtty")
-  set quantity(int value);
+  set quantity(double value);
   @override
   @JsonKey(name: "TotalValue")
-  int get totalValue;
+  double get totalValue;
   @JsonKey(name: "TotalValue")
-  set totalValue(int value);
+  set totalValue(double value);
 
   /// Create a copy of IndexModel
   /// with the given fields replaced by the non-null parameter values.

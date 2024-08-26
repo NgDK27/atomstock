@@ -6,7 +6,7 @@ part of 'stock_details_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$stockDetailsHash() => r'1d3f1c239d9c0f754d78fb7d0b4ff51f417f6f80';
+String _$stockDetailsHash() => r'49c4a4dfcd0a9e143554316e823b756895b136eb';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -31,10 +31,12 @@ class _SystemHash {
 
 abstract class _$StockDetails
     extends BuildlessAutoDisposeAsyncNotifier<StockModel> {
-  late final String symbol;
+  late final String identifier;
+  late final StockItemType type;
 
   FutureOr<StockModel> build(
-    String symbol,
+    String identifier,
+    StockItemType type,
   );
 }
 
@@ -49,10 +51,12 @@ class StockDetailsFamily extends Family<AsyncValue<StockModel>> {
 
   /// See also [StockDetails].
   StockDetailsProvider call(
-    String symbol,
+    String identifier,
+    StockItemType type,
   ) {
     return StockDetailsProvider(
-      symbol,
+      identifier,
+      type,
     );
   }
 
@@ -61,7 +65,8 @@ class StockDetailsFamily extends Family<AsyncValue<StockModel>> {
     covariant StockDetailsProvider provider,
   ) {
     return call(
-      provider.symbol,
+      provider.identifier,
+      provider.type,
     );
   }
 
@@ -85,9 +90,12 @@ class StockDetailsProvider
     extends AutoDisposeAsyncNotifierProviderImpl<StockDetails, StockModel> {
   /// See also [StockDetails].
   StockDetailsProvider(
-    String symbol,
+    String identifier,
+    StockItemType type,
   ) : this._internal(
-          () => StockDetails()..symbol = symbol,
+          () => StockDetails()
+            ..identifier = identifier
+            ..type = type,
           from: stockDetailsProvider,
           name: r'stockDetailsProvider',
           debugGetCreateSourceHash:
@@ -97,7 +105,8 @@ class StockDetailsProvider
           dependencies: StockDetailsFamily._dependencies,
           allTransitiveDependencies:
               StockDetailsFamily._allTransitiveDependencies,
-          symbol: symbol,
+          identifier: identifier,
+          type: type,
         );
 
   StockDetailsProvider._internal(
@@ -107,17 +116,20 @@ class StockDetailsProvider
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.symbol,
+    required this.identifier,
+    required this.type,
   }) : super.internal();
 
-  final String symbol;
+  final String identifier;
+  final StockItemType type;
 
   @override
   FutureOr<StockModel> runNotifierBuild(
     covariant StockDetails notifier,
   ) {
     return notifier.build(
-      symbol,
+      identifier,
+      type,
     );
   }
 
@@ -126,13 +138,16 @@ class StockDetailsProvider
     return ProviderOverride(
       origin: this,
       override: StockDetailsProvider._internal(
-        () => create()..symbol = symbol,
+        () => create()
+          ..identifier = identifier
+          ..type = type,
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        symbol: symbol,
+        identifier: identifier,
+        type: type,
       ),
     );
   }
@@ -145,21 +160,27 @@ class StockDetailsProvider
 
   @override
   bool operator ==(Object other) {
-    return other is StockDetailsProvider && other.symbol == symbol;
+    return other is StockDetailsProvider &&
+        other.identifier == identifier &&
+        other.type == type;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, symbol.hashCode);
+    hash = _SystemHash.combine(hash, identifier.hashCode);
+    hash = _SystemHash.combine(hash, type.hashCode);
 
     return _SystemHash.finish(hash);
   }
 }
 
 mixin StockDetailsRef on AutoDisposeAsyncNotifierProviderRef<StockModel> {
-  /// The parameter `symbol` of this provider.
-  String get symbol;
+  /// The parameter `identifier` of this provider.
+  String get identifier;
+
+  /// The parameter `type` of this provider.
+  StockItemType get type;
 }
 
 class _StockDetailsProviderElement
@@ -168,7 +189,9 @@ class _StockDetailsProviderElement
   _StockDetailsProviderElement(super.provider);
 
   @override
-  String get symbol => (origin as StockDetailsProvider).symbol;
+  String get identifier => (origin as StockDetailsProvider).identifier;
+  @override
+  StockItemType get type => (origin as StockDetailsProvider).type;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

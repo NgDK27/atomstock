@@ -13,10 +13,20 @@ class IndexModel with _$IndexModel {
     @JsonKey(name: "Change") required double priceChange,
     @JsonKey(name: "RatioChange") required double percentChange,
     @JsonKey(name: "TotalTrade") required double trade,
-    @JsonKey(name: "TotalQtty") required int quantity,
-    @JsonKey(name: "TotalValue") required int totalValue,
+    @JsonKey(name: "TotalQtty") required double quantity,
+    @JsonKey(name: "TotalValue") required double totalValue,
   }) = _IndexModel;
+
+  const IndexModel._();
 
   factory IndexModel.fromJson(Map<String, dynamic> json) =>
       _$IndexModelFromJson(json);
+
+  Map<String, double?> get detailFields {
+    return {
+      'Total Volume': trade,
+      'Total Quantity': quantity,
+      'Total Value': totalValue
+    };
+  }
 }
