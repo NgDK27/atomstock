@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:oppenhomies/domain/models/stock/market_session.dart';
 import 'package:oppenhomies/domain/models/stock/stock_item_type.dart';
 import 'package:oppenhomies/domain/models/stock/stock_model.dart';
 import 'package:oppenhomies/domain/models/stock/stock_price_date_filters.dart';
+import 'package:oppenhomies/domain/providers/stock/details/stock_details_provider.dart';
 import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/styles/text.dart';
@@ -17,7 +19,7 @@ import 'package:oppenhomies/widgets/typography/stock_percent_change_text.dart';
 import 'package:oppenhomies/widgets/typography/stock_point_change_text.dart';
 import 'package:oppenhomies/widgets/typography/stock_price_change_text.dart';
 
-class StockDetailsOverview extends HookWidget {
+class StockDetailsOverview extends HookConsumerWidget {
   final StockModel stock;
   final Color accentColor;
   final StockItemType type;
@@ -26,10 +28,11 @@ class StockDetailsOverview extends HookWidget {
       {super.key,
       required this.stock,
       required this.accentColor,
-      required this.type});
+      required this.type,
+    });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final detailFields = stock.detailFields.entries.toList();
     final split = (detailFields.length / 2).ceil();
 
@@ -124,7 +127,10 @@ class StockDetailsOverview extends HookWidget {
                               )
                             : OpNeutralTextButton(
                                 text: filter.label,
-                                onPressed: () => selectedFilter.value = filter,
+                                onPressed: () => {
+                                  selectedFilter.value = filter,
+
+                                },
                                 tightPadding: true,
                               ),
                       )

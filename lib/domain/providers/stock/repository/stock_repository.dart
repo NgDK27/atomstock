@@ -48,23 +48,34 @@ class StockRepository {
     return StockMarketStocksModel.fromJson(response.data);
   }
 
-  Future<StockModel> fetchStockDetails({required String symbol}) async {
+  Future<StockModel> fetchStockDetails({required String symbol, String? timeRange}) async {
     try {
-      final responses = await Future.wait([
-        _dio.get('$_apiEndpoint:8080/stock/$symbol'),
-        _dio.get('$_apiEndpoint:8000/ticker/$symbol'),
-      ]);
+      final stockFuture = _dio.get('$_apiEndpoint:8080/stock/$symbol');
+      final tickerFuture = timeRange != null
+          ? _dio.get('$_apiEndpoint:8000/ticker/$symbol?range=$timeRange')
+          : _dio.get('$_apiEndpoint:8000/ticker/$symbol');
+
+      final responses = await Future.wait([stockFuture, tickerFuture]);
 
       final stockData = responses[0].data;
       final tickerData = responses[1].data;
 
-      final dateFormat = DateFormat('dd/MM/yyyy HH:mm:ss');
+      final dateFormat = DateFormat('dd/MM/yyyy');
+      final dateTimeFormat = DateFormat('dd/MM/yyyy HH:mm:ss');
 
       final List<StockPricePoint> pricePoints = (tickerData['historical_data'] as List)
-          .map((point) => StockPricePoint(
-        timestamp: dateFormat.parse('${point['TradingDate']} ${point['Time']}'),
-        price: double.parse(point['ClosePrice']),
-      ))
+          .map((point) {
+        final date = dateFormat.parse(point['TradingDate']);
+        final time = point['Time'];
+        final timestamp = time != null
+            ? dateTimeFormat.parse('${point['TradingDate']} $time')
+            : DateTime(date.year, date.month, date.day);
+
+        return StockPricePoint(
+          timestamp: timestamp,
+          price: double.parse(point['ClosePrice']),
+        );
+      })
           .toList();
 
       return StockModel(

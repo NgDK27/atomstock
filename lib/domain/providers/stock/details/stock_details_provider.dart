@@ -37,6 +37,18 @@ class StockDetails extends _$StockDetails {
     }
   }
 
+  Future<void> updateDetailsWithTimeRange(
+      {required String timeRange}) async {
+    switch (type) {
+      case StockItemType.idx:
+        break;
+      case StockItemType.stock:
+        state = const AsyncValue.loading();
+        state = await AsyncValue.guard(
+                () => _fetchDetails(identifier: identifier, type: type));
+    }
+  }
+
   Future<void> refreshStockDetails(
       String identifier, StockItemType type) async {
     state = const AsyncValue.loading();

@@ -26,7 +26,7 @@ class StockListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return MarketItemListTile(
       symbol: stock.symbol,
-      name: stock.name,
+      name: "",
       currentValue: stock.currentPrice.vndFormat(),
       priceChange: StockPriceChangeText(value: stock.priceChange),
       percentChange: stock.percentChange,

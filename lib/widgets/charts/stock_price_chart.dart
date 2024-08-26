@@ -38,20 +38,16 @@ class _StockLineChartState extends State<StockLineChart> {
   Widget build(BuildContext context) {
     final stockPricePoints = useState(widget.stockPricePoints);
 
-    final filteredData = useMemoized(() {
-      final now = DateTime.now();
-      return stockPricePoints.value.points.where((point) =>
-          point.timestamp.isAfter(now.subtract(widget.selectedDateFilter.duration),),
-      ).toList();
-    }, [widget.selectedDateFilter, stockPricePoints.value],);
+    final allData = useMemoized(() {
+      return stockPricePoints.value.points;
+    }, [stockPricePoints.value]);
 
-
-    final hasData = filteredData.isNotEmpty;
+    final hasData = allData.isNotEmpty;
 
     final accentColor = hasData
         ? StockColoring.determineStockColor(
       context,
-      filteredData.last.price - filteredData.first.price,
+      allData.last.price - allData.first.price,
     )
         : widget.accentColor; // Default color when no data
 
@@ -70,7 +66,7 @@ class _StockLineChartState extends State<StockLineChart> {
                 ? LineChart(
                 curve: Curves.easeInOutQuad,
                 duration: const Duration(milliseconds: 300),
-                mainData(accentColor, filteredData, widget.selectedDateFilter),)
+                mainData(accentColor, allData, widget.selectedDateFilter),)
                 : const Center(
                 child: Text('No data available for this period'),),
           ),
