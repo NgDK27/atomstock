@@ -6,6 +6,7 @@ import 'package:oppenhomies/domain/models/stock/stock_item_type.dart';
 import 'package:oppenhomies/domain/models/stock/stock_model.dart';
 import 'package:oppenhomies/domain/models/stock/stock_price_date_filters.dart';
 import 'package:oppenhomies/domain/providers/stock/details/stock_details_provider.dart';
+import 'package:oppenhomies/domain/providers/stock/details/stock_details_time_range_provider.dart';
 import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/styles/text.dart';
@@ -23,13 +24,16 @@ class StockDetailsOverview extends HookConsumerWidget {
   final StockModel stock;
   final Color accentColor;
   final StockItemType type;
+  final StockPriceDateFilter timeRange;
 
   const StockDetailsOverview(
       {super.key,
       required this.stock,
       required this.accentColor,
       required this.type,
-    });
+        required this.timeRange,
+
+      });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -37,8 +41,6 @@ class StockDetailsOverview extends HookConsumerWidget {
     final split = (detailFields.length / 2).ceil();
 
     const dateFilterOptions = StockPriceDateFilter.values;
-    final selectedFilter = useState(StockPriceDateFilter.oneDay);
-    final mockTimeFrame = selectedFilter.value;
 
     final marketSession = useState(MarketSession.closed);
 
@@ -96,7 +98,7 @@ class StockDetailsOverview extends HookConsumerWidget {
                   ),
                   const SizedBox(width: OpSpacing.sm),
                   Text(
-                    mockTimeFrame.description,
+                    timeRange.description,
                     style: OpTextStyle.labelMedium(context),
                   ),
                 ],
@@ -111,7 +113,7 @@ class StockDetailsOverview extends HookConsumerWidget {
             children: [
               StockLineChart(
                 stockPricePoints: stock.pricePoints!,
-                selectedDateFilter: selectedFilter.value,
+                selectedDateFilter: timeRange,
                 accentColor: accentColor,
               ),
               Padding(
@@ -120,7 +122,7 @@ class StockDetailsOverview extends HookConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: dateFilterOptions
                       .map(
-                        (filter) => filter == selectedFilter.value
+                        (filter) => filter == timeRange
                             ? OpTonalPrimaryButton(
                                 text: filter.label,
                                 onPressed: () {},
@@ -128,8 +130,8 @@ class StockDetailsOverview extends HookConsumerWidget {
                             : OpNeutralTextButton(
                                 text: filter.label,
                                 onPressed: () => {
-                                  selectedFilter.value = filter,
-
+                                  // selectedFilter.value = filter,
+                                ref.read(stockDetailsTimeRangeProvider.notifier).updateTimeRange(filter)
                                 },
                                 tightPadding: true,
                               ),

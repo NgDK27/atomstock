@@ -6,7 +6,7 @@ part of 'stock_details_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$stockDetailsHash() => r'0bd86541cdc602b62ed130d708a376836622fff7';
+String _$stockDetailsHash() => r'890eccb65468f9be66f8a73f083d4fe9f681a6c5';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -33,10 +33,12 @@ abstract class _$StockDetails
     extends BuildlessAutoDisposeAsyncNotifier<StockModel> {
   late final String identifier;
   late final StockItemType type;
+  late final StockPriceDateFilter timeRange;
 
   FutureOr<StockModel> build(
     String identifier,
     StockItemType type,
+    StockPriceDateFilter timeRange,
   );
 }
 
@@ -53,10 +55,12 @@ class StockDetailsFamily extends Family<AsyncValue<StockModel>> {
   StockDetailsProvider call(
     String identifier,
     StockItemType type,
+    StockPriceDateFilter timeRange,
   ) {
     return StockDetailsProvider(
       identifier,
       type,
+      timeRange,
     );
   }
 
@@ -67,6 +71,7 @@ class StockDetailsFamily extends Family<AsyncValue<StockModel>> {
     return call(
       provider.identifier,
       provider.type,
+      provider.timeRange,
     );
   }
 
@@ -92,10 +97,12 @@ class StockDetailsProvider
   StockDetailsProvider(
     String identifier,
     StockItemType type,
+    StockPriceDateFilter timeRange,
   ) : this._internal(
           () => StockDetails()
             ..identifier = identifier
-            ..type = type,
+            ..type = type
+            ..timeRange = timeRange,
           from: stockDetailsProvider,
           name: r'stockDetailsProvider',
           debugGetCreateSourceHash:
@@ -107,6 +114,7 @@ class StockDetailsProvider
               StockDetailsFamily._allTransitiveDependencies,
           identifier: identifier,
           type: type,
+          timeRange: timeRange,
         );
 
   StockDetailsProvider._internal(
@@ -118,10 +126,12 @@ class StockDetailsProvider
     required super.from,
     required this.identifier,
     required this.type,
+    required this.timeRange,
   }) : super.internal();
 
   final String identifier;
   final StockItemType type;
+  final StockPriceDateFilter timeRange;
 
   @override
   FutureOr<StockModel> runNotifierBuild(
@@ -130,6 +140,7 @@ class StockDetailsProvider
     return notifier.build(
       identifier,
       type,
+      timeRange,
     );
   }
 
@@ -140,7 +151,8 @@ class StockDetailsProvider
       override: StockDetailsProvider._internal(
         () => create()
           ..identifier = identifier
-          ..type = type,
+          ..type = type
+          ..timeRange = timeRange,
         from: from,
         name: null,
         dependencies: null,
@@ -148,6 +160,7 @@ class StockDetailsProvider
         debugGetCreateSourceHash: null,
         identifier: identifier,
         type: type,
+        timeRange: timeRange,
       ),
     );
   }
@@ -162,7 +175,8 @@ class StockDetailsProvider
   bool operator ==(Object other) {
     return other is StockDetailsProvider &&
         other.identifier == identifier &&
-        other.type == type;
+        other.type == type &&
+        other.timeRange == timeRange;
   }
 
   @override
@@ -170,6 +184,7 @@ class StockDetailsProvider
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, identifier.hashCode);
     hash = _SystemHash.combine(hash, type.hashCode);
+    hash = _SystemHash.combine(hash, timeRange.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -181,6 +196,9 @@ mixin StockDetailsRef on AutoDisposeAsyncNotifierProviderRef<StockModel> {
 
   /// The parameter `type` of this provider.
   StockItemType get type;
+
+  /// The parameter `timeRange` of this provider.
+  StockPriceDateFilter get timeRange;
 }
 
 class _StockDetailsProviderElement
@@ -192,6 +210,9 @@ class _StockDetailsProviderElement
   String get identifier => (origin as StockDetailsProvider).identifier;
   @override
   StockItemType get type => (origin as StockDetailsProvider).type;
+  @override
+  StockPriceDateFilter get timeRange =>
+      (origin as StockDetailsProvider).timeRange;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

@@ -7,6 +7,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:oppenhomies/domain/helpers/stock_item_type_from_string.dart';
 import 'package:oppenhomies/domain/providers/stock/details/stock_details_provider.dart';
+import 'package:oppenhomies/domain/providers/stock/details/stock_details_time_range_provider.dart';
 import 'package:oppenhomies/pages/market/stock_details/models/stock_details_tab_destinations.dart';
 import 'package:oppenhomies/pages/market/stock_details/screens/stock_details_ai.dart';
 import 'package:oppenhomies/pages/market/stock_details/screens/stock_details_automation.dart';
@@ -26,7 +27,8 @@ class StockDetails extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Stock data
-    final provider = stockDetailsProvider(identifier!, type.toStockItemType()!);
+    final timeRange = ref.watch(stockDetailsTimeRangeProvider);
+    final provider = stockDetailsProvider(identifier!, type.toStockItemType()!, timeRange);
     final stockDataAsync = ref.watch(provider);
 
     // Coloring based on change
@@ -141,7 +143,8 @@ class StockDetails extends HookConsumerWidget {
                                 stock: data,
                                 accentColor: accentColor,
                                 type: type.toStockItemType()!,
-                              ),
+                            timeRange: timeRange,
+                          ),
                           error: (_, __) => const Text("Failed to load data"),
                           loading: () => Center(
                                 child: SizedBox(
