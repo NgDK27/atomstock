@@ -8,6 +8,7 @@ import 'package:oppenhomies/domain/models/stock/index_model.dart';
 import 'package:oppenhomies/domain/models/stock/stock_model.dart';
 import 'package:oppenhomies/domain/providers/stock/stock_market_provider.dart';
 import 'package:oppenhomies/navigation/routes.dart';
+import 'package:oppenhomies/pages/home/layouts/stock_list.dart';
 import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/widgets/list_tiles/index_list_tile.dart';
@@ -70,7 +71,7 @@ class Home extends ConsumerWidget {
               stockMarketData.when(
                   data: (stockMarket) => Column(
                         children: [
-                          _buildIndexList(
+                          marketIndexList(
                             title: "Indexes",
                             icon: Icon(
                               Symbols.bar_chart_rounded,
@@ -82,7 +83,7 @@ class Home extends ConsumerWidget {
                                 navigateToIndexes(context: context),
                             indexes: stockMarket.indexes,
                           ),
-                          _buildStockList(
+                          marketStockList(
                             title: "Top performers today",
                             icon: Icon(
                               Symbols.north_east_rounded,
@@ -94,7 +95,7 @@ class Home extends ConsumerWidget {
                                 navigateToTopPerformers(context: context),
                             stocks: stockMarket.topIncrease,
                           ),
-                          _buildStockList(
+                          marketStockList(
                             title: "Top decliners today",
                             icon: Icon(
                               Symbols.south_east_rounded,
@@ -106,7 +107,7 @@ class Home extends ConsumerWidget {
                                 navigateToTopDecliners(context: context),
                             stocks: stockMarket.topDecrease,
                           ),
-                          _buildStockList(
+                          marketStockList(
                             title: "Top movers today",
                             icon: Icon(
                               Symbols.swap_horiz_rounded,
@@ -158,38 +159,6 @@ class Home extends ConsumerWidget {
         ),
       ),
       onPressed: () => navigateToNotifications(context: context),
-    );
-  }
-
-  Widget _buildIndexList(
-      {required String title,
-        required Icon icon,
-        required VoidCallback onPressed,
-        required List<IndexModel> indexes}) {
-    return Column(
-      children: [
-        OpTitleLarge(title, onPressed: onPressed, leading: icon),
-        ...indexes.map((index) => IndexListTile(index: index)),
-        const SizedBox(
-          height: OpSpacing.lg,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildStockList(
-      {required String title,
-      required Icon icon,
-      required VoidCallback onPressed,
-      required List<StockModel> stocks}) {
-    return Column(
-      children: [
-        OpTitleLarge(title, onPressed: onPressed, leading: icon),
-        ...stocks.map((stock) => StockListTile(stock: stock)),
-        const SizedBox(
-          height: OpSpacing.lg,
-        ),
-      ],
     );
   }
 }

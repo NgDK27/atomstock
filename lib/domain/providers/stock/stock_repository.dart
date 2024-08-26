@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:oppenhomies/domain/models/stock/stock_market_indexes_model.dart';
 import 'package:oppenhomies/domain/models/stock/stock_market_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -17,6 +18,11 @@ class StockRepository {
   Future<StockMarketModel> fetchStockMarketOverview() async {
     final response = await _dio.get('$_apiEndpoint/main-market');
     return StockMarketModel.fromJson(response.data);
+  }
+
+  Future<StockMarketIndexesModel> fetchStockMarketIndexes() async {
+    final response = await _dio.get('$_apiEndpoint/main-market?category=indexes');
+    return StockMarketIndexesModel.fromJson(response.data);
   }
 }
 
