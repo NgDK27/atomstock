@@ -378,7 +378,7 @@ func main() {
 	protected.GET("/user", getUserInfoHandler)
 
 	go func() {
-        if err := r.Run(":2708"); err != nil {
+        if err := r.Run(":8080"); err != nil {
             log.Fatalf("Failed to start server: %v", err)
         }
     }()

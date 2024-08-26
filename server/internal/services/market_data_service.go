@@ -72,23 +72,34 @@ func (s *MarketDataService) processStockData(data []byte, symbol string) error {
     ctx := context.Background()
     key := "stock:" + symbol
 
-    _, err = s.redisClient.HSet(ctx, key, map[string]interface{}{
-        "Price":       stockData.Price,
-        "Change":      stockData.Change,
-        "RatioChange": stockData.RatioChange,
-        "Volume":      stockData.Volume,
-    }).Result()
-
-    if err != nil {
-        return fmt.Errorf("error storing stock data in Redis: %v", err)
-    }
 
     if stockData.RatioChange != -100 {
+        _, err = s.redisClient.HSet(ctx, key, map[string]interface{}{
+            "Price":       stockData.Price,
+            "Change":      stockData.Change,
+            "RatioChange": stockData.RatioChange,
+            "Volume":      stockData.Volume,
+        }).Result()
+    
+        if err != nil {
+            return fmt.Errorf("error storing stock data in Redis: %v", err)
+        }
         // Update sorted sets
         s.redisClient.ZAdd(ctx, "stock_volume", redis.Z{Score: stockData.Volume, Member: symbol})
         s.redisClient.ZAdd(ctx, "stock_increase", redis.Z{Score: stockData.RatioChange, Member: symbol})
         s.redisClient.ZAdd(ctx, "stock_decrease", redis.Z{Score: -stockData.RatioChange, Member: symbol})
     } else {
+        _, err = s.redisClient.HSet(ctx, key, map[string]interface{}{
+            "Price":       stockData.Change * -1,
+            "Change":      0,
+            "RatioChange": 0,
+            "Volume":      stockData.Volume,
+        }).Result()
+    
+        if err != nil {
+            return fmt.Errorf("error storing stock data in Redis: %v", err)
+        }
+
         log.Printf("Skipping update of sorted sets for %s because RatioChange is -100", symbol)
     }
 
