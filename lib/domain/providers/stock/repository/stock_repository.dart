@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:oppenhomies/domain/models/stock/stock_market_indexes_model.dart';
-import 'package:oppenhomies/domain/models/stock/stock_market_model.dart';
+import 'package:oppenhomies/domain/models/stock/market_list/stock_market_indexes_model.dart';
+import 'package:oppenhomies/domain/models/stock/market_list/stock_market_model.dart';
+import 'package:oppenhomies/domain/models/stock/market_list/stock_market_stocks_model.dart';
 import 'package:oppenhomies/domain/models/stock/stock_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -24,6 +25,21 @@ class StockRepository {
   Future<StockMarketIndexesModel> fetchStockMarketIndexes() async {
     final response = await _dio.get('$_apiEndpoint/main-market?category=indexes');
     return StockMarketIndexesModel.fromJson(response.data);
+  }
+
+  Future<StockMarketStocksModel> fetchStockMarketTopVolume() async {
+    final response = await _dio.get('$_apiEndpoint/main-market?category=volume');
+    return StockMarketStocksModel.fromJson(response.data);
+  }
+
+  Future<StockMarketStocksModel> fetchStockMarketTopIncrease() async {
+    final response = await _dio.get('$_apiEndpoint/main-market?category=increase');
+    return StockMarketStocksModel.fromJson(response.data);
+  }
+
+  Future<StockMarketStocksModel> fetchStockMarketTopDecrease() async {
+    final response = await _dio.get('$_apiEndpoint/main-market?category=decrease');
+    return StockMarketStocksModel.fromJson(response.data);
   }
 
   Future<StockModel> fetchStockDetails({required String symbol}) async {

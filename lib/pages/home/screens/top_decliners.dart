@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:oppenhomies/domain/models/stock/stock_model.dart';
+import 'package:oppenhomies/domain/providers/stock/market/stock_market_top_decliners_provider.dart';
 import 'package:oppenhomies/pages/home/layouts/stock_market_category_layout.dart';
 
 class TopDecliners extends HookConsumerWidget {
@@ -8,19 +9,11 @@ class TopDecliners extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-  //   final sampleStocks = [
-  //     StockModel.sample(),
-  //     StockModel.positiveSample(),
-  //     StockModel.negativeSample(),
-  //     StockModel.detailedSample(),
-  //   ];
-  //
-  //   return StockMarketCategoryLayout(
-  //     title: "Top Decliners Today",
-  //     stocks: sampleStocks,
-  //   );
+    final stocks = ref.watch(stockMarketTopDeclinersProvider);
 
-    return Placeholder();
-
+    return StockMarketCategoryLayout(
+      title: "Top decliners",
+      asyncData: stocks,
+    );
   }
 }
