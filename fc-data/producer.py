@@ -18,10 +18,10 @@ dotenv_path = project_root / 'oppenhomies/server/.env'
 load_dotenv(dotenv_path)
 
 # Database configuration
-DB_HOST = os.getenv('HOST')
-DB_NAME = os.getenv('DB_NAME')
-DB_USER = os.getenv('USER')
-DB_PASSWORD = os.getenv('PASSWORD') 
+DB_HOST = os.getenv('HOST') or 'localhost'
+DB_NAME = os.getenv('DB_NAME') or 'capstone'
+DB_USER = os.getenv('USER') or 'quando'
+DB_PASSWORD = os.getenv('PASSWORD') or '808225'
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -33,10 +33,10 @@ def get_symbols():
     index_symbols = []
 
     conn = psycopg2.connect(
-        host='localhost',
-        dbname='capstone',
-        user='quando',
-        password='808205'
+        host=DB_HOST,
+        dbname=DB_NAME,
+        user=DB_USER,
+        password=DB_PASSWORD
     )
 
     cursor = conn.cursor()
@@ -71,11 +71,11 @@ load_dotenv()
 stocks, indexes = get_symbols()
 
 # Kafka configuration
-KAFKA_HOST = os.getenv('KAFKA_HOST')
-KAFKA_PORT = os.getenv('KAFKA_PORT')
+KAFKA_HOST = os.getenv('KAFKA_HOST') or '192.168.25.229:9092'
+KAFKA_PORT = os.getenv('KAFKA_PORT') or '9092'
 
 kafka_config = {
-    'bootstrap.servers': f"192.168.25.229:9092",
+    'bootstrap.servers': f"{KAFKA_HOST}:{KAFKA_PORT}",
 }
 
 producer = Producer(kafka_config)
