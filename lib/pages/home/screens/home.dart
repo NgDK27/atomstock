@@ -84,6 +84,18 @@ class Home extends ConsumerWidget {
                             indexes: stockMarket.indexes,
                           ),
                           marketStockList(
+                            title: "Top movers today",
+                            icon: Icon(
+                              Symbols.swap_horiz_rounded,
+                              weight: 800,
+                              size: 22,
+                              color: OpDynamicColor.onSurface(context),
+                            ),
+                            onPressed: () =>
+                                navigateToTopMovers(context: context),
+                            stocks: stockMarket.topVolume,
+                          ),
+                          marketStockList(
                             title: "Top performers today",
                             icon: Icon(
                               Symbols.north_east_rounded,
@@ -107,18 +119,6 @@ class Home extends ConsumerWidget {
                                 navigateToTopDecliners(context: context),
                             stocks: stockMarket.topDecrease,
                           ),
-                          marketStockList(
-                            title: "Top movers today",
-                            icon: Icon(
-                              Symbols.swap_horiz_rounded,
-                              weight: 800,
-                              size: 22,
-                              color: OpDynamicColor.onSurface(context),
-                            ),
-                            onPressed: () =>
-                                navigateToTopMovers(context: context),
-                            stocks: stockMarket.topVolume,
-                          )
                         ],
                       ),
                   error: (_, __) => const Column(

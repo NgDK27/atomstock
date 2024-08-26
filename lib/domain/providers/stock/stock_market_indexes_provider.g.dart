@@ -7,7 +7,7 @@ part of 'stock_market_indexes_provider.dart';
 // **************************************************************************
 
 String _$stockMarketIndexesHash() =>
-    r'd944a93c6dfb20f0013e9f41b36da1acced60397';
+    r'68064aaaf1c8951b43ff958960c53ebfbd9f78ab';
 
 /// See also [StockMarketIndexes].
 @ProviderFor(StockMarketIndexes)

@@ -131,9 +131,9 @@ class OpRoutes {
   );
 
   static final stockDetails = RouteModel(
-    path: '/stock_details',
+    path: '/stock_details/:symbol',
     name: 'stock_details',
-    builder: (context, state) => const StockDetails(),
+    builder: (context, state) =>  StockDetails(symbol: state.pathParameters["symbol"] ?? ""),
   );
 
   static final signInLanding = RouteModel(

@@ -11,15 +11,15 @@ class StockMarketIndexes extends _$StockMarketIndexes {
   @override
   Future<StockMarketIndexesModel> build() async {
     _repository = ref.read(stockRepositoryProvider);
-    return _fetchStockMarketIndexesOverview();
+    return _fetchStockMarketIndexes();
   }
 
-  Future<StockMarketIndexesModel> _fetchStockMarketIndexesOverview() async {
+  Future<StockMarketIndexesModel> _fetchStockMarketIndexes() async {
     return await _repository.fetchStockMarketIndexes();
   }
 
-  Future<void> refreshStockMarketIndexesOverview() async {
+  Future<void> refreshStockMarketIndexes() async {
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() => _fetchStockMarketIndexesOverview());
+    state = await AsyncValue.guard(() => _fetchStockMarketIndexes());
   }
 }

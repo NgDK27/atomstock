@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:oppenhomies/domain/models/stock/stock_model.dart';
+import 'package:oppenhomies/domain/providers/stock/stock_details_provider.dart';
 import 'package:oppenhomies/pages/market/stock_details/models/stock_details_tab_destinations.dart';
 import 'package:oppenhomies/pages/market/stock_details/screens/stock_details_ai.dart';
 import 'package:oppenhomies/pages/market/stock_details/screens/stock_details_automation.dart';
@@ -17,16 +17,22 @@ import 'package:oppenhomies/widgets/gradients/gradient.dart';
 import 'package:oppenhomies/widgets/helpers/stock_formatter.dart';
 
 class StockDetails extends HookConsumerWidget {
-  const StockDetails({super.key});
+  final String? symbol;
+
+  const StockDetails({super.key, required this.symbol});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Stock data
-    final stock = StockModel.detailedSample();
+    final provider = stockDetailsProvider(symbol!);
+    final stockDataAsync = ref.watch(provider);
 
     // Coloring based on change
-    final accentColor =
-        StockColoring.determineStockColor(context, stock.priceChange);
+    final Color accentColor = stockDataAsync.when(
+        data: (stock) =>
+            StockColoring.determineStockColor(context, stock.priceChange),
+        error: (_, __) => OpDynamicColor.surface(context),
+        loading: () => OpDynamicColor.surface(context));
     final accentColorScheme = ColorScheme.fromSeed(
       seedColor: accentColor,
       brightness: WidgetsBinding.instance.platformDispatcher.platformBrightness,
@@ -85,7 +91,7 @@ class StockDetails extends HookConsumerWidget {
       material: (_, __) =>
           MaterialScaffoldData(backgroundColor: accentColorScheme.surface),
       appBar: PlatformAppBar(
-        title: Text(stock.symbol),
+        title: Text(symbol ?? "PROBLEM"),
         material: (_, __) => MaterialAppBarData(
           centerTitle: true,
           backgroundColor: accentColorScheme.surface,
@@ -125,11 +131,20 @@ class StockDetails extends HookConsumerWidget {
               child: TabBarView(
                 controller: tabController,
                 physics: const NeverScrollableScrollPhysics(),
-
                 children: DetailsTabDestinations.values.map((tab) {
                   switch (tab) {
                     case DetailsTabDestinations.overview:
-                      return StockDetailsOverview(stock: stock, accentColor: accentColor,);
+                      return stockDataAsync.when(
+                          data: (data) => StockDetailsOverview(
+                              stock: data, accentColor: accentColor),
+                          error: (_, __) => const Text("Failed to load data"),
+                          loading: () => Center(
+                                child: SizedBox(
+                                  height: OpSpacing.md,
+                                  width: OpSpacing.md,
+                                  child: PlatformCircularProgressIndicator(),
+                                ),
+                              ));
                     case DetailsTabDestinations.automations:
                       return const StockDetailsAutomation();
                     case DetailsTabDestinations.ai:
@@ -169,9 +184,10 @@ class StockDetails extends HookConsumerWidget {
                         groupValue: cupertinoSelectedTab.value,
                         onValueChanged: (value) {
                           cupertinoSelectedTab.value = value;
-                          tabController.index = DetailsTabDestinations.values
-                              .indexOf(
-                                  value ?? DetailsTabDestinations.overview,);
+                          tabController.index =
+                              DetailsTabDestinations.values.indexOf(
+                            value ?? DetailsTabDestinations.overview,
+                          );
                         },
                         children: {
                           for (final tab in DetailsTabDestinations.values)

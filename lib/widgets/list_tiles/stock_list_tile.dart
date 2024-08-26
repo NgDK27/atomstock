@@ -11,8 +11,13 @@ class StockListTile extends StatelessWidget {
 
   const StockListTile({super.key, required this.stock});
 
-  void _navigateToDetails(BuildContext context) {
-    context.pushNamed(OpRoutes.stockDetails.name);
+  void _navigateToDetails(BuildContext context, String stockSymbol) {
+    context.pushNamed(
+      OpRoutes.stockDetails.name,
+      pathParameters: {
+        'symbol': stockSymbol,
+      },
+    );
   }
 
   @override
@@ -23,7 +28,7 @@ class StockListTile extends StatelessWidget {
       currentValue: stock.currentPrice.vndFormat(),
       priceChange: StockPriceChangeText(value: stock.priceChange),
       percentChange: stock.percentChange,
-      onTap: () => _navigateToDetails(context),
+      onTap: () => _navigateToDetails(context, stock.symbol),
     );
   }
 }
