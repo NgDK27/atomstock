@@ -29,9 +29,8 @@ class StockMarketCategoryLayout extends HookConsumerWidget {
               asyncData.when(
                   data: (data) => Column(
                         children: [
-                          ...data.indexes.map((item) => isIndexes
-                              ? IndexListTile(index: item)
-                              : StockListTile(stock: item))
+                          ...isIndexes ? data.indexes.map((index) => IndexListTile(index: index))
+                              : data.stocks.map((stock) => StockListTile(stock: stock)),
                         ],
                       ),
                   error: (_, __) => const Column(

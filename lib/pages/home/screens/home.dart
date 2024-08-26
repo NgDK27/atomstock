@@ -4,17 +4,12 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:oppenhomies/domain/models/stock/index_model.dart';
-import 'package:oppenhomies/domain/models/stock/stock_model.dart';
-import 'package:oppenhomies/domain/providers/stock/stock_market_provider.dart';
+import 'package:oppenhomies/domain/providers/stock/market/stock_market_provider.dart';
 import 'package:oppenhomies/navigation/routes.dart';
 import 'package:oppenhomies/pages/home/layouts/stock_list.dart';
 import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/spacings.dart';
-import 'package:oppenhomies/widgets/list_tiles/index_list_tile.dart';
-import 'package:oppenhomies/widgets/list_tiles/stock_list_tile.dart';
 import 'package:oppenhomies/widgets/scaffolds/platform_sliver_scaffold.dart';
-import 'package:oppenhomies/widgets/typography/title_large.dart';
 
 class Home extends ConsumerWidget {
   const Home({super.key});
