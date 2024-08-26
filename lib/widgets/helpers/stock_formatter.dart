@@ -13,7 +13,10 @@ extension StockFormatter on double {
     return '$symbol ${abs().toStringAsFixed(2)}%';
   }
 
-
+  String formatAsPointChange( ) {
+    final symbol = isNegative ? '-' : '+';
+    return '$symbol ${abs()}';
+  }
 }
 
 extension StockColor on TextStyle {
