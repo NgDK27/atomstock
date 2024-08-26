@@ -20,20 +20,29 @@ StockModel _$StockModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$StockModel {
-  String get id => throw _privateConstructorUsedError;
+// required final String id,
   String get name => throw _privateConstructorUsedError;
+  @JsonKey(name: "Symbol")
   String get symbol => throw _privateConstructorUsedError;
+  @JsonKey(name: "Price")
   double get currentPrice => throw _privateConstructorUsedError;
+  @JsonKey(name: "Price")
   set currentPrice(double value) => throw _privateConstructorUsedError;
+  @JsonKey(name: "Change")
   double get priceChange => throw _privateConstructorUsedError;
+  @JsonKey(name: "Change")
   set priceChange(double value) => throw _privateConstructorUsedError;
+  @JsonKey(name: "RatioChange")
   double get percentChange => throw _privateConstructorUsedError;
+  @JsonKey(name: "RatioChange")
   set percentChange(double value) => throw _privateConstructorUsedError;
   double? get floor => throw _privateConstructorUsedError;
   set floor(double? value) => throw _privateConstructorUsedError;
   double? get ceiling => throw _privateConstructorUsedError;
   set ceiling(double? value) => throw _privateConstructorUsedError;
+  @JsonKey(name: "Volume")
   double? get totalVolume => throw _privateConstructorUsedError;
+  @JsonKey(name: "Volume")
   set totalVolume(double? value) => throw _privateConstructorUsedError;
   double? get totalValue => throw _privateConstructorUsedError;
   set totalValue(double? value) => throw _privateConstructorUsedError;
@@ -68,15 +77,14 @@ abstract class $StockModelCopyWith<$Res> {
       _$StockModelCopyWithImpl<$Res, StockModel>;
   @useResult
   $Res call(
-      {String id,
-      String name,
-      String symbol,
-      double currentPrice,
-      double priceChange,
-      double percentChange,
+      {String name,
+      @JsonKey(name: "Symbol") String symbol,
+      @JsonKey(name: "Price") double currentPrice,
+      @JsonKey(name: "Change") double priceChange,
+      @JsonKey(name: "RatioChange") double percentChange,
       double? floor,
       double? ceiling,
-      double? totalVolume,
+      @JsonKey(name: "Volume") double? totalVolume,
       double? totalValue,
       double? open,
       double? close,
@@ -104,7 +112,6 @@ class _$StockModelCopyWithImpl<$Res, $Val extends StockModel>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
     Object? name = null,
     Object? symbol = null,
     Object? currentPrice = null,
@@ -122,10 +129,6 @@ class _$StockModelCopyWithImpl<$Res, $Val extends StockModel>
     Object? pricePoints = freezed,
   }) {
     return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -227,15 +230,14 @@ abstract class _$$StockModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String id,
-      String name,
-      String symbol,
-      double currentPrice,
-      double priceChange,
-      double percentChange,
+      {String name,
+      @JsonKey(name: "Symbol") String symbol,
+      @JsonKey(name: "Price") double currentPrice,
+      @JsonKey(name: "Change") double priceChange,
+      @JsonKey(name: "RatioChange") double percentChange,
       double? floor,
       double? ceiling,
-      double? totalVolume,
+      @JsonKey(name: "Volume") double? totalVolume,
       double? totalValue,
       double? open,
       double? close,
@@ -263,7 +265,6 @@ class __$$StockModelImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
     Object? name = null,
     Object? symbol = null,
     Object? currentPrice = null,
@@ -281,10 +282,6 @@ class __$$StockModelImplCopyWithImpl<$Res>
     Object? pricePoints = freezed,
   }) {
     return _then(_$StockModelImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -353,15 +350,14 @@ class __$$StockModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$StockModelImpl extends _StockModel with DiagnosticableTreeMixin {
   _$StockModelImpl(
-      {required this.id,
-      required this.name,
-      required this.symbol,
-      required this.currentPrice,
-      required this.priceChange,
-      required this.percentChange,
+      {this.name = "Stock Name",
+      @JsonKey(name: "Symbol") required this.symbol,
+      @JsonKey(name: "Price") required this.currentPrice,
+      @JsonKey(name: "Change") required this.priceChange,
+      @JsonKey(name: "RatioChange") required this.percentChange,
       this.floor,
       this.ceiling,
-      this.totalVolume,
+      @JsonKey(name: "Volume") this.totalVolume,
       this.totalValue,
       this.open,
       this.close,
@@ -374,23 +370,28 @@ class _$StockModelImpl extends _StockModel with DiagnosticableTreeMixin {
   factory _$StockModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$StockModelImplFromJson(json);
 
+// required final String id,
   @override
-  final String id;
-  @override
+  @JsonKey()
   final String name;
   @override
+  @JsonKey(name: "Symbol")
   final String symbol;
   @override
+  @JsonKey(name: "Price")
   double currentPrice;
   @override
+  @JsonKey(name: "Change")
   double priceChange;
   @override
+  @JsonKey(name: "RatioChange")
   double percentChange;
   @override
   double? floor;
   @override
   double? ceiling;
   @override
+  @JsonKey(name: "Volume")
   double? totalVolume;
   @override
   double? totalValue;
@@ -409,7 +410,7 @@ class _$StockModelImpl extends _StockModel with DiagnosticableTreeMixin {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'StockModel(id: $id, name: $name, symbol: $symbol, currentPrice: $currentPrice, priceChange: $priceChange, percentChange: $percentChange, floor: $floor, ceiling: $ceiling, totalVolume: $totalVolume, totalValue: $totalValue, open: $open, close: $close, high: $high, low: $low, exchange: $exchange, pricePoints: $pricePoints)';
+    return 'StockModel(name: $name, symbol: $symbol, currentPrice: $currentPrice, priceChange: $priceChange, percentChange: $percentChange, floor: $floor, ceiling: $ceiling, totalVolume: $totalVolume, totalValue: $totalValue, open: $open, close: $close, high: $high, low: $low, exchange: $exchange, pricePoints: $pricePoints)';
   }
 
   @override
@@ -417,7 +418,6 @@ class _$StockModelImpl extends _StockModel with DiagnosticableTreeMixin {
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'StockModel'))
-      ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('name', name))
       ..add(DiagnosticsProperty('symbol', symbol))
       ..add(DiagnosticsProperty('currentPrice', currentPrice))
@@ -453,15 +453,14 @@ class _$StockModelImpl extends _StockModel with DiagnosticableTreeMixin {
 
 abstract class _StockModel extends StockModel {
   factory _StockModel(
-      {required final String id,
-      required final String name,
-      required final String symbol,
-      required double currentPrice,
-      required double priceChange,
-      required double percentChange,
+      {final String name,
+      @JsonKey(name: "Symbol") required final String symbol,
+      @JsonKey(name: "Price") required double currentPrice,
+      @JsonKey(name: "Change") required double priceChange,
+      @JsonKey(name: "RatioChange") required double percentChange,
       double? floor,
       double? ceiling,
-      double? totalVolume,
+      @JsonKey(name: "Volume") double? totalVolume,
       double? totalValue,
       double? open,
       double? close,
@@ -474,20 +473,26 @@ abstract class _StockModel extends StockModel {
   factory _StockModel.fromJson(Map<String, dynamic> json) =
       _$StockModelImpl.fromJson;
 
-  @override
-  String get id;
+// required final String id,
   @override
   String get name;
   @override
+  @JsonKey(name: "Symbol")
   String get symbol;
   @override
+  @JsonKey(name: "Price")
   double get currentPrice;
+  @JsonKey(name: "Price")
   set currentPrice(double value);
   @override
+  @JsonKey(name: "Change")
   double get priceChange;
+  @JsonKey(name: "Change")
   set priceChange(double value);
   @override
+  @JsonKey(name: "RatioChange")
   double get percentChange;
+  @JsonKey(name: "RatioChange")
   set percentChange(double value);
   @override
   double? get floor;
@@ -496,7 +501,9 @@ abstract class _StockModel extends StockModel {
   double? get ceiling;
   set ceiling(double? value);
   @override
+  @JsonKey(name: "Volume")
   double? get totalVolume;
+  @JsonKey(name: "Volume")
   set totalVolume(double? value);
   @override
   double? get totalValue;

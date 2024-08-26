@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:oppenhomies/domain/models/stock/stock_model.dart';
+import 'package:oppenhomies/domain/providers/stock/stock_market_provider.dart';
 import 'package:oppenhomies/navigation/routes.dart';
 import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/spacings.dart';
@@ -53,11 +54,7 @@ class Home extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final sampleStocks = [
-      StockModel.sample(),
-      StockModel.positiveSample(),
-      StockModel.negativeSample(),
-    ];
+    final sampleStocks = [StockModel.detailedSample()];
 
     return OpPlatformSliverScaffold(
       title: "Home",
@@ -86,63 +83,73 @@ class Home extends ConsumerWidget {
       slivers: [
         SliverSafeArea(
           top: false,
-          // minimum: EdgeInsets.symmetric(horizontal: OpSpacing.md),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
               PlatformWidget(
                 cupertino: (_, __) => const SizedBox(height: OpSpacing.sm),
               ),
-              OpTitleLarge(
-                "Indexes",
-                onPressed: () => navigateToIndexes(context: context),
-                leading: Icon(
+              _buildStockList(
+                title: "Indexes",
+                icon: Icon(
                   Symbols.bar_chart_rounded,
                   weight: 800,
                   size: 22,
                   color: OpDynamicColor.onSurface(context),
                 ),
+                onPressed: () => navigateToIndexes(context: context),
+                stocks: sampleStocks,
               ),
-              ...sampleStocks.map((stock) => StockListTile(stock: stock)),
-              const SizedBox(height: OpSpacing.lg),
-              OpTitleLarge(
-                "Top performers today",
-                onPressed: () => navigateToTopPerformers(context: context),
-                leading: Icon(
+              _buildStockList(
+                title: "Top performers today",
+                icon: Icon(
                   Symbols.north_east_rounded,
                   weight: 800,
                   size: 22,
                   color: OpDynamicColor.aquaHarmonized(context),
                 ),
+                onPressed: () => navigateToTopPerformers(context: context),
+                stocks: sampleStocks,
               ),
-              ...sampleStocks.map((stock) => StockListTile(stock: stock)),
-              const SizedBox(
-                height: OpSpacing.lg,
-              ),
-              OpTitleLarge(
-                "Top decliners today",
-                onPressed: () => navigateToTopDecliners(context: context),
-                leading: Icon(
+              _buildStockList(
+                title: "Top decliners today",
+                icon: Icon(
                   Symbols.south_east_rounded,
                   weight: 800,
                   size: 22,
                   color: OpDynamicColor.cherryHarmonized(context),
                 ),
+                onPressed: () => navigateToTopDecliners(context: context),
+                stocks: sampleStocks,
               ),
-              ...sampleStocks.map((stock) => StockListTile(stock: stock)),
-              const SizedBox(height: OpSpacing.lg),
-              OpTitleLarge(
-                "Top movers today",
-                onPressed: () => navigateToTopMovers(context: context),
-                leading: Icon(
+              _buildStockList(
+                title: "Top movers today",
+                icon: Icon(
                   Symbols.swap_horiz_rounded,
                   weight: 800,
                   size: 22,
                   color: OpDynamicColor.onSurface(context),
                 ),
+                onPressed: () => navigateToTopMovers(context: context),
+                stocks: sampleStocks,
               ),
-              ...sampleStocks.map((stock) => StockListTile(stock: stock)),
             ]),
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStockList(
+      {required String title,
+      required Icon icon,
+      required void onPressed,
+      required List<StockModel> stocks}) {
+    return Column(
+      children: [
+        OpTitleLarge(title, onPressed: () => onPressed, leading: icon),
+        ...stocks.map((stock) => StockListTile(stock: stock)),
+        const SizedBox(
+          height: OpSpacing.lg,
         ),
       ],
     );

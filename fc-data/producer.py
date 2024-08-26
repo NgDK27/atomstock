@@ -33,10 +33,10 @@ def get_symbols():
     index_symbols = []
 
     conn = psycopg2.connect(
-        host=DB_HOST,
-        dbname=DB_NAME,
-        user=DB_USER,
-        password=DB_PASSWORD
+        host='localhost',
+        dbname='capstone',
+        user='quando',
+        password='808205'
     )
 
     cursor = conn.cursor()
@@ -75,7 +75,7 @@ KAFKA_HOST = os.getenv('KAFKA_HOST')
 KAFKA_PORT = os.getenv('KAFKA_PORT')
 
 kafka_config = {
-    'bootstrap.servers': f"{KAFKA_HOST}:{KAFKA_PORT}",
+    'bootstrap.servers': f"192.168.25.229:9092",
 }
 
 producer = Producer(kafka_config)
