@@ -77,15 +77,15 @@ class OppenhomiesApp extends ConsumerWidget {
     return PlatformProvider(
       builder: (context) =>
 
-      // TODO: Replace once flutter_dynamic_colors is fixed
-      // TEMPORARY FIX because flutter_dynamic_colors are not generating all colors
-      DynamicColorBuilder(
+          // TODO: Replace once flutter_dynamic_colors is fixed
+          // TEMPORARY FIX because flutter_dynamic_colors are not generating all colors
+          DynamicColorBuilder(
         builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
           ColorScheme? lightScheme, darkScheme;
 
           if (lightDynamic != null && darkDynamic != null) {
             (lightScheme, darkScheme) =
-            _generateDynamicColourSchemes(lightDynamic, darkDynamic);
+                _generateDynamicColourSchemes(lightDynamic, darkDynamic);
           } else {
             lightScheme = lightDynamic;
             darkScheme = darkDynamic;
