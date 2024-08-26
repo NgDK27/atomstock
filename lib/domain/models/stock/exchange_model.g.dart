@@ -8,9 +8,9 @@ part of 'exchange_model.dart';
 
 _$ExchangeModelImpl _$$ExchangeModelImplFromJson(Map<String, dynamic> json) =>
     _$ExchangeModelImpl(
-      id: json['id'] as String,
+      id: json['id'] as String?,
       symbol: json['symbol'] as String,
-      name: json['name'] as String,
+      name: json['name'] as String?,
     );
 
 Map<String, dynamic> _$$ExchangeModelImplToJson(_$ExchangeModelImpl instance) =>

@@ -51,37 +51,18 @@ class StockDetailsOverview extends HookWidget {
             children: [
               switch (marketSession.value) {
                 MarketSession.open => ChipMediumAqua(
-                    text: "HOSE • ${marketSession.value.label}",
+                    text: "${stock.exchange?.symbol} • ${marketSession.value.label}",
                   ),
                 MarketSession.closed => ChipMediumNeutral(
-                    text: "HOSE • ${marketSession.value.label}",
+                    text: "${stock.exchange?.symbol} • ${marketSession.value.label}",
                   ),
               },
               const SizedBox(
                 height: OpSpacing.sm,
               ),
-              Row(
-                children: [
-                  Text(
-                    stock.symbol,
-                    style: OpTextStyle.titleLarge(context),
-                  ),
-                  const SizedBox(width: OpSpacing.xs),
-                  if (type == StockItemType.stock)
-                    Row(
-                      children: [
-                        Text(
-                          '•',
-                          style: OpTextStyle.titleSmall(context),
-                        ),
-                        const SizedBox(width: OpSpacing.xs),
-                        Text(
-                          stock.name,
-                          style: OpTextStyle.titleLarge(context),
-                        ),
-                      ],
-                    )
-                ],
+              Text(
+                "${stock.symbol} • ${stock.name}",
+                style: OpTextStyle.titleLarge(context),
               ),
               const SizedBox(
                 height: OpSpacing.xs3,
@@ -89,7 +70,6 @@ class StockDetailsOverview extends HookWidget {
               Text(
                 switch (type) {
                   StockItemType.idx => stock.currentPrice.toString(),
-                  // TODO: Handle this case.
                   StockItemType.stock => stock.currentPrice.vndFormat(),
                 },
                 style: OpTextStyle.display(context).spacedOut(),

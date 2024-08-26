@@ -232,8 +232,8 @@ class _StockLineChartState extends State<StockLineChart> {
             ),
           )
               .toList(),
-          isCurved: true,
-          curveSmoothness: 0.5,
+          // isCurved: true,
+          // curveSmoothness: 0.,
           color: accentColor,
           barWidth: 3,
           isStrokeCapRound: true,
@@ -274,7 +274,7 @@ class _StockLineChartState extends State<StockLineChart> {
 
   String dateTimeToText(double value) {
     final date = DateTime.fromMillisecondsSinceEpoch(value.toInt());
-    final formatter = DateFormat('MMM d');
+    final formatter = DateFormat('MMM d, h:mm a');
     final text = formatter.format(date);
     return text;
   }
