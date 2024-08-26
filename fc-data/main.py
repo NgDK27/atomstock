@@ -211,7 +211,7 @@ async def fetch_stock_prices(symbol: str, start_date: datetime, end_date: dateti
 
 
 
-@app.get("/api/stock/{symbol}")
+@app.get("/ticker/{symbol}")
 async def get_stock_details(symbol: str, range: str = "1d"):
     try:
         is_index = symbol in [index[0] for index in indexes]
