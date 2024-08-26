@@ -17,6 +17,7 @@ from collections import defaultdict
 import threading
 from queue import Queue, Empty
 import time
+from fastapi.middleware.cors import CORSMiddleware
 
 import sys
 
@@ -80,6 +81,13 @@ stocks, indexes = get_symbols()
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  
+    allow_credentials=True,
+    allow_methods=["*"], 
+    allow_headers=["*"], 
+)
 
 class StockPriceRequest(BaseModel):
     symbol: str

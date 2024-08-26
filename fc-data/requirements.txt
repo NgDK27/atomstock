@@ -4,3 +4,5 @@ fastapi
 asyncio
 redis
 confluent-kafka
+fastapi-cors
+uvicorn
