@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
@@ -100,23 +101,26 @@ class StockRepository {
         return StockPricePoint(
           timestamp: timestamp,
           price: double.parse(point['ClosePrice']),
+          // price: 123456.25,
         );
       }).toList();
 
       return StockModel(
         name: tickerData['name'],
         symbol: stockData['Symbol'],
-        currentPrice: stockData['Price'],
-        priceChange: stockData['Change'],
-        percentChange: stockData['RatioChange'],
-        totalVolume: stockData['Volume'],
+        currentPrice: stockData['Price'].toDouble(),
+        priceChange: stockData['Change'].toDouble(),
+        percentChange: stockData['RatioChange'].toDouble(),
+        totalVolume: stockData['Volume'].toDouble(),
         exchange: ExchangeModel(
           symbol: tickerData['market'],
         ),
         pricePoints: StockPricePoints(points: pricePoints),
       );
+
     } catch (e) {
       // Handle errors
+      log(e.toString());
       throw Exception('Failed to fetch stock details: $e');
     }
   }
@@ -148,7 +152,7 @@ class StockRepository {
 
           return StockPricePoint(
             timestamp: timestamp,
-            price: double.parse(point['ClosePrice']),
+            price: double.parse(point['ClosePrice'] ?? point['IndexValue']),
           );
         }).toList();
 
@@ -163,6 +167,7 @@ class StockRepository {
         );
       } catch (e) {
         // Handle errors
+        log(e.toString());
         throw Exception('Failed to fetch index details: $e');
       }
     }
