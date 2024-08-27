@@ -19,7 +19,7 @@ class OpenAIService {
         print('Server responded with error: ${response.statusCode}');
         print('Response body: ${response.body}');
         throw Exception(
-            'Failed to generate response: ${response.statusCode} ${response.body}');
+            'Failed to generate response: ${response.statusCode} ${response.body}',);
       }
     } catch (e) {
       print('Error occurred: $e');

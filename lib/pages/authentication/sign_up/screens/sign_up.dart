@@ -22,7 +22,7 @@ class SignUp extends HookConsumerWidget {
   const SignUp({super.key});
 
   Future<void> _handleSignUp(BuildContext context, WidgetRef ref, String email,
-      String password, ValueNotifier<UiState> uiState) async {
+      String password, ValueNotifier<UiState> uiState,) async {
     uiState.value = UiState.loading();
     final signUpNotifier = ref.read(signUpProvider.notifier);
     final result =
@@ -40,7 +40,7 @@ class SignUp extends HookConsumerWidget {
             builder: (_) => PlatformAlertDialog(
               title: const Text("Sign up unsuccessful"),
               content: Text(result.uiState.message ??
-                  "Please check your credentials and try again."),
+                  "Please check your credentials and try again.",),
               actions: <Widget>[
                 PlatformDialogAction(
                   child: const Text('OK'),
@@ -259,21 +259,21 @@ class SignUp extends HookConsumerWidget {
         emailValidationMode.value = AutovalidateMode.always;
       }
       return null;
-    }, [emailDebounced]);
+    }, [emailDebounced],);
 
     useEffect(() {
       if (passwordDebounced?.isNotEmpty == true) {
         passwordValidationMode.value = AutovalidateMode.always;
       }
       return null;
-    }, [passwordDebounced]);
+    }, [passwordDebounced],);
 
     useEffect(() {
       if (nameDebounced?.isNotEmpty == true) {
         nameValidationMode.value = AutovalidateMode.always;
       }
       return null;
-    }, [nameDebounced]);
+    }, [nameDebounced],);
 
     useEffect(() {
       if (email.text.isNotEmpty &&
@@ -285,6 +285,6 @@ class SignUp extends HookConsumerWidget {
         isFormValid.value = false;
       }
       return null;
-    }, [email, password, name]);
+    }, [email, password, name],);
   }
 }

@@ -50,6 +50,8 @@ mixin _$IndexModel {
   double get totalValue => throw _privateConstructorUsedError;
   @JsonKey(name: "TotalValue")
   set totalValue(double value) => throw _privateConstructorUsedError;
+  StockChange? get change => throw _privateConstructorUsedError;
+  set change(StockChange? value) => throw _privateConstructorUsedError;
 
   /// Serializes this IndexModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -75,7 +77,8 @@ abstract class $IndexModelCopyWith<$Res> {
       @JsonKey(name: "RatioChange") double percentChange,
       @JsonKey(name: "TotalTrade") double trade,
       @JsonKey(name: "TotalQtty") double quantity,
-      @JsonKey(name: "TotalValue") double totalValue});
+      @JsonKey(name: "TotalValue") double totalValue,
+      StockChange? change});
 }
 
 /// @nodoc
@@ -101,6 +104,7 @@ class _$IndexModelCopyWithImpl<$Res, $Val extends IndexModel>
     Object? trade = null,
     Object? quantity = null,
     Object? totalValue = null,
+    Object? change = freezed,
   }) {
     return _then(_value.copyWith(
       indexId: null == indexId
@@ -135,6 +139,10 @@ class _$IndexModelCopyWithImpl<$Res, $Val extends IndexModel>
           ? _value.totalValue
           : totalValue // ignore: cast_nullable_to_non_nullable
               as double,
+      change: freezed == change
+          ? _value.change
+          : change // ignore: cast_nullable_to_non_nullable
+              as StockChange?,
     ) as $Val);
   }
 }
@@ -155,7 +163,8 @@ abstract class _$$IndexModelImplCopyWith<$Res>
       @JsonKey(name: "RatioChange") double percentChange,
       @JsonKey(name: "TotalTrade") double trade,
       @JsonKey(name: "TotalQtty") double quantity,
-      @JsonKey(name: "TotalValue") double totalValue});
+      @JsonKey(name: "TotalValue") double totalValue,
+      StockChange? change});
 }
 
 /// @nodoc
@@ -179,6 +188,7 @@ class __$$IndexModelImplCopyWithImpl<$Res>
     Object? trade = null,
     Object? quantity = null,
     Object? totalValue = null,
+    Object? change = freezed,
   }) {
     return _then(_$IndexModelImpl(
       indexId: null == indexId
@@ -213,6 +223,10 @@ class __$$IndexModelImplCopyWithImpl<$Res>
           ? _value.totalValue
           : totalValue // ignore: cast_nullable_to_non_nullable
               as double,
+      change: freezed == change
+          ? _value.change
+          : change // ignore: cast_nullable_to_non_nullable
+              as StockChange?,
     ));
   }
 }
@@ -228,7 +242,8 @@ class _$IndexModelImpl extends _IndexModel with DiagnosticableTreeMixin {
       @JsonKey(name: "RatioChange") required this.percentChange,
       @JsonKey(name: "TotalTrade") required this.trade,
       @JsonKey(name: "TotalQtty") required this.quantity,
-      @JsonKey(name: "TotalValue") required this.totalValue})
+      @JsonKey(name: "TotalValue") required this.totalValue,
+      this.change})
       : super._();
 
   factory _$IndexModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -258,10 +273,12 @@ class _$IndexModelImpl extends _IndexModel with DiagnosticableTreeMixin {
   @override
   @JsonKey(name: "TotalValue")
   double totalValue;
+  @override
+  StockChange? change;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'IndexModel(indexId: $indexId, name: $name, indexValue: $indexValue, priceChange: $priceChange, percentChange: $percentChange, trade: $trade, quantity: $quantity, totalValue: $totalValue)';
+    return 'IndexModel(indexId: $indexId, name: $name, indexValue: $indexValue, priceChange: $priceChange, percentChange: $percentChange, trade: $trade, quantity: $quantity, totalValue: $totalValue, change: $change)';
   }
 
   @override
@@ -276,7 +293,8 @@ class _$IndexModelImpl extends _IndexModel with DiagnosticableTreeMixin {
       ..add(DiagnosticsProperty('percentChange', percentChange))
       ..add(DiagnosticsProperty('trade', trade))
       ..add(DiagnosticsProperty('quantity', quantity))
-      ..add(DiagnosticsProperty('totalValue', totalValue));
+      ..add(DiagnosticsProperty('totalValue', totalValue))
+      ..add(DiagnosticsProperty('change', change));
   }
 
   /// Create a copy of IndexModel
@@ -297,15 +315,15 @@ class _$IndexModelImpl extends _IndexModel with DiagnosticableTreeMixin {
 
 abstract class _IndexModel extends IndexModel {
   factory _IndexModel(
-          {@JsonKey(name: "IndexId") required String indexId,
-          String name,
-          @JsonKey(name: "IndexValue") required double indexValue,
-          @JsonKey(name: "Change") required double priceChange,
-          @JsonKey(name: "RatioChange") required double percentChange,
-          @JsonKey(name: "TotalTrade") required double trade,
-          @JsonKey(name: "TotalQtty") required double quantity,
-          @JsonKey(name: "TotalValue") required double totalValue}) =
-      _$IndexModelImpl;
+      {@JsonKey(name: "IndexId") required String indexId,
+      String name,
+      @JsonKey(name: "IndexValue") required double indexValue,
+      @JsonKey(name: "Change") required double priceChange,
+      @JsonKey(name: "RatioChange") required double percentChange,
+      @JsonKey(name: "TotalTrade") required double trade,
+      @JsonKey(name: "TotalQtty") required double quantity,
+      @JsonKey(name: "TotalValue") required double totalValue,
+      StockChange? change}) = _$IndexModelImpl;
   _IndexModel._() : super._();
 
   factory _IndexModel.fromJson(Map<String, dynamic> json) =
@@ -349,6 +367,9 @@ abstract class _IndexModel extends IndexModel {
   double get totalValue;
   @JsonKey(name: "TotalValue")
   set totalValue(double value);
+  @override
+  StockChange? get change;
+  set change(StockChange? value);
 
   /// Create a copy of IndexModel
   /// with the given fields replaced by the non-null parameter values.

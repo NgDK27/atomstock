@@ -17,7 +17,7 @@ class StockListTile extends StatelessWidget {
       OpRoutes.stockDetails.name,
       pathParameters: {
         'identifier': stockSymbol,
-        'type': StockItemType.stock.value
+        'type': StockItemType.stock.value,
       },
     );
   }
@@ -28,9 +28,12 @@ class StockListTile extends StatelessWidget {
       symbol: stock.symbol,
       name: "",
       currentValue: stock.currentPrice.vndFormat(),
-      priceChange: StockPriceChangeText(value: stock.priceChange),
+      priceChange: StockPriceChangeText(
+        value: stock.priceChange,
+      ),
       percentChange: stock.percentChange,
       onTap: () => _navigateToDetails(context, stock.symbol),
+      change: stock.change,
     );
   }
 }

@@ -75,7 +75,7 @@ class StockRepository {
   }
 
   Future<StockModel> fetchStockDetails(
-      {required String symbol, String? timeRange}) async {
+      {required String symbol, String? timeRange,}) async {
     try {
       final stockFuture = _dio.get('$_apiEndpoint:8080/stock/$symbol');
       final tickerFuture = timeRange != null
@@ -126,7 +126,7 @@ class StockRepository {
   }
 
   Future<StockModel> fetchIndexDetails(
-      {required String id, String? timeRange}) async {
+      {required String id, String? timeRange,}) async {
     {
       try {
         final stockFuture = _dio.get('$_apiEndpoint:8080/index/$id');

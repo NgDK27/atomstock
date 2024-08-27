@@ -16,20 +16,20 @@ class StockDetails extends _$StockDetails {
     return _fetchDetails(
         identifier: identifier,
         type: type,
-        timeRange: StockPriceDateFilter.oneDay);
+        timeRange: StockPriceDateFilter.oneDay,);
   }
 
   Future<StockModel> _fetchStockDetails(
       {required String symbol,
-      required StockPriceDateFilter? timeRange}) async {
+      required StockPriceDateFilter? timeRange,}) async {
     return await _repository.fetchStockDetails(
-        symbol: symbol, timeRange: timeRange?.serverParameter);
+        symbol: symbol, timeRange: timeRange?.serverParameter,);
   }
 
   Future<StockModel> _fetchIndexDetails(
-      {required String id, required StockPriceDateFilter? timeRange}) async {
+      {required String id, required StockPriceDateFilter? timeRange,}) async {
     StockModel stockFromIndex = await _repository.fetchIndexDetails(
-        id: id, timeRange: timeRange?.serverParameter);
+        id: id, timeRange: timeRange?.serverParameter,);
     return stockFromIndex;
   }
 
@@ -43,22 +43,22 @@ class StockDetails extends _$StockDetails {
         return await _fetchIndexDetails(id: identifier, timeRange: timeRange);
       case StockItemType.stock:
         return await _fetchStockDetails(
-            symbol: identifier, timeRange: timeRange);
+            symbol: identifier, timeRange: timeRange,);
     }
   }
 
   Future<void> updateDetailsWithTimeRange(
-      {required StockPriceDateFilter timeRange}) async {
+      {required StockPriceDateFilter timeRange,}) async {
     switch (type) {
       case StockItemType.idx:
         state = const AsyncValue.loading();
         state = await AsyncValue.guard(() => _fetchDetails(
-            identifier: identifier, type: type, timeRange: timeRange));
+            identifier: identifier, type: type, timeRange: timeRange,),);
         break;
       case StockItemType.stock:
         state = const AsyncValue.loading();
         state = await AsyncValue.guard(() => _fetchDetails(
-            identifier: identifier, type: type, timeRange: timeRange));
+            identifier: identifier, type: type, timeRange: timeRange,),);
     }
   }
 //

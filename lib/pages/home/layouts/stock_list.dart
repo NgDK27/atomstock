@@ -10,7 +10,7 @@ Widget marketIndexList({
   required String title,
   required Icon icon,
   required VoidCallback onPressed,
-  required List<IndexModel> indexes
+  required List<IndexModel> indexes,
 }) {
   return Column(
     children: [
@@ -25,7 +25,7 @@ Widget marketStockList({
   required String title,
   required Icon icon,
   required VoidCallback onPressed,
-  required List<StockModel> stocks
+  required List<StockModel> stocks,
 }) {
   return Column(
     children: [

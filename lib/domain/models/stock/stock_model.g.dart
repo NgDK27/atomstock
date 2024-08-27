@@ -21,6 +21,7 @@ _$StockModelImpl _$$StockModelImplFromJson(Map<String, dynamic> json) =>
       close: (json['close'] as num?)?.toDouble(),
       high: (json['high'] as num?)?.toDouble(),
       low: (json['low'] as num?)?.toDouble(),
+      change: $enumDecodeNullable(_$StockChangeEnumMap, json['change']),
       exchange: json['exchange'] == null
           ? null
           : ExchangeModel.fromJson(json['exchange'] as Map<String, dynamic>),
@@ -45,6 +46,12 @@ Map<String, dynamic> _$$StockModelImplToJson(_$StockModelImpl instance) =>
       'close': instance.close,
       'high': instance.high,
       'low': instance.low,
+      'change': _$StockChangeEnumMap[instance.change],
       'exchange': instance.exchange,
       'pricePoints': instance.pricePoints,
     };
+
+const _$StockChangeEnumMap = {
+  StockChange.increase: 'increase',
+  StockChange.decrease: 'decrease',
+};

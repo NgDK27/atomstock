@@ -16,6 +16,7 @@ _$IndexModelImpl _$$IndexModelImplFromJson(Map<String, dynamic> json) =>
       trade: (json['TotalTrade'] as num).toDouble(),
       quantity: (json['TotalQtty'] as num).toDouble(),
       totalValue: (json['TotalValue'] as num).toDouble(),
+      change: $enumDecodeNullable(_$StockChangeEnumMap, json['change']),
     );
 
 Map<String, dynamic> _$$IndexModelImplToJson(_$IndexModelImpl instance) =>
@@ -28,4 +29,10 @@ Map<String, dynamic> _$$IndexModelImplToJson(_$IndexModelImpl instance) =>
       'TotalTrade': instance.trade,
       'TotalQtty': instance.quantity,
       'TotalValue': instance.totalValue,
+      'change': _$StockChangeEnumMap[instance.change],
     };
+
+const _$StockChangeEnumMap = {
+  StockChange.increase: 'increase',
+  StockChange.decrease: 'decrease',
+};

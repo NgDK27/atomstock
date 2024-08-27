@@ -68,7 +68,7 @@ class SignUpVerify extends HookConsumerWidget {
       WidgetRef ref,
       String code,
       TextEditingController textEditingController,
-      ValueNotifier<UiState> uiState) async {
+      ValueNotifier<UiState> uiState,) async {
     uiState.value = UiState.loading();
     textEditingController.clear();
 
@@ -229,7 +229,7 @@ class SignUpVerify extends HookConsumerWidget {
               child: SizedBox(
                   height: OpSpacing.lg,
                   width: OpSpacing.lg,
-                  child: PlatformCircularProgressIndicator()),
+                  child: PlatformCircularProgressIndicator(),),
             ),
           ),
       ],

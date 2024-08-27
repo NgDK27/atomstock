@@ -3,6 +3,8 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:oppenhomies/domain/models/stock/exchange_model.dart';
 import 'package:oppenhomies/domain/models/stock/stock_price_points.dart';
 
+import 'stock_change_enum.dart';
+
 part 'stock_model.freezed.dart';
 part 'stock_model.g.dart';
 
@@ -23,6 +25,7 @@ class StockModel with _$StockModel {
     double? close,
     double? high,
     double? low,
+    StockChange? change,
     ExchangeModel? exchange,
     StockPricePoints? pricePoints,
   }) = _StockModel;

@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:oppenhomies/domain/models/stock/index_model.dart';
 import 'package:oppenhomies/domain/models/stock/stock_item_type.dart';
 import 'package:oppenhomies/navigation/routes.dart';
@@ -16,10 +15,7 @@ class IndexListTile extends StatelessWidget {
   void _navigateToDetails(BuildContext context, String indexId) {
     context.pushNamed(
       OpRoutes.stockDetails.name,
-      pathParameters: {
-        'identifier': indexId,
-        'type': StockItemType.idx.value
-      },
+      pathParameters: {'identifier': indexId, 'type': StockItemType.idx.value},
     );
   }
 
@@ -32,6 +28,7 @@ class IndexListTile extends StatelessWidget {
       priceChange: StockPointChangeText(value: index.priceChange),
       percentChange: index.percentChange,
       onTap: () => _navigateToDetails(context, index.indexId),
+      change: index.change,
     );
   }
 }

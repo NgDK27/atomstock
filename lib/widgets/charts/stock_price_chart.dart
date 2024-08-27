@@ -14,7 +14,6 @@ import 'package:oppenhomies/styles/text.dart';
 import 'package:oppenhomies/widgets/chip/chip_base.dart';
 import 'package:oppenhomies/widgets/gradients/gradient.dart';
 import 'package:oppenhomies/widgets/helpers/money_formatter.dart';
-import 'package:oppenhomies/widgets/helpers/stock_formatter.dart';
 
 class StockLineChart extends StatefulHookWidget {
   final StockPricePoints stockPricePoints;
@@ -29,7 +28,7 @@ class StockLineChart extends StatefulHookWidget {
       required this.selectedDateFilter,
       required this.accentColor,
       required this.isReloading,
-      required this.type});
+      required this.type,});
 
   @override
   State<StockLineChart> createState() => _StockLineChartState();
@@ -58,7 +57,7 @@ class _StockLineChartState extends State<StockLineChart> {
                     curve: Curves.easeInOutQuad,
                     duration: const Duration(milliseconds: 300),
                     mainData(
-                        widget.accentColor, allData, widget.selectedDateFilter),
+                        widget.accentColor, allData, widget.selectedDateFilter,),
                   )
                 : const Center(
                     child: Text('No data available for this period'),
@@ -70,7 +69,7 @@ class _StockLineChartState extends State<StockLineChart> {
   }
 
   Widget bottomTitleWidgets(
-      double value, TitleMeta meta, StockPriceDateFilter filter) {
+      double value, TitleMeta meta, StockPriceDateFilter filter,) {
     final style = OpTextStyle.labelSmall(context);
     final date = DateTime.fromMillisecondsSinceEpoch(value.toInt());
 
@@ -118,7 +117,7 @@ class _StockLineChartState extends State<StockLineChart> {
                   text: switch (widget.type) {
                 StockItemType.idx => value.toStringAsFixed(2),
                 StockItemType.stock => value.vndFormat(),
-              }),
+              },),
             ),
             const SizedBox.shrink(),
           ],
@@ -201,7 +200,7 @@ class _StockLineChartState extends State<StockLineChart> {
                           .copyWith(color: OpDynamicColor.surface(context)),
                     ),
                     TextSpan(
-                      text: ' ${dateTimeToText(touchedSpot.x)}',
+                      text: ' ${dateTimeToText(touchedSpot.x, filter)}',
                       style: OpTextStyle.labelSmall(context)?.copyWith(
                         color: OpDynamicColor.surfaceContainer(context),
                       ),
@@ -279,10 +278,11 @@ class _StockLineChartState extends State<StockLineChart> {
     );
   }
 
-  String dateTimeToText(double value) {
+  String dateTimeToText(double value, StockPriceDateFilter filter) {
     final date = DateTime.fromMillisecondsSinceEpoch(value.toInt());
-    final formatter = DateFormat('MMM d, h:mm a');
-    final text = formatter.format(date);
-    return text;
+    final formatter = filter == StockPriceDateFilter.oneDay
+        ? DateFormat('MMM d, h:mm a')
+        : DateFormat('MMM d, yyyy');
+    return formatter.format(date);
   }
 }

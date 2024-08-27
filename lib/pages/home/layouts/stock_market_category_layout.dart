@@ -16,7 +16,7 @@ class StockMarketCategoryLayout extends HookConsumerWidget {
       {super.key,
       required this.title,
       required this.asyncData,
-      required this.type});
+      required this.type,});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -33,7 +33,7 @@ class StockMarketCategoryLayout extends HookConsumerWidget {
                          ...switch(type) {
                            StockItemType.idx => data.indexes.map((index) => IndexListTile(index: index)),
                            StockItemType.stock => data.stocks.map((stock) => StockListTile(stock: stock)),
-                         }
+                         },
                         ],
                       ),
                   error: (_, __) => const Column(
@@ -45,7 +45,7 @@ class StockMarketCategoryLayout extends HookConsumerWidget {
                           height: OpSpacing.md,
                           child: PlatformCircularProgressIndicator(),
                         ),
-                      ))
+                      ),),
             ]),
           ),
         ),

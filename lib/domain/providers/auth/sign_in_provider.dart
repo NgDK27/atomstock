@@ -18,7 +18,7 @@ class SignIn extends _$SignIn {
   }
 
   Future<UiState> signIn(
-      {required String email, required String password}) async {
+      {required String email, required String password,}) async {
     try {
       final authTokenResponse =
           await _repository.signIn(email: email, password: password);

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:oppenhomies/domain/models/stock/stock_change_enum.dart';
 
 part 'index_model.freezed.dart';
 part 'index_model.g.dart';
@@ -15,6 +16,7 @@ class IndexModel with _$IndexModel {
     @JsonKey(name: "TotalTrade") required double trade,
     @JsonKey(name: "TotalQtty") required double quantity,
     @JsonKey(name: "TotalValue") required double totalValue,
+    StockChange? change,
   }) = _IndexModel;
 
   const IndexModel._();
@@ -26,7 +28,7 @@ class IndexModel with _$IndexModel {
     return {
       'Total Volume': trade,
       'Total Quantity': quantity,
-      'Total Value': totalValue
+      'Total Value': totalValue,
     };
   }
 }

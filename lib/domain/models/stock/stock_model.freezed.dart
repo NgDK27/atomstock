@@ -54,6 +54,8 @@ mixin _$StockModel {
   set high(double? value) => throw _privateConstructorUsedError;
   double? get low => throw _privateConstructorUsedError;
   set low(double? value) => throw _privateConstructorUsedError;
+  StockChange? get change => throw _privateConstructorUsedError;
+  set change(StockChange? value) => throw _privateConstructorUsedError;
   ExchangeModel? get exchange => throw _privateConstructorUsedError;
   set exchange(ExchangeModel? value) => throw _privateConstructorUsedError;
   StockPricePoints? get pricePoints => throw _privateConstructorUsedError;
@@ -90,6 +92,7 @@ abstract class $StockModelCopyWith<$Res> {
       double? close,
       double? high,
       double? low,
+      StockChange? change,
       ExchangeModel? exchange,
       StockPricePoints? pricePoints});
 
@@ -125,6 +128,7 @@ class _$StockModelCopyWithImpl<$Res, $Val extends StockModel>
     Object? close = freezed,
     Object? high = freezed,
     Object? low = freezed,
+    Object? change = freezed,
     Object? exchange = freezed,
     Object? pricePoints = freezed,
   }) {
@@ -181,6 +185,10 @@ class _$StockModelCopyWithImpl<$Res, $Val extends StockModel>
           ? _value.low
           : low // ignore: cast_nullable_to_non_nullable
               as double?,
+      change: freezed == change
+          ? _value.change
+          : change // ignore: cast_nullable_to_non_nullable
+              as StockChange?,
       exchange: freezed == exchange
           ? _value.exchange
           : exchange // ignore: cast_nullable_to_non_nullable
@@ -243,6 +251,7 @@ abstract class _$$StockModelImplCopyWith<$Res>
       double? close,
       double? high,
       double? low,
+      StockChange? change,
       ExchangeModel? exchange,
       StockPricePoints? pricePoints});
 
@@ -278,6 +287,7 @@ class __$$StockModelImplCopyWithImpl<$Res>
     Object? close = freezed,
     Object? high = freezed,
     Object? low = freezed,
+    Object? change = freezed,
     Object? exchange = freezed,
     Object? pricePoints = freezed,
   }) {
@@ -334,6 +344,10 @@ class __$$StockModelImplCopyWithImpl<$Res>
           ? _value.low
           : low // ignore: cast_nullable_to_non_nullable
               as double?,
+      change: freezed == change
+          ? _value.change
+          : change // ignore: cast_nullable_to_non_nullable
+              as StockChange?,
       exchange: freezed == exchange
           ? _value.exchange
           : exchange // ignore: cast_nullable_to_non_nullable
@@ -363,6 +377,7 @@ class _$StockModelImpl extends _StockModel with DiagnosticableTreeMixin {
       this.close,
       this.high,
       this.low,
+      this.change,
       this.exchange,
       this.pricePoints})
       : super._();
@@ -404,13 +419,15 @@ class _$StockModelImpl extends _StockModel with DiagnosticableTreeMixin {
   @override
   double? low;
   @override
+  StockChange? change;
+  @override
   ExchangeModel? exchange;
   @override
   StockPricePoints? pricePoints;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'StockModel(name: $name, symbol: $symbol, currentPrice: $currentPrice, priceChange: $priceChange, percentChange: $percentChange, floor: $floor, ceiling: $ceiling, totalVolume: $totalVolume, totalValue: $totalValue, open: $open, close: $close, high: $high, low: $low, exchange: $exchange, pricePoints: $pricePoints)';
+    return 'StockModel(name: $name, symbol: $symbol, currentPrice: $currentPrice, priceChange: $priceChange, percentChange: $percentChange, floor: $floor, ceiling: $ceiling, totalVolume: $totalVolume, totalValue: $totalValue, open: $open, close: $close, high: $high, low: $low, change: $change, exchange: $exchange, pricePoints: $pricePoints)';
   }
 
   @override
@@ -431,6 +448,7 @@ class _$StockModelImpl extends _StockModel with DiagnosticableTreeMixin {
       ..add(DiagnosticsProperty('close', close))
       ..add(DiagnosticsProperty('high', high))
       ..add(DiagnosticsProperty('low', low))
+      ..add(DiagnosticsProperty('change', change))
       ..add(DiagnosticsProperty('exchange', exchange))
       ..add(DiagnosticsProperty('pricePoints', pricePoints));
   }
@@ -466,6 +484,7 @@ abstract class _StockModel extends StockModel {
       double? close,
       double? high,
       double? low,
+      StockChange? change,
       ExchangeModel? exchange,
       StockPricePoints? pricePoints}) = _$StockModelImpl;
   _StockModel._() : super._();
@@ -520,6 +539,9 @@ abstract class _StockModel extends StockModel {
   @override
   double? get low;
   set low(double? value);
+  @override
+  StockChange? get change;
+  set change(StockChange? value);
   @override
   ExchangeModel? get exchange;
   set exchange(ExchangeModel? value);

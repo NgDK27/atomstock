@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:oppenhomies/domain/helpers/calculateStockPriceChange.dart';
+import 'package:oppenhomies/domain/helpers/market_hours_service.dart';
 import 'package:oppenhomies/domain/models/stock/market_session.dart';
 import 'package:oppenhomies/domain/models/stock/stock_item_type.dart';
 import 'package:oppenhomies/domain/models/stock/stock_price_date_filters.dart';
@@ -39,7 +40,9 @@ class StockDetailsOverview extends HookConsumerWidget {
 
     final timeRange = useState(StockPriceDateFilter.oneDay);
 
-    final marketSession = useState(MarketSession.closed);
+    final marketSession = useState(MarketHoursService.isMarketOpen()
+        ? MarketSession.open
+        : MarketSession.closed,);
 
     const dateFilterOptions = StockPriceDateFilter.values;
 
@@ -80,7 +83,7 @@ class StockDetailsOverview extends HookConsumerWidget {
               //region Background Gradient
               TweenAnimationBuilder<Color?>(
                 tween: ColorTween(
-                    begin: OpDynamicColor.surface(context), end: accentColor),
+                    begin: OpDynamicColor.surface(context), end: accentColor,),
                 duration: const Duration(milliseconds: 250),
                 builder: (context, color, child) {
                   return AnimatedContainer(
@@ -158,7 +161,7 @@ class StockDetailsOverview extends HookConsumerWidget {
                             Text(
                               timeRange.value.description,
                               style: OpTextStyle.labelMedium(context),
-                            )
+                            ),
                           ],
                         ),
                       ],
@@ -193,7 +196,7 @@ class StockDetailsOverview extends HookConsumerWidget {
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: OpSpacing.xs3),
+                              horizontal: OpSpacing.xs3,),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: dateFilterOptions
@@ -210,7 +213,7 @@ class StockDetailsOverview extends HookConsumerWidget {
                                             ref
                                                 .read(provider.notifier)
                                                 .updateDetailsWithTimeRange(
-                                                    timeRange: filter);
+                                                    timeRange: filter,);
                                           },
                                           tightPadding: true,
                                         ),
@@ -247,10 +250,10 @@ class StockDetailsOverview extends HookConsumerWidget {
                     ),
                   ),
                 ],
-              )
+              ),
             ],
           );
-        });
+        },);
   }
 
   Widget _buildHalfColumn(

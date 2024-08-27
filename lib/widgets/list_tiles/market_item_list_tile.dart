@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:oppenhomies/domain/helpers/determine_stock_change_color.dart';
+import 'package:oppenhomies/domain/models/stock/stock_change_enum.dart';
 import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/styles/text.dart';
@@ -14,6 +16,7 @@ class MarketItemListTile extends HookWidget {
   final Widget priceChange;
   final double percentChange;
   final VoidCallback onTap;
+  final StockChange? change;
 
   const MarketItemListTile({
     super.key,
@@ -23,6 +26,7 @@ class MarketItemListTile extends HookWidget {
     required this.priceChange,
     required this.percentChange,
     required this.onTap,
+    this.change,
   });
 
   @override
@@ -32,22 +36,60 @@ class MarketItemListTile extends HookWidget {
         .regular()
         .copyWith(color: OpDynamicColor.onSurfaceVariant(context));
 
+    final animationController = useAnimationController(
+      duration: const Duration(milliseconds: 300),
+    );
+
+    useEffect(() {
+      animationController.forward();
+      return null;
+    }, [],);
+
+    final colorTween = ColorTween(
+      begin: determineStockChangeColor(context: context, change: change),
+      end: OpDynamicColor.onSurface(context),
+    );
+
     return PlatformListTile(
       onTap: onTap,
-      title: Text(symbol.toUpperCase(), style: titleStyle),
+      title: AnimatedBuilder(
+        animation: animationController,
+        builder: (context, child) {
+          return AnimatedDefaultTextStyle(
+            style: titleStyle.spacedOut().copyWith(
+                  color: colorTween.evaluate(animationController),
+                ),
+            duration: const Duration(milliseconds: 300),
+            child: Text(symbol.toUpperCase()),
+          );
+        },
+      ),
       subtitle: Text(name, style: subtitleStyle),
       trailing: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text(currentValue, style: titleStyle.spacedOut()),
+          AnimatedBuilder(
+            animation: animationController,
+            builder: (context, child) {
+              return AnimatedDefaultTextStyle(
+                style: titleStyle.spacedOut().copyWith(
+                      color: colorTween.evaluate(animationController),
+                    ),
+                duration: const Duration(milliseconds: 300),
+                child: Text(currentValue),
+              );
+            },
+          ),
           const SizedBox(height: OpSpacing.xs3),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               priceChange,
               const SizedBox(width: OpSpacing.sm),
-              StockPercentChangeText(value: percentChange),
+              StockPercentChangeText(value: percentChange,
+                  // , changeOverride: change
+                  ),
             ],
           ),
         ],

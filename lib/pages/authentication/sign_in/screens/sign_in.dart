@@ -24,7 +24,7 @@ class SignIn extends HookConsumerWidget {
   }
 
   Future<void> _handleSignIn(BuildContext context, WidgetRef ref, String email,
-      String password, ValueNotifier<UiState> uiState) async {
+      String password, ValueNotifier<UiState> uiState,) async {
     uiState.value = UiState.loading();
     final signInNotifier = ref.read(signInProvider.notifier);
     final result = await signInNotifier.signIn(email: email, password: password);
@@ -228,14 +228,14 @@ class SignIn extends HookConsumerWidget {
         emailValidationMode.value = AutovalidateMode.always;
       }
       return null;
-    }, [emailDebounced]);
+    }, [emailDebounced],);
 
     useEffect(() {
       if (passwordDebounced?.isNotEmpty == true) {
         passwordValidationMode.value = AutovalidateMode.always;
       }
       return null;
-    }, [passwordDebounced]);
+    }, [passwordDebounced],);
 
     useEffect(() {
       if (email.text.isNotEmpty && password.text.isNotEmpty) {
@@ -245,6 +245,6 @@ class SignIn extends HookConsumerWidget {
         isFormValid.value = false;
       }
       return null;
-    }, [email, password]);
+    }, [email, password],);
   }
 }

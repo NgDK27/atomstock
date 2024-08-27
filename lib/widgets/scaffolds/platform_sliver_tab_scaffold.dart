@@ -21,13 +21,13 @@ class OpPlatformSliverTabScaffold extends HookWidget {
       label: route.label,
       icon: route.icon,
       activeIcon: route.activeIcon,
-    )).toList());
+    ),).toList(),);
 
     final itemsFilled = useMemoized(() => routes.allRoutes.map((route) => BottomNavigationBarItem(
       label: route.label,
       icon: route.activeIcon.copyWith(color: OpDynamicColor.onSurfaceVariant(context).withOpacity(OpOpacity.tertiary)),
       activeIcon: route.activeIcon.copyWith(color: OpDynamicColor.primary(context)),
-    )).toList());
+    ),).toList(),);
 
     int getCurrentIndex(BuildContext context) {
       final state = GoRouterState.of(context);

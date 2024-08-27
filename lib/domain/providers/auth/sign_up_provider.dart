@@ -39,13 +39,13 @@ class SignUp extends _$SignUp {
   }
 
   Future<SignUpState> signUp(
-      {required String tempEmail, required String tempPassword}) async {
+      {required String tempEmail, required String tempPassword,}) async {
     try {
       await _repository.signUp(email: tempEmail, password: tempPassword);
       state = state.copyWith(
           uiState: UiState.success(),
           tempEmail: tempEmail,
-          tempPassword: tempPassword);
+          tempPassword: tempPassword,);
       return state;
     } on DioException catch (e) {
       final errorMessage =
@@ -56,7 +56,7 @@ class SignUp extends _$SignUp {
       return state;
     } catch (e) {
       state = state.copyWith(
-          uiState: UiState.failed(message: "An unknown error occurred"));
+          uiState: UiState.failed(message: "An unknown error occurred"),);
       return state;
     }
   }

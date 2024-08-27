@@ -62,8 +62,8 @@ func main() {
         Addr:     "localhost:6379",
     })
 
-    // setFakeVNIndexData(redisClient)
+    setFakeVNIndexData(redisClient)
 
-    checkRedisHash(redisClient, "stock:ACB")
-    // flushRedis(redisClient)
+//     checkRedisHash(redisClient, "stock:ACB")
+//     flushRedis(redisClient)
 }
