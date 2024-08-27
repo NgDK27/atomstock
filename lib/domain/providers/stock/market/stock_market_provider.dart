@@ -28,7 +28,7 @@ class StockMarket extends _$StockMarket {
 
   void _listenToUpdates(StockMarketModel initialData) {
     _subscription?.cancel();
-    _subscription = _repository.getStockUpdates().listen(
+    _subscription = _repository.getMainMarketUpdates().listen(
       (update) {
         print("Received update: $update"); // Debug print
         final updatedModel = _updateStockMarketModel(state.value ?? initialData, update);

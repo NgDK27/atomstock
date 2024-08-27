@@ -6,7 +6,7 @@ part of 'stock_market_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$stockMarketHash() => r'3cb75502493a7b6c8919455a18172542b7ca7d80';
+String _$stockMarketHash() => r'4db8d0888ffc85f5178dbf43c1bf6c352c8998b0';
 
 /// See also [StockMarket].
 @ProviderFor(StockMarket)

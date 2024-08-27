@@ -38,7 +38,7 @@ class StockRepository {
     return StockMarketModel.fromJson(response.data);
   }
 
-  Stream<StockUpdate> getStockUpdates() {
+  Stream<StockUpdate> getMainMarketUpdates() {
     if (MarketHoursService.isMarketOpen()) {
       print("bruh");
       return _wsManager
