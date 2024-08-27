@@ -40,10 +40,16 @@ class MarketItemListTile extends HookWidget {
       duration: const Duration(milliseconds: 300),
     );
 
+    final previousValue = useRef(currentValue);
+
     useEffect(() {
-      animationController.forward();
+      if (previousValue.value != currentValue) {
+        animationController.reset();
+        animationController.forward();
+        previousValue.value = currentValue;
+      }
       return null;
-    }, [],);
+    }, [currentValue]);
 
     final colorTween = ColorTween(
       begin: determineStockChangeColor(context: context, change: change),
@@ -57,8 +63,8 @@ class MarketItemListTile extends HookWidget {
         builder: (context, child) {
           return AnimatedDefaultTextStyle(
             style: titleStyle.spacedOut().copyWith(
-                  color: colorTween.evaluate(animationController),
-                ),
+              color: colorTween.evaluate(animationController),
+            ),
             duration: const Duration(milliseconds: 300),
             child: Text(symbol.toUpperCase()),
           );
@@ -74,8 +80,8 @@ class MarketItemListTile extends HookWidget {
             builder: (context, child) {
               return AnimatedDefaultTextStyle(
                 style: titleStyle.spacedOut().copyWith(
-                      color: colorTween.evaluate(animationController),
-                    ),
+                  color: colorTween.evaluate(animationController),
+                ),
                 duration: const Duration(milliseconds: 300),
                 child: Text(currentValue),
               );
@@ -87,9 +93,7 @@ class MarketItemListTile extends HookWidget {
             children: [
               priceChange,
               const SizedBox(width: OpSpacing.sm),
-              StockPercentChangeText(value: percentChange,
-                  // , changeOverride: change
-                  ),
+              StockPercentChangeText(value: percentChange),
             ],
           ),
         ],

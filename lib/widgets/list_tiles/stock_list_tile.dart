@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oppenhomies/domain/models/stock/stock_item_type.dart';
 import 'package:oppenhomies/domain/models/stock/stock_model.dart';
@@ -7,7 +8,7 @@ import 'package:oppenhomies/widgets/helpers/money_formatter.dart';
 import 'package:oppenhomies/widgets/list_tiles/market_item_list_tile.dart';
 import 'package:oppenhomies/widgets/typography/stock_price_change_text.dart';
 
-class StockListTile extends StatelessWidget {
+class StockListTile extends HookWidget {
   final StockModel stock;
 
   const StockListTile({super.key, required this.stock});
