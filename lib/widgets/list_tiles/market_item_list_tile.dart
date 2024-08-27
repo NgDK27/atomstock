@@ -5,9 +5,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/styles/text.dart';
-import 'package:oppenhomies/widgets/helpers/money_formatter.dart';
 import 'package:oppenhomies/widgets/typography/stock_percent_change_text.dart';
-import 'package:oppenhomies/widgets/typography/stock_price_change_text.dart';
 
 class MarketItemListTile extends HookWidget {
   final String symbol;
@@ -18,14 +16,14 @@ class MarketItemListTile extends HookWidget {
   final VoidCallback onTap;
 
   const MarketItemListTile({
-    Key? key,
+    super.key,
     required this.symbol,
     required this.name,
     required this.currentValue,
     required this.priceChange,
     required this.percentChange,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

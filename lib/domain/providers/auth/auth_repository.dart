@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:oppenhomies/domain/models/auth/auth_token_response.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

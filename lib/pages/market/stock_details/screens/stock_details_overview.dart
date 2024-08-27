@@ -5,7 +5,6 @@ import 'package:oppenhomies/domain/models/stock/market_session.dart';
 import 'package:oppenhomies/domain/models/stock/stock_item_type.dart';
 import 'package:oppenhomies/domain/models/stock/stock_model.dart';
 import 'package:oppenhomies/domain/models/stock/stock_price_date_filters.dart';
-import 'package:oppenhomies/domain/providers/stock/details/stock_details_provider.dart';
 import 'package:oppenhomies/domain/providers/stock/details/stock_details_time_range_provider.dart';
 import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/spacings.dart';

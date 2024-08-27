@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 import 'package:oppenhomies/domain/models/stock/exchange_model.dart';
@@ -9,23 +10,40 @@ import 'package:oppenhomies/domain/models/stock/stock_model.dart';
 import 'package:oppenhomies/domain/models/stock/stock_price_point.dart';
 import 'package:oppenhomies/domain/models/stock/stock_price_points.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:oppenhomies/domain/models/ws/websocket.dart';
+import 'package:oppenhomies/domain/helpers/market_hours_service.dart';
+import 'package:oppenhomies/domain/providers/websocket_provider.dart';
+import 'package:oppenhomies/domain/models/stock/stock_update.dart';
 
 part 'stock_repository.g.dart';
 
 class StockRepository {
   final Dio _dio;
   final String _apiEndpoint;
-
+  final WebSocketManager _wsManager;
 
   StockRepository({
     required Dio dio,
     required String apiEndpoint,
-  })  : _dio = dio,
-        _apiEndpoint = apiEndpoint;
+    required WebSocketManager wsManager,
+  }) : _dio = dio,
+       _apiEndpoint = apiEndpoint,
+       _wsManager = wsManager;
 
   Future<StockMarketModel> fetchStockMarketOverview() async {
     final response = await _dio.get('$_apiEndpoint:8080/main-market');
     return StockMarketModel.fromJson(response.data);
+  }
+
+  Stream<StockUpdate> getStockUpdates() {
+    if (MarketHoursService.isMarketOpen()) {
+      print("bruh");
+      return _wsManager.connect('/ws/main-market')
+          .map((event) => StockUpdate.fromJson(jsonDecode(event)));
+    } else {
+      print("nobruh");
+      return const Stream.empty();
+    }
   }
 
   Future<StockMarketIndexesModel> fetchStockMarketIndexes() async {
@@ -107,5 +125,6 @@ StockRepository stockRepository(StockRepositoryRef ref) {
   return StockRepository(
     dio: Dio(),
     apiEndpoint: 'http://192.168.25.229',
+    wsManager: ref.watch(webSocketManagerProvider),
   );
 }

@@ -52,7 +52,7 @@ class Home extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final stockMarketData = ref.watch(stockMarketProvider);
+    final stockMarketAsyncValue = ref.watch(stockMarketProvider);
 
     return OpPlatformSliverScaffold(
       title: "Home",
@@ -63,69 +63,64 @@ class Home extends ConsumerWidget {
           top: false,
           sliver: SliverList(
             delegate: SliverChildListDelegate([
-              stockMarketData.when(
-                  data: (stockMarket) => Column(
-                        children: [
-                          marketIndexList(
-                            title: "Indexes",
-                            icon: Icon(
-                              Symbols.bar_chart_rounded,
-                              weight: 800,
-                              size: 22,
-                              color: OpDynamicColor.onSurface(context),
-                            ),
-                            onPressed: () =>
-                                navigateToIndexes(context: context),
-                            indexes: stockMarket.indexes,
-                          ),
-                          marketStockList(
-                            title: "Top movers today",
-                            icon: Icon(
-                              Symbols.swap_horiz_rounded,
-                              weight: 800,
-                              size: 22,
-                              color: OpDynamicColor.onSurface(context),
-                            ),
-                            onPressed: () =>
-                                navigateToTopMovers(context: context),
-                            stocks: stockMarket.topVolume,
-                          ),
-                          marketStockList(
-                            title: "Top performers today",
-                            icon: Icon(
-                              Symbols.north_east_rounded,
-                              weight: 800,
-                              size: 22,
-                              color: OpDynamicColor.aquaHarmonized(context),
-                            ),
-                            onPressed: () =>
-                                navigateToTopPerformers(context: context),
-                            stocks: stockMarket.topIncrease,
-                          ),
-                          marketStockList(
-                            title: "Top decliners today",
-                            icon: Icon(
-                              Symbols.south_east_rounded,
-                              weight: 800,
-                              size: 22,
-                              color: OpDynamicColor.cherryHarmonized(context),
-                            ),
-                            onPressed: () =>
-                                navigateToTopDecliners(context: context),
-                            stocks: stockMarket.topDecrease,
-                          ),
-                        ],
+              stockMarketAsyncValue.when(
+                data: (stockMarket) => Column(
+                  children: [
+                    marketIndexList(
+                      title: "Indexes",
+                      icon: Icon(
+                        Symbols.bar_chart_rounded,
+                        weight: 800,
+                        size: 22,
+                        color: OpDynamicColor.onSurface(context),
                       ),
-                  error: (_, __) => const Column(
-                        children: [Text("Data failed to load")],
+                      onPressed: () => navigateToIndexes(context: context),
+                      indexes: stockMarket.indexes,
+                    ),
+                    marketStockList(
+                      title: "Top movers today",
+                      icon: Icon(
+                        Symbols.swap_horiz_rounded,
+                        weight: 800,
+                        size: 22,
+                        color: OpDynamicColor.onSurface(context),
                       ),
-                  loading: () => Center(
-                        child: SizedBox(
-                          width: OpSpacing.md,
-                          height: OpSpacing.md,
-                          child: PlatformCircularProgressIndicator(),
-                        ),
-                      ))
+                      onPressed: () => navigateToTopMovers(context: context),
+                      stocks: stockMarket.topVolume,
+                    ),
+                    marketStockList(
+                      title: "Top performers today",
+                      icon: Icon(
+                        Symbols.north_east_rounded,
+                        weight: 800,
+                        size: 22,
+                        color: OpDynamicColor.aquaHarmonized(context),
+                      ),
+                      onPressed: () => navigateToTopPerformers(context: context),
+                      stocks: stockMarket.topIncrease,
+                    ),
+                    marketStockList(
+                      title: "Top decliners today",
+                      icon: Icon(
+                        Symbols.south_east_rounded,
+                        weight: 800,
+                        size: 22,
+                        color: OpDynamicColor.cherryHarmonized(context),
+                      ),
+                      onPressed: () => navigateToTopDecliners(context: context),
+                      stocks: stockMarket.topDecrease,
+                    ),
+                  ],
+                ),
+                error: (error, stack) => Text("Error: $error"),
+                loading: () => Center(
+                  child: SizedBox(
+                    width: OpSpacing.md,
+                    height: OpSpacing.md,
+                    child: PlatformCircularProgressIndicator(),
+                  ),
+                ),
+              ),
             ]),
           ),
         ),

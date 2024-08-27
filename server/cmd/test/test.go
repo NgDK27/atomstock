@@ -34,10 +34,35 @@ func flushRedis(redisClient *redis.Client) error {
     return nil
 }
 
+func setFakeVNIndexData(client *redis.Client) error {
+    ctx := context.Background()
+    key := "index:VNIndex"
+    
+    data := map[string]interface{}{
+        "IndexId":     "VNIndex",
+        "IndexValue":  1232.56,
+        "Change":      0.21,
+        "RatioChange": 0.09,
+        "TotalTrade":  327992,
+        "TotalQtty":   589958790,
+        "TotalValue":  14426729993080,
+    }
+
+    err := client.HMSet(ctx, key, data).Err()
+    if err != nil {
+        return fmt.Errorf("failed to set fake VNIndex data: %v", err)
+    }
+
+    fmt.Println("Successfully set fake VNIndex data in Redis")
+    return nil
+}
+
 func main() {
     redisClient := redis.NewClient(&redis.Options{
         Addr:     "localhost:6379",
     })
+
+    // setFakeVNIndexData(redisClient)
 
     checkRedisHash(redisClient, "stock:ACB")
     // flushRedis(redisClient)

@@ -6,34 +6,32 @@ import 'package:oppenhomies/widgets/list_tiles/index_list_tile.dart';
 import 'package:oppenhomies/widgets/list_tiles/stock_list_tile.dart';
 import 'package:oppenhomies/widgets/typography/title_large.dart';
 
-Widget marketIndexList(
-    {required String title,
-      required Icon icon,
-      required VoidCallback onPressed,
-      required List<IndexModel> indexes}) {
+Widget marketIndexList({
+  required String title,
+  required Icon icon,
+  required VoidCallback onPressed,
+  required List<IndexModel> indexes
+}) {
   return Column(
     children: [
       OpTitleLarge(title, onPressed: onPressed, leading: icon),
       ...indexes.map((index) => IndexListTile(index: index)),
-      const SizedBox(
-        height: OpSpacing.lg,
-      ),
+      const SizedBox(height: OpSpacing.lg),
     ],
   );
 }
 
-Widget marketStockList(
-    {required String title,
-      required Icon icon,
-      required VoidCallback onPressed,
-      required List<StockModel> stocks}) {
+Widget marketStockList({
+  required String title,
+  required Icon icon,
+  required VoidCallback onPressed,
+  required List<StockModel> stocks
+}) {
   return Column(
     children: [
       OpTitleLarge(title, onPressed: onPressed, leading: icon),
       ...stocks.map((stock) => StockListTile(stock: stock)),
-      const SizedBox(
-        height: OpSpacing.lg,
-      ),
+      const SizedBox(height: OpSpacing.lg),
     ],
   );
 }
