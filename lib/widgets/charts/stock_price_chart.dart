@@ -21,12 +21,14 @@ class StockLineChart extends StatefulHookWidget {
   final StockPricePoints stockPricePoints;
   final StockPriceDateFilter selectedDateFilter;
   final Color accentColor;
+final bool isReloading;
 
   const StockLineChart({
     super.key,
     required this.stockPricePoints,
     required this.selectedDateFilter,
     required this.accentColor,
+    required this.isReloading,
   });
 
   @override
@@ -44,14 +46,7 @@ class _StockLineChartState extends State<StockLineChart> {
 
     final allData = widget.stockPricePoints.points;
 
-    final hasData = allData.isNotEmpty;
-
-    final accentColor = hasData
-        ? StockColoring.determineStockColor(
-      context,
-      allData.last.price - allData.first.price,
-    )
-        : widget.accentColor; // Default color when no data
+    final hasData = allData.isNotEmpty; // Default color when no data
 
     return Column(
       children: <Widget>[
@@ -68,7 +63,7 @@ class _StockLineChartState extends State<StockLineChart> {
                 ? LineChart(
                 curve: Curves.easeInOutQuad,
                 duration: const Duration(milliseconds: 300),
-                mainData(accentColor, allData, widget.selectedDateFilter),)
+                mainData(widget.accentColor, allData, widget.selectedDateFilter),)
                 : const Center(
                 child: Text('No data available for this period'),),
           ),

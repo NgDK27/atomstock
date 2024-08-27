@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:oppenhomies/domain/helpers/calculateStockPriceChange.dart';
 import 'package:oppenhomies/domain/models/stock/market_session.dart';
 import 'package:oppenhomies/domain/models/stock/stock_item_type.dart';
 import 'package:oppenhomies/domain/models/stock/stock_price_date_filters.dart';
@@ -13,6 +14,7 @@ import 'package:oppenhomies/widgets/buttons/neutral/op_neutral_text_button.dart'
 import 'package:oppenhomies/widgets/buttons/primary/OpTonalPrimaryButton.dart';
 import 'package:oppenhomies/widgets/charts/stock_price_chart.dart';
 import 'package:oppenhomies/widgets/chip/chip_base.dart';
+import 'package:oppenhomies/widgets/gradients/gradient.dart';
 import 'package:oppenhomies/widgets/helpers/money_formatter.dart';
 import 'package:oppenhomies/widgets/helpers/stock_formatter.dart';
 import 'package:oppenhomies/widgets/tables/simple_row.dart';
@@ -44,133 +46,190 @@ class StockDetailsOverview extends HookConsumerWidget {
     return data.when(
         skipLoadingOnRefresh: true,
         skipLoadingOnReload: true,
-        error: (_, __) => Text("Failed to load data"),
-        loading: () => PlatformCircularProgressIndicator(),
+        error: (_, __) => const Text("Failed to load data"),
+        loading: () => Center(
+              child: SizedBox(
+                width: OpSpacing.md,
+                height: OpSpacing.md,
+                child: PlatformCircularProgressIndicator(),
+              ),
+            ),
         data: (stock) {
+          // Get detail fields
           final detailFields = data.value!.detailFields.entries.toList();
           final split = (detailFields.length / 2).ceil();
-          return ListView(
+
+          // Get accent color
+          final accentColor = stock.pricePoints!.points.isNotEmpty
+              ? StockColoring.determineStockColor(
+                  context,
+                  stock.pricePoints!.points.last.price -
+                      stock.pricePoints!.points.first.price,
+                )
+              : OpDynamicColor.primary(context);
+
+          // Calculate price and percentage changes
+          final (calculatedPriceChange, calculatedPercentChange) =
+              calculatePriceChanges(
+            timeRange.value,
+            stock.pricePoints?.points ?? [],
+          );
+
+          return Stack(
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: OpSpacing.md,
-                  vertical: OpSpacing.lg,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    switch (marketSession.value) {
-                      MarketSession.open => ChipMediumAqua(
-                          text:
-                              "${stock.exchange?.symbol} • ${marketSession.value.label}",
-                        ),
-                      MarketSession.closed => ChipMediumNeutral(
-                          text:
-                              "${stock.exchange?.symbol} • ${marketSession.value.label}",
-                        ),
-                    },
-                    const SizedBox(height: OpSpacing.sm),
-                    Text(
-                      "${stock.symbol} • ${stock.name}",
-                      style: OpTextStyle.titleLarge(context),
+              //region Background Gradient
+              TweenAnimationBuilder<Color?>(
+                tween: ColorTween(
+                    begin: OpDynamicColor.surface(context), end: accentColor),
+                duration: const Duration(milliseconds: 250),
+                builder: (context, color, child) {
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 250),
+                    decoration: BoxDecoration(
+                      gradient: OpGradient.pageGradient(
+                        context,
+                        center: Alignment.topRight,
+                        beginColor: color ?? OpDynamicColor.surface(context),
+                      ),
                     ),
-                    const SizedBox(height: OpSpacing.xs3),
-                    Text(
-                      switch (type) {
-                        StockItemType.idx => stock.currentPrice.toString(),
-                        StockItemType.stock => stock.currentPrice.vndFormat(),
-                      },
-                      style: OpTextStyle.display(context).spacedOut(),
+                  );
+                },
+              ),
+              //endregion
+              ListView(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: OpSpacing.md,
+                      vertical: OpSpacing.lg,
                     ),
-                    const SizedBox(height: OpSpacing.xs2),
-                    Row(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        switch (type) {
-                          StockItemType.idx => StockPointChangeText(
-                              value: stock.priceChange,
+                        switch (marketSession.value) {
+                          MarketSession.open => ChipMediumAqua(
+                              text:
+                                  "${stock.exchange?.symbol} • ${marketSession.value.label}",
                             ),
-                          StockItemType.stock => StockPriceChangeText(
-                              value: stock.priceChange,
+                          MarketSession.closed => ChipMediumNeutral(
+                              text:
+                                  "${stock.exchange?.symbol} • ${marketSession.value.label}",
                             ),
                         },
-                        const SizedBox(width: OpSpacing.sm),
-                        StockPercentChangeText(
-                          value: stock.percentChange,
-                        ),
-                        const SizedBox(width: OpSpacing.sm),
+                        const SizedBox(height: OpSpacing.sm),
                         Text(
-                          StockPriceDateFilter.oneDay.description,
-                          style: OpTextStyle.labelMedium(context),
-                        )
+                          "${stock.symbol} • ${stock.name}",
+                          style: OpTextStyle.titleLarge(context),
+                        ),
+                        const SizedBox(height: OpSpacing.xs3),
+                        Text(
+                          switch (type) {
+                            StockItemType.idx => stock.currentPrice.toString(),
+                            StockItemType.stock =>
+                              stock.currentPrice.vndFormat(),
+                          },
+                          style: OpTextStyle.display(context).spacedOut(),
+                        ),
+                        const SizedBox(height: OpSpacing.xs2),
+                        Row(
+                          children: [
+                            switch (type) {
+                              StockItemType.idx => StockPointChangeText(
+                                  value: timeRange.value ==
+                                          StockPriceDateFilter.oneDay
+                                      ? stock.priceChange
+                                      : calculatedPriceChange,
+                                ),
+                              StockItemType.stock => StockPriceChangeText(
+                                  value: timeRange.value ==
+                                          StockPriceDateFilter.oneDay
+                                      ? stock.priceChange
+                                      : calculatedPriceChange,
+                                ),
+                            },
+                            const SizedBox(width: OpSpacing.sm),
+                            StockPercentChangeText(
+                              value:
+                                  timeRange.value == StockPriceDateFilter.oneDay
+                                      ? stock.percentChange
+                                      : calculatedPercentChange,
+                            ),
+                            const SizedBox(width: OpSpacing.sm),
+                            Text(
+                              timeRange.value.description,
+                              style: OpTextStyle.labelMedium(context),
+                            )
+                          ],
+                        ),
                       ],
                     ),
-                  ],
-                ),
-              ),
-              if (stock.pricePoints != null)
-                Column(
-                  children: [
-                    StockLineChart(
-                      stockPricePoints: stock.pricePoints!,
-                      selectedDateFilter: timeRange.value,
-                      accentColor: StockColoring.determineStockColor(
-                          context, stock.priceChange),
+                  ),
+                  if (stock.pricePoints != null)
+                    Column(
+                      children: [
+                        StockLineChart(
+                          stockPricePoints: stock.pricePoints!,
+                          selectedDateFilter: timeRange.value,
+                          accentColor: accentColor,
+                          isReloading: data.isReloading,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: OpSpacing.xs3),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: dateFilterOptions
+                                .map(
+                                  (filter) => filter == timeRange.value
+                                      ? OpTonalPrimaryButton(
+                                          text: filter.label,
+                                          onPressed: () {},
+                                        )
+                                      : OpNeutralTextButton(
+                                          text: filter.label,
+                                          onPressed: () {
+                                            timeRange.value = filter;
+                                            ref
+                                                .read(provider.notifier)
+                                                .updateDetailsWithTimeRange(
+                                                    timeRange: filter);
+                                          },
+                                          tightPadding: true,
+                                        ),
+                                )
+                                .toList(),
+                          ),
+                        ),
+                      ],
                     ),
-                    Padding(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: OpSpacing.xs3),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: dateFilterOptions
-                            .map(
-                              (filter) => filter == timeRange.value
-                                  ? OpTonalPrimaryButton(
-                                      text: filter.label,
-                                      onPressed: () {},
-                                    )
-                                  : OpNeutralTextButton(
-                                      text: filter.label,
-                                      onPressed: () {
-                                        timeRange.value = filter;
-                                        ref
-                                            .read(provider.notifier)
-                                            .updateDetailsWithTimeRange(
-                                                timeRange: filter);
-                                      },
-                                      tightPadding: true,
-                                    ),
-                            )
-                            .toList(),
-                      ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: OpSpacing.md,
+                      vertical: OpSpacing.lg,
                     ),
-                  ],
-                ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: OpSpacing.md,
-                  vertical: OpSpacing.lg,
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: _buildHalfColumn(
-                        detailFields.sublist(0, split),
-                        context,
-                      ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: _buildHalfColumn(
+                            detailFields.sublist(0, split),
+                            context,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: OpSpacing.lg,
+                        ),
+                        Expanded(
+                          child: _buildHalfColumn(
+                            detailFields.sublist(split),
+                            context,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(
-                      width: OpSpacing.lg,
-                    ),
-                    Expanded(
-                      child: _buildHalfColumn(
-                        detailFields.sublist(split),
-                        context,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                  ),
+                ],
+              )
             ],
           );
         });
