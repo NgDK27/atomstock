@@ -180,7 +180,8 @@ async def fetch_daily_data(symbol: str, start_date: datetime, end_date: datetime
 
     if response['status'] != 'Success':
         return []
-
+    
+    time.sleep(1)
     if is_index:
         return [{'TradingDate': item['TradingDate'], 'IndexValue': item['IndexValue']} for item in response['data']]
     else:
