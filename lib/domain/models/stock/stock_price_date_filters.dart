@@ -5,7 +5,7 @@ enum StockPriceDateFilter {
   threeMonth('3M', Duration(days: 90), "Past 3 months", '3m'),
   sixMonth('6M', Duration(days: 180), "Past 6 months", '6m'),
   oneYear('1Y', Duration(days: 365), "Past year", '1y'),
-  threeYear('3Y', Duration(days: 1095), "Past 3 years", '3y'),
+  // threeYear('3Y', Duration(days: 1095), "Past 3 years", '3y'),
   fiveYear('5Y', Duration(days: 5475), "Past 5 years", '5y');
 
   final String label;

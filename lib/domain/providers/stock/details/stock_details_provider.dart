@@ -13,9 +13,9 @@ class StockDetails extends _$StockDetails {
   late final StockRepository _repository;
 
   @override
-  Future<StockModel> build(String identifier, StockItemType type, StockPriceDateFilter timeRange) async {
+  Future<StockModel> build(String identifier, StockItemType type) async {
     _repository = ref.read(stockRepositoryProvider);
-    return _fetchDetails(identifier: identifier, type: type, timeRange: timeRange);
+    return _fetchDetails(identifier: identifier, type: type, timeRange: StockPriceDateFilter.oneDay);
   }
 
   Future<StockModel> _fetchStockDetails({required String symbol, required StockPriceDateFilter? timeRange}) async {
@@ -41,17 +41,17 @@ class StockDetails extends _$StockDetails {
     }
   }
 
-  // Future<void> updateDetailsWithTimeRange(
-  //     {required StockPriceDateFilter timeRange}) async {
-  //   switch (type) {
-  //     case StockItemType.idx:
-  //       break;
-  //     case StockItemType.stock:
-  //       state = const AsyncValue.loading();
-  //       state = await AsyncValue.guard(
-  //               () => _fetchDetails(identifier: identifier, type: type, timeRange: timeRange));
-  //   }
-  // }
+  Future<void> updateDetailsWithTimeRange(
+      {required StockPriceDateFilter timeRange}) async {
+    switch (type) {
+      case StockItemType.idx:
+        break;
+      case StockItemType.stock:
+        state = const AsyncValue.loading();
+        state = await AsyncValue.guard(
+                () => _fetchDetails(identifier: identifier, type: type, timeRange: timeRange));
+    }
+  }
   //
   // Future<void> refreshStockDetails(
   //     String identifier, StockItemType type, StockPriceDateFilter timeRange) async {

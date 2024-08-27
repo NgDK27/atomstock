@@ -36,11 +36,13 @@ class StockLineChart extends StatefulHookWidget {
 class _StockLineChartState extends State<StockLineChart> {
   @override
   Widget build(BuildContext context) {
-    final stockPricePoints = useState(widget.stockPricePoints);
+    // final stockPricePoints = useState(widget.stockPricePoints);
+    //
+    // final allData = useMemoized(() {
+    //   return stockPricePoints.value.points;
+    // }, [stockPricePoints.value]);
 
-    final allData = useMemoized(() {
-      return stockPricePoints.value.points;
-    }, [stockPricePoints.value]);
+    final allData = widget.stockPricePoints.points;
 
     final hasData = allData.isNotEmpty;
 

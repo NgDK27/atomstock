@@ -6,8 +6,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:oppenhomies/domain/helpers/stock_item_type_from_string.dart';
-import 'package:oppenhomies/domain/providers/stock/details/stock_details_provider.dart';
-import 'package:oppenhomies/domain/providers/stock/details/stock_details_time_range_provider.dart';
 import 'package:oppenhomies/pages/market/stock_details/models/stock_details_tab_destinations.dart';
 import 'package:oppenhomies/pages/market/stock_details/screens/stock_details_ai.dart';
 import 'package:oppenhomies/pages/market/stock_details/screens/stock_details_automation.dart';
@@ -15,8 +13,6 @@ import 'package:oppenhomies/pages/market/stock_details/screens/stock_details_ove
 import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/styles/text.dart';
-import 'package:oppenhomies/widgets/gradients/gradient.dart';
-import 'package:oppenhomies/widgets/helpers/stock_formatter.dart';
 
 class StockDetails extends HookConsumerWidget {
   final String? identifier;
@@ -26,21 +22,16 @@ class StockDetails extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Stock data
-    final timeRange = ref.watch(stockDetailsTimeRangeProvider);
-    final provider = stockDetailsProvider(identifier!, type.toStockItemType()!, timeRange);
-    final stockDataAsync = ref.watch(provider);
-
-    // Coloring based on change
-    final Color accentColor = stockDataAsync.when(
-        data: (stock) =>
-            StockColoring.determineStockColor(context, stock.priceChange),
-        error: (_, __) => OpDynamicColor.surface(context),
-        loading: () => OpDynamicColor.surface(context));
-    final accentColorScheme = ColorScheme.fromSeed(
-      seedColor: accentColor,
-      brightness: WidgetsBinding.instance.platformDispatcher.platformBrightness,
-    );
+    // // Coloring based on change
+    // final Color accentColor = stockDataAsync.when(
+    //     data: (stock) =>
+    //         StockColoring.determineStockColor(context, stock.priceChange),
+    //     error: (_, __) => OpDynamicColor.surface(context),
+    //     loading: () => OpDynamicColor.surface(context));
+    // final accentColorScheme = ColorScheme.fromSeed(
+    //   seedColor: accentColor,
+    //   brightness: WidgetsBinding.instance.platformDispatcher.platformBrightness,
+    // );
 
     // TABS
 
@@ -92,18 +83,18 @@ class StockDetails extends HookConsumerWidget {
 
     // UI
     return PlatformScaffold(
-      material: (_, __) =>
-          MaterialScaffoldData(backgroundColor: accentColorScheme.surface),
+      // material: (_, __) =>
+      // MaterialScaffoldData(backgroundColor: accentColorScheme.surface),
       appBar: PlatformAppBar(
         title: Text(identifier ?? "PROBLEM"),
         material: (_, __) => MaterialAppBarData(
           centerTitle: true,
-          backgroundColor: accentColorScheme.surface,
+          // backgroundColor: accentColorScheme.surface,
           bottom:
               // region Android Tab
               TabBar(
-            indicatorColor: accentColorScheme.primary,
-            labelColor: accentColorScheme.primary,
+            // indicatorColor: accentColorScheme.primary,
+            // labelColor: accentColorScheme.primary,
             controller: tabController,
             tabs: DetailsTabDestinations.values
                 .map((tab) => Tab(text: tab.label))
@@ -115,15 +106,15 @@ class StockDetails extends HookConsumerWidget {
       body: Stack(
         children: [
           //region Background Gradient
-          Container(
-            decoration: BoxDecoration(
-              gradient: OpGradient.pageGradient(
-                context,
-                center: Alignment.topRight,
-                beginColor: accentColor,
-              ),
-            ),
-          ),
+          // Container(
+          //   decoration: BoxDecoration(
+          //     gradient: OpGradient.pageGradient(
+          //       context,
+          //       center: Alignment.topRight,
+          //       // beginColor: accentColor,
+          //     ),
+          //   ),
+          // ),
           //endregion
 
           //region Body UI
@@ -138,21 +129,10 @@ class StockDetails extends HookConsumerWidget {
                 children: DetailsTabDestinations.values.map((tab) {
                   switch (tab) {
                     case DetailsTabDestinations.overview:
-                      return stockDataAsync.when(
-                          data: (data) => StockDetailsOverview(
-                                stock: data,
-                                accentColor: accentColor,
-                                type: type.toStockItemType()!,
-                            timeRange: timeRange,
-                          ),
-                          error: (_, __) => const Text("Failed to load data"),
-                          loading: () => Center(
-                                child: SizedBox(
-                                  height: OpSpacing.md,
-                                  width: OpSpacing.md,
-                                  child: PlatformCircularProgressIndicator(),
-                                ),
-                              ));
+                      return StockDetailsOverview(
+                        identifier: identifier!,
+                        type: type.toStockItemType()!,
+                      );
                     case DetailsTabDestinations.automations:
                       return const StockDetailsAutomation();
                     case DetailsTabDestinations.ai:
