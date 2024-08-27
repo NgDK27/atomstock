@@ -4,6 +4,7 @@ import 'package:oppenhomies/domain/models/stock/stock_update.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:oppenhomies/domain/providers/stock/repository/stock_repository.dart';
 import 'package:oppenhomies/domain/models/stock/stock_model.dart';
+import 'package:oppenhomies/domain/models/stock/stock_change_enum.dart';
 
 part 'stock_market_provider.g.dart';
 
@@ -51,7 +52,16 @@ class StockMarket extends _$StockMarket {
       ),
       indexUpdate: (indexUpdate) {
         final updatedIndexes = currentModel.indexes.map((index) {
-          return index.indexId == indexUpdate.data.indexId ? indexUpdate.data : index;
+          if (index.indexId == indexUpdate.data.indexId) {
+            StockChange? change;
+            if (indexUpdate.data.indexValue > index.indexValue) {
+              change = StockChange.increase;
+            } else if (indexUpdate.data.indexValue < index.indexValue) {
+              change = StockChange.decrease;
+            } 
+            return indexUpdate.data.copyWith(change: change);
+          }
+          return index;
         }).toList();
         return currentModel.copyWith(indexes: updatedIndexes);
       },
@@ -70,10 +80,23 @@ class StockMarket extends _$StockMarket {
   }
 
   List<StockModel> _updateStockList(List<StockModel> stocks, StockModel updatedStock) {
-    return stocks.map((stock) {
-      return stock.symbol == updatedStock.symbol ? updatedStock : stock;
-    }).toList();
-  }
+  return stocks.map((stock) {
+    if (stock.symbol == updatedStock.symbol) {
+     
+      StockChange? change;
+      if (updatedStock.currentPrice > stock.currentPrice) {
+        change = StockChange.increase;
+      } else if (updatedStock.currentPrice < stock.currentPrice) {
+        change = StockChange.decrease;
+      } 
+
+      return updatedStock.copyWith(
+        change: change,
+      );
+    }
+    return stock;
+  }).toList();
+}
 
   Future<void> refreshStockMarketOverview() async {
     state = const AsyncLoading();
