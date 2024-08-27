@@ -118,7 +118,7 @@ class StockDetailsOverview extends HookConsumerWidget {
                         },
                         const SizedBox(height: OpSpacing.sm),
                         Text(
-                          "${stock.symbol} • ${stock.name}",
+                          "${stock.symbol} ${type == StockItemType.stock ? '• ${stock.name}' : ''}",
                           style: OpTextStyle.titleLarge(context),
                         ),
                         const SizedBox(height: OpSpacing.xs3),
@@ -167,11 +167,29 @@ class StockDetailsOverview extends HookConsumerWidget {
                   if (stock.pricePoints != null)
                     Column(
                       children: [
-                        StockLineChart(
-                          stockPricePoints: stock.pricePoints!,
-                          selectedDateFilter: timeRange.value,
-                          accentColor: accentColor,
-                          isReloading: data.isReloading,
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            StockLineChart(
+                              stockPricePoints: stock.pricePoints!,
+                              selectedDateFilter: timeRange.value,
+                              accentColor: accentColor,
+                              isReloading: data.isReloading,
+                              type: type,
+                            ),
+                            AnimatedOpacity(
+                              curve: Curves.easeInOut,
+                              opacity: data.isReloading ? 1.0 : 0.0,
+                              duration: const Duration(milliseconds: 300),
+                              child: Center(
+                                child: SizedBox(
+                                  width: OpSpacing.md,
+                                  height: OpSpacing.md,
+                                  child: PlatformCircularProgressIndicator(),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(

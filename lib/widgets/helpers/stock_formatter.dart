@@ -15,7 +15,7 @@ extension StockFormatter on double {
 
   String formatAsPointChange( ) {
     final symbol = isNegative ? '-' : '+';
-    return '$symbol ${abs()}';
+    return '$symbol ${abs().toStringAsFixed(2)}';
   }
 }
 
