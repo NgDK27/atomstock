@@ -37,39 +37,38 @@ class MarketItemListTile extends HookWidget {
         .copyWith(color: OpDynamicColor.onSurfaceVariant(context));
 
     final animationController = useAnimationController(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 1000), 
     );
 
-    final previousValue = useRef(currentValue);
+    final colorAnimation = useAnimation(
+      ColorTween(
+        begin: determineStockChangeColor(context: context, change: change),
+        end: OpDynamicColor.onSurface(context),
+      ).animate(CurvedAnimation(
+        parent: animationController,
+        curve: Curves.easeInOut,
+      )),
+    );
 
     useEffect(() {
-      if (previousValue.value != currentValue) {
-        animationController.reset();
-        animationController.forward();
-        previousValue.value = currentValue;
-      }
+      animationController.forward(from: 0.0);
       return null;
-    }, [currentValue]);
-
-    final colorTween = ColorTween(
-      begin: determineStockChangeColor(context: context, change: change),
-      end: OpDynamicColor.onSurface(context),
-    );
+    }, [currentValue, change]);
 
     return PlatformListTile(
       onTap: onTap,
       title: AnimatedBuilder(
-        animation: animationController,
-        builder: (context, child) {
-          return AnimatedDefaultTextStyle(
-            style: titleStyle.spacedOut().copyWith(
-              color: colorTween.evaluate(animationController),
-            ),
-            duration: const Duration(milliseconds: 300),
-            child: Text(symbol.toUpperCase()),
-          );
-        },
-      ),
+            animation: animationController,
+            builder: (context, child) {
+              return Text(
+                symbol.toUpperCase(),
+                key: ValueKey(currentValue),
+                style: titleStyle.spacedOut().copyWith(
+                  color: colorAnimation,
+                ),
+              );
+            },
+          ),
       subtitle: Text(name, style: subtitleStyle),
       trailing: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -78,12 +77,12 @@ class MarketItemListTile extends HookWidget {
           AnimatedBuilder(
             animation: animationController,
             builder: (context, child) {
-              return AnimatedDefaultTextStyle(
+              return Text(
+                currentValue,
+                key: ValueKey(currentValue),
                 style: titleStyle.spacedOut().copyWith(
-                  color: colorTween.evaluate(animationController),
+                  color: colorAnimation,
                 ),
-                duration: const Duration(milliseconds: 300),
-                child: Text(currentValue),
               );
             },
           ),

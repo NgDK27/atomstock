@@ -7,7 +7,6 @@ import 'package:oppenhomies/navigation/routes.dart';
 import 'package:oppenhomies/widgets/list_tiles/market_item_list_tile.dart';
 import 'package:oppenhomies/widgets/typography/stock_point_change_text.dart';
 
-
 class IndexListTile extends HookWidget {
   final IndexModel index;
 
@@ -23,6 +22,7 @@ class IndexListTile extends HookWidget {
   @override
   Widget build(BuildContext context) {
     return MarketItemListTile(
+      key: ValueKey('${index.indexId}-${index.indexValue}'),
       symbol: index.indexId,
       name: "",
       currentValue: index.indexValue.toString(),

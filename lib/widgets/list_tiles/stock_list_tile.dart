@@ -26,6 +26,7 @@ class StockListTile extends HookWidget {
   @override
   Widget build(BuildContext context) {
     return MarketItemListTile(
+      key: ValueKey('${stock.symbol}-${stock.currentPrice}'),
       symbol: stock.symbol,
       name: "",
       currentValue: stock.currentPrice.vndFormat(),
