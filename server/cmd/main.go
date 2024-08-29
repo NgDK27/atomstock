@@ -380,7 +380,9 @@ func main() {
     r.GET("/ws/index/:indexId", handlers.IndexDetailWebSocket(redisClient))
     
     // Search endpoint
-    // r.GET("/search", handlers.SearchStocks(redisClient))
+    r.GET("/search", handlers.SearchStocks(redisClient, db))
+	// Get data
+	r.GET("/stocks", handlers.GetAllStocks(redisClient))
 
 	protected := r.Group("/")
 	protected.Use(AuthMiddleware())

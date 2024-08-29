@@ -8,6 +8,8 @@ import (
     "log"
     "strings"
     "sync"
+    "database/sql"
+    "sort"
 
     "github.com/gin-gonic/gin"
     "github.com/gorilla/websocket"
@@ -397,32 +399,101 @@ func listenForIndexUpdates(ctx context.Context, redisClient *redis.Client, index
     }
 }
 
-func SearchStocks(redisClient *redis.Client) gin.HandlerFunc {
+func SearchStocks(redisClient *redis.Client, dbConn *sql.DB) gin.HandlerFunc {
     return func(c *gin.Context) {
         query := c.Query("q")
         ctx := c.Request.Context()
 
-        results := searchStocksInRedis(ctx, redisClient, query)
+        results, err := searchStocksInRedisAndDB(ctx, redisClient, dbConn, query)
+        if err != nil {
+            log.Printf("Failed to search stocks: %v", err)
+            c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to search stocks"})
+            return
+        }
+
         c.JSON(http.StatusOK, results)
     }
 }
 
-func searchStocksInRedis(ctx context.Context, redisClient *redis.Client, query string) []models.StockData {
-    keys, _ := redisClient.Keys(ctx, "stock:*").Result()
-    var results []models.StockData
+func searchStocksInRedisAndDB(ctx context.Context, redisClient *redis.Client, dbConn *sql.DB, query string) ([]models.StockData, error) {
+    sqlQuery := `
+        SELECT s.symbol, s.en_name
+        FROM stocks s
+        WHERE LOWER(s.symbol) LIKE LOWER($1) OR LOWER(s.en_name) LIKE LOWER($1)
+    `
+    rows, err := dbConn.QueryContext(ctx, sqlQuery, "%"+query+"%")
+    if err != nil {
+        log.Printf("Error querying database: %v", err)
+        return nil, err
+    }
+    defer rows.Close()
 
-    for _, key := range keys {
-        symbol := strings.TrimPrefix(key, "stock:")
-        if strings.Contains(strings.ToLower(symbol), strings.ToLower(query)) {
-            stockData := getStockData(ctx, redisClient, symbol)
-            if stockData != nil {
-                results = append(results, *stockData)
-            }
+    var results []models.StockData
+    for rows.Next() {
+        var symbol, enName string
+        if err := rows.Scan(&symbol, &enName); err != nil {
+            log.Printf("Error scanning row: %v", err)
+            return nil, err
+        }
+
+        // Check if this stock exists in Redis
+        if stockData := getStockData(ctx, redisClient, symbol); stockData != nil {
+            results = append(results, *stockData)
         }
     }
 
-    return results
+    if err := rows.Err(); err != nil {
+        log.Printf("Error after scanning rows: %v", err)
+        return nil, err
+    }
+
+    return results, nil
 }
 
+func GetAllStocks(redisClient *redis.Client) gin.HandlerFunc {
+    return func(c *gin.Context) {
+        ctx := c.Request.Context()
+        offset, _ := strconv.Atoi(c.DefaultQuery("offset", "0"))
+        limit := 50
 
+        stocks, hasMore := getAllStocksFromRedis(ctx, redisClient, offset, limit)
+        
+        c.JSON(http.StatusOK, gin.H{
+            "stocks": stocks,
+            "hasMore": hasMore,
+            "nextOffset": offset + len(stocks),
+        })
+    }
+}
 
+func getAllStocksFromRedis(ctx context.Context, redisClient *redis.Client, offset, limit int) ([]models.StockData, bool) {
+    keys, err := redisClient.Keys(ctx, "stock:*").Result()
+    if err != nil {
+        log.Printf("Error fetching stock keys: %v", err)
+        return []models.StockData{}, false
+    }
+
+    symbols := make([]string, len(keys))
+    for i, key := range keys {
+        symbols[i] = strings.TrimPrefix(key, "stock:")
+    }
+    sort.Strings(symbols)
+
+    totalStocks := len(symbols)
+    endIndex := offset + limit
+    hasMore := endIndex < totalStocks
+
+    if endIndex > totalStocks {
+        endIndex = totalStocks
+    }
+
+    var stocks []models.StockData
+    for _, symbol := range symbols[offset:endIndex] {
+        stockData := getStockData(ctx, redisClient, symbol)
+        if stockData != nil {
+            stocks = append(stocks, *stockData)
+        }
+    }
+
+    return stocks, hasMore
+}
