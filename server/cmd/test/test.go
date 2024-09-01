@@ -53,10 +53,10 @@ func setFakeData(client *redis.Client) error {
         return fmt.Errorf("failed to set fake VNIndex data: %v", err)
     }
 
-    key = "stock:DXG"
+    key = "stock:DIG"
     
     data = map[string]interface{}{
-        "Symbol":     "DXG",
+        "Symbol":     "DIG",
         "Price":  26000,
         "Change":      0.30,
         "RatioChange": 0.42,
@@ -65,7 +65,7 @@ func setFakeData(client *redis.Client) error {
 
     err = client.HMSet(ctx, key, data).Err()
     if err != nil {
-        return fmt.Errorf("failed to set fake DXG data: %v", err)
+        return fmt.Errorf("failed to set fake DIG data: %v", err)
     }
 
     fmt.Println("Successfully set fake data in Redis")
@@ -80,5 +80,5 @@ func main() {
     setFakeData(redisClient)
 
     // checkRedisHash(redisClient, "stock:DXG")
-//     flushRedis(redisClient)
+    // flushRedis(redisClient)
 }

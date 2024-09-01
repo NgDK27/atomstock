@@ -32,11 +32,9 @@ class StockMarket extends _$StockMarket {
       (update) {
         print("Received update: $update"); // Debug print
         final updatedModel = _updateStockMarketModel(state.value ?? initialData, update);
-        print("Updated model: $updatedModel"); // Debug print
         state = AsyncData(updatedModel);
       },
       onError: (error, stack) {
-        print("Error in stream: $error"); // Debug print
         state = AsyncError(error, stack);
       },
     );

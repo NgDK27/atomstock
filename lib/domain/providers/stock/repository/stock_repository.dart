@@ -16,6 +16,7 @@ import 'package:oppenhomies/domain/models/stock/stock_price_points.dart';
 import 'package:oppenhomies/domain/models/stock/stock_update.dart';
 import 'package:oppenhomies/domain/models/ws/websocket.dart';
 import 'package:oppenhomies/domain/providers/websocket_provider.dart';
+import 'package:oppenhomies/domain/models/stock/details_update.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'stock_repository.g.dart';
@@ -170,6 +171,31 @@ class StockRepository {
         log(e.toString());
         throw Exception('Failed to fetch index details: $e');
       }
+    }
+  }
+
+  Stream<StockDetailUpdate> getStockDetailUpdates(String symbol) {
+    if (MarketHoursService.isMarketOpen()) {
+      return _wsManager
+        .connect('/ws/stock/$symbol')
+        .map((event) {
+          return StockDetailUpdate.fromJson(jsonDecode(event));
+        });
+    } else {
+      return Stream.empty();
+    }
+  }
+
+  Stream<IndexDetailUpdate> getIndexDetailUpdates(String indexId) {
+    print("Setting up index detail stream for $indexId");
+    if (MarketHoursService.isMarketOpen()) {
+      return _wsManager
+        .connect('/ws/index/$indexId')
+        .map((event) {
+          return IndexDetailUpdate.fromJson(jsonDecode(event));
+        });
+    } else {
+      return Stream.empty();
     }
   }
 }

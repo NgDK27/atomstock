@@ -47,17 +47,17 @@ class StockDetailsOverview extends HookConsumerWidget {
     const dateFilterOptions = StockPriceDateFilter.values;
 
     return data.when(
-        skipLoadingOnRefresh: true,
-        skipLoadingOnReload: true,
-        error: (_, __) => const Text("Failed to load data"),
-        loading: () => Center(
-              child: SizedBox(
-                width: OpSpacing.md,
-                height: OpSpacing.md,
-                child: PlatformCircularProgressIndicator(),
-              ),
-            ),
-        data: (stock) {
+      skipLoadingOnRefresh: true,
+      skipLoadingOnReload: true,
+      error: (_, __) => const Text("Failed to load data"),
+      loading: () => Center(
+        child: SizedBox(
+          width: OpSpacing.md,
+          height: OpSpacing.md,
+          child: PlatformCircularProgressIndicator(),
+        ),
+      ),
+      data: (stock) {
           // Get detail fields
           final detailFields = data.value!.detailFields.entries.toList();
           final split = (detailFields.length / 2).ceil();
