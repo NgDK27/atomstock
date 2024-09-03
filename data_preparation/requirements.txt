@@ -1,0 +1,10 @@
+requests
+pandas
+selenium
+botocore
+fuzzywuzzy
+unidecode
+boto3
+datetime
+json
+botocore

@@ -1,0 +1,107 @@
+2024-09-01 18:20:24.440397
+=====================
+An error occurred while opening item Page: 1, Item: 1: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=127.0.6533.119)
+Stacktrace:
+#0 0x58af20ab8c7a <unknown>
+#1 0x58af2079be2c <unknown>
+#2 0x58af207710d4 <unknown>
+#3 0x58af20813a8d <unknown>
+#4 0x58af20829ca6 <unknown>
+#5 0x58af2080b363 <unknown>
+#6 0x58af207db247 <unknown>
+#7 0x58af207dbb9e <unknown>
+#8 0x58af20a7f24b <unknown>
+#9 0x58af20a832f1 <unknown>
+#10 0x58af20a6aafe <unknown>
+#11 0x58af20a83e52 <unknown>
+#12 0x58af20a4f79f <unknown>
+#13 0x58af20aa8638 <unknown>
+#14 0x58af20aa8810 <unknown>
+#15 0x58af20ab7dac <unknown>
+#16 0x78711ce94ac3 <unknown>
+, on 1 page
+
+2024-09-02 00:06:32.166388
+=====================
+An error occurred while opening item Page: 2, Item: 15: list indices must be integers or slices, not WebElement, on 2 page
+
+2024-09-02 05:31:24.014073
+=====================
+An error occurred while opening item Page: 7, Item: 1: Message: no such element: Unable to locate element: {"method":"css selector","selector":"div.x5s.p_AFCore.p_AFDefault"}
+  (Session info: chrome=127.0.6533.119); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+Stacktrace:
+#0 0x63eea551dc7a <unknown>
+#1 0x63eea5200e2c <unknown>
+#2 0x63eea524d661 <unknown>
+#3 0x63eea524d751 <unknown>
+#4 0x63eea5291f64 <unknown>
+#5 0x63eea52705ed <unknown>
+#6 0x63eea528f303 <unknown>
+#7 0x63eea5270363 <unknown>
+#8 0x63eea5240247 <unknown>
+#9 0x63eea5240b9e <unknown>
+#10 0x63eea54e424b <unknown>
+#11 0x63eea54e82f1 <unknown>
+#12 0x63eea54cfafe <unknown>
+#13 0x63eea54e8e52 <unknown>
+#14 0x63eea54b479f <unknown>
+#15 0x63eea550d638 <unknown>
+#16 0x63eea550d810 <unknown>
+#17 0x63eea551cdac <unknown>
+#18 0x798773e94ac3 <unknown>
+, on 7 page
+
+2024-09-03 01:04:10.188390
+=====================
+An error occurred while opening item Page: 7, Item: 1: Message: no such element: Unable to locate element: {"method":"css selector","selector":"div.x5s.p_AFCore.p_AFDefault"}
+  (Session info: chrome=127.0.6533.119); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+Stacktrace:
+#0 0x6036e8028c7a <unknown>
+#1 0x6036e7d0be2c <unknown>
+#2 0x6036e7d58661 <unknown>
+#3 0x6036e7d58751 <unknown>
+#4 0x6036e7d9cf64 <unknown>
+#5 0x6036e7d7b5ed <unknown>
+#6 0x6036e7d9a303 <unknown>
+#7 0x6036e7d7b363 <unknown>
+#8 0x6036e7d4b247 <unknown>
+#9 0x6036e7d4bb9e <unknown>
+#10 0x6036e7fef24b <unknown>
+#11 0x6036e7ff32f1 <unknown>
+#12 0x6036e7fdaafe <unknown>
+#13 0x6036e7ff3e52 <unknown>
+#14 0x6036e7fbf79f <unknown>
+#15 0x6036e8018638 <unknown>
+#16 0x6036e8018810 <unknown>
+#17 0x6036e8027dac <unknown>
+#18 0x7c3c5b094ac3 <unknown>
+, on 7 page
+
+2024-09-03 01:07:43.745158
+=====================
+An error occurred while opening item Page: 7, Item: 1: Message: no such element: Unable to locate element: {"method":"css selector","selector":"div.x5s.p_AFCore.p_AFDefault"}
+  (Session info: chrome=127.0.6533.119); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+Stacktrace:
+#0 0x652b6f56cc7a <unknown>
+#1 0x652b6f24fe2c <unknown>
+#2 0x652b6f29c661 <unknown>
+#3 0x652b6f29c751 <unknown>
+#4 0x652b6f2e0f64 <unknown>
+#5 0x652b6f2bf5ed <unknown>
+#6 0x652b6f2de303 <unknown>
+#7 0x652b6f2bf363 <unknown>
+#8 0x652b6f28f247 <unknown>
+#9 0x652b6f28fb9e <unknown>
+#10 0x652b6f53324b <unknown>
+#11 0x652b6f5372f1 <unknown>
+#12 0x652b6f51eafe <unknown>
+#13 0x652b6f537e52 <unknown>
+#14 0x652b6f50379f <unknown>
+#15 0x652b6f55c638 <unknown>
+#16 0x652b6f55c810 <unknown>
+#17 0x652b6f56bdac <unknown>
+#18 0x74b91d294ac3 <unknown>
+, on 7 page
+

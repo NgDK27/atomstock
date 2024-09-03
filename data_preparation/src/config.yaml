@@ -1,0 +1,15 @@
+AWS_S3_CONFIG:
+        ACCESS_KEY: ""
+        SECRET_KEY:  ""
+        ENDPOINT: "https://s3-sgn10.fptcloud.com"
+
+BUCKET_NAME: "external-datasets"
+
+SERVICE: "s3"
+
+LIST_OBJECT_V2: "list_objects_v2"
+
+
+
+S3_PREFIX: 
+        CONGBOTHONGTIN_SSC: "open-datasets/vi/Congbothongtin_SSC"
