@@ -1,15 +1,17 @@
 package services
 
 import (
-    "context"
-    "encoding/json"
-    "log"
-    "strings"
-    "fmt"
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+	"strconv"
+	"strings"
 
-    "github.com/segmentio/kafka-go"
-    "github.com/redis/go-redis/v9"
-    "oppenhomies/server/internal/models"
+	"oppenhomies/server/internal/models"
+
+	"github.com/redis/go-redis/v9"
+	"github.com/segmentio/kafka-go"
 )
 
 type MarketDataService struct {
@@ -72,6 +74,9 @@ func (s *MarketDataService) processStockData(data []byte, symbol string) error {
     ctx := context.Background()
     key := "stock:" + symbol
 
+    currentData, _ := s.redisClient.HGetAll(ctx, key).Result()
+    price, _ := strconv.ParseFloat(currentData["Price"], 64)
+
 
     if stockData.RatioChange != -100 {
         _, err = s.redisClient.HSet(ctx, key, map[string]interface{}{
@@ -91,8 +96,8 @@ func (s *MarketDataService) processStockData(data []byte, symbol string) error {
     } else {
         _, err = s.redisClient.HSet(ctx, key, map[string]interface{}{
             "Price":       stockData.Change * -1,
-            "Change":      0.00,
-            "RatioChange": 0.00,
+            "Change":      stockData.Change + stockData.Change,
+            "RatioChange": stockData.RatioChange + stockData.RatioChange,
             "Volume":      stockData.Volume,
         }).Result()
     
@@ -103,11 +108,12 @@ func (s *MarketDataService) processStockData(data []byte, symbol string) error {
         log.Printf("Skipping update of sorted sets for %s because RatioChange is -100", symbol)
     }
 
+    if stockData.Price != price {
+        // Publish update for real-time subscribers
+        s.publishStockUpdate(ctx, stockData)
+        log.Printf("Stored and published stock data for %s", symbol)
+    }
 
-    // Publish update for real-time subscribers
-    s.publishStockUpdate(ctx, stockData)
-
-    log.Printf("Stored and published stock data for %s", symbol)
     return nil
 }
 

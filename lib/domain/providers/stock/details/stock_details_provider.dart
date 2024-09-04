@@ -13,6 +13,7 @@ part 'stock_details_provider.g.dart';
 class StockDetails extends _$StockDetails {
   late final StockRepository _repository;
   StreamSubscription? _subscription;
+  String? _currentEndpoint;
 
   @override
   Future<StockModel> build(String identifier, StockItemType type) async {
@@ -20,6 +21,9 @@ class StockDetails extends _$StockDetails {
 
     ref.onDispose(() {
       _subscription?.cancel();
+      if (_currentEndpoint != null) {
+        _repository.disconnectWebSocket(_currentEndpoint!);
+      }
     });
 
     final initialData = await _fetchDetails(
@@ -33,6 +37,13 @@ class StockDetails extends _$StockDetails {
 
   void _listenToUpdates(StockModel initialData, String identifier, StockItemType type) {
     _subscription?.cancel();
+    if (_currentEndpoint != null) {
+      _repository.disconnectWebSocket(_currentEndpoint!);
+    }
+    _currentEndpoint = type == StockItemType.stock
+        ? '/ws/stock/$identifier'
+        : '/ws/index/$identifier';
+
     _subscription = (type == StockItemType.stock
         ? _repository.getStockDetailUpdates(identifier)
         : _repository.getIndexDetailUpdates(identifier))

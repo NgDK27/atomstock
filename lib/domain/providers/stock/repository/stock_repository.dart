@@ -198,6 +198,10 @@ class StockRepository {
       return Stream.empty();
     }
   }
+
+  void disconnectWebSocket(String endpoint) {
+    _wsManager.disconnect(endpoint);
+  }
 }
 
 @riverpod

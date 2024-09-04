@@ -2,24 +2,33 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:oppenhomies/domain/helpers/market_hours_service.dart';
 
 class WebSocketManager {
-  WebSocketChannel? _channel;
+  final Map<String, WebSocketChannel> _channels = {};
   final String _wsUrl;
 
   WebSocketManager(this._wsUrl);
 
   Stream<dynamic> connect(String endpoint) {
     if (MarketHoursService.isMarketOpen()) {
-      _channel = WebSocketChannel.connect(Uri.parse('$_wsUrl$endpoint'));
-      return _channel!.stream;
+      if (!_channels.containsKey(endpoint)) {
+        _channels[endpoint] = WebSocketChannel.connect(Uri.parse('$_wsUrl$endpoint'));
+      }
+      return _channels[endpoint]!.stream;
     } else {
       return const Stream.empty();
     }
   }
 
-  void disconnect() {
-    _channel?.sink.close();
-    _channel = null;
+  void disconnect(String endpoint) {
+    _channels[endpoint]?.sink.close();
+    _channels.remove(endpoint);
   }
 
-  bool get isConnected => _channel != null;
+  void disconnectAll() {
+    for (var channel in _channels.values) {
+      channel.sink.close();
+    }
+    _channels.clear();
+  }
+
+  bool isConnected(String endpoint) => _channels.containsKey(endpoint);
 }

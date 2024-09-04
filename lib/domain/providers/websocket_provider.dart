@@ -6,6 +6,6 @@ part 'websocket_provider.g.dart';
 @riverpod
 WebSocketManager webSocketManager(WebSocketManagerRef ref) {
   final manager = WebSocketManager('ws://192.168.25.229:8080');
-  ref.onDispose(() => manager.disconnect());
+  ref.onDispose(() => manager.disconnectAll());
   return manager;
 }

@@ -77,8 +77,8 @@ func main() {
         Addr:     "localhost:6379",
     })
 
-    setFakeData(redisClient)
+    // setFakeData(redisClient)
 
     // checkRedisHash(redisClient, "stock:DXG")
-    // flushRedis(redisClient)
+    flushRedis(redisClient)
 }
