@@ -44,7 +44,7 @@ class ChatInput extends HookWidget {
                     borderSide: BorderSide.none,
                   ),
                   filled: true,
-                  contentPadding: EdgeInsets.symmetric(
+                  contentPadding: const EdgeInsets.symmetric(
                     horizontal: OpSpacing.md,
                     vertical: OpSpacing.sm,
                   ),
@@ -54,7 +54,7 @@ class ChatInput extends HookWidget {
                       textController.clear();
                     },
                     padding: EdgeInsets.zero,
-                    icon: Icon(
+                    icon: const Icon(
                        Icons.send,
                       weight: 800,
                       size: 28,
@@ -84,7 +84,7 @@ class ChatInput extends HookWidget {
 
                 ),
                 suffixMode: OverlayVisibilityMode.always,
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: OpSpacing.sm,
                   vertical: OpSpacing.xs,
                 ),

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:oppenhomies/domain/models/stock/stock_model.dart';
 import 'package:oppenhomies/navigation/routes.dart';
 import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/widgets/scaffolds/platform_sliver_scaffold.dart';
@@ -17,14 +16,6 @@ class Market extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
-    final sampleStocks = [
-      StockModel.sample(),
-      StockModel.positiveSample(),
-      StockModel.negativeSample(),
-      StockModel.detailedSample(),
-    ];
-
     return OpPlatformSliverScaffold(
       title: "Explore",
       transitionBetweenRoutes: false,

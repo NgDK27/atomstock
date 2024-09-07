@@ -25,12 +25,12 @@ class BaseMessageBubble extends ConsumerWidget {
     return Align(
       alignment: Alignment.centerLeft,
       child: Container(
-        margin: EdgeInsets.symmetric(
+        margin: const EdgeInsets.symmetric(
           horizontal: OpSpacing.xs,
           vertical: OpSpacing.xs2,
         ),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(OpRadius.md)),
+          borderRadius: const BorderRadius.all(Radius.circular(OpRadius.md)),
           color: bubbleColor(context),
         ),
         child: Padding(
@@ -135,7 +135,7 @@ class MessageBubble extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (isThinking) {
-      return ThinkingMessageBubble();
+      return const ThinkingMessageBubble();
     }
 
     switch (message.sender) {

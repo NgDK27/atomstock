@@ -15,6 +15,8 @@ import (
 	"reflect"
 	"os/signal"
     "syscall"
+	"time"
+	"github.com/gin-contrib/cors"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -25,6 +27,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
     "oppenhomies/server/internal/handlers"
+	"oppenhomies/server/internal/services"
 	_ "github.com/lib/pq"
 )
 
@@ -67,6 +70,11 @@ type ConfirmSignUpResponse struct {
 
 type UpdateBalanceInput struct {
 	Amount string  `json:"amount"`
+}
+
+type UserInfo struct {
+    Email     string  `json:"email"`
+    Balance   float64 `json:"balance"`
 }
 
 func calculateSecretHash(clientID, clientSecret, username string) string {
@@ -252,26 +260,53 @@ func depositHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Balance updated successfully"})
 }
 
+func getUserInfoHandler(c *gin.Context) {
+    userID, exists := c.Get("userID")
+    if !exists {
+        c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+        return
+    }
+
+    var user UserInfo
+    err := db.QueryRow("SELECT email, balance FROM users WHERE id = $1", userID).Scan(
+        &user.Email, &user.Balance,
+    )
+
+    if err == sql.ErrNoRows {
+        c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+        return
+    } else if err != nil {
+        log.Printf("Failed to fetch user information: %v", err)
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch user information"})
+        return
+    }
+
+    c.JSON(http.StatusOK, user)
+}
+
 func AuthMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		tokenString := c.GetHeader("Authorization")
-		if tokenString == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "No token provided"})
-			c.Abort()
-			return
-		}
+    return func(c *gin.Context) {
+        tokenString := c.GetHeader("Authorization")
+        if tokenString == "" {
+            c.JSON(http.StatusUnauthorized, gin.H{"error": "No token provided"})
+            c.Abort()
+            return
+        }
 
-		tokenString = strings.TrimPrefix(tokenString, "Bearer ")
+        tokenString = strings.TrimPrefix(tokenString, "Bearer ")
 
-		_, err := extractUserIDFromToken(tokenString)
-		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
-			c.Abort()
-			return
-		}
+        userID, err := extractUserIDFromToken(tokenString)
+        if err != nil {
+            c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+            c.Abort()
+            return
+        }
 
-		c.Next()
-	}
+        // Set the user ID in the context
+        c.Set("userID", userID)
+
+        c.Next()
+    }
 }
 
 func ConnectDatabase() {
@@ -317,8 +352,18 @@ func main() {
     }
     log.Println("Successfully connected to Redis")
 	
+    portfolioService := services.NewPortfolioService(db, redisClient)
 
 	r := gin.Default()
+
+	r.Use(cors.New(cors.Config{
+        AllowOrigins:     []string{"*"},  
+        AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+        AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+        ExposeHeaders:    []string{"Content-Length"},
+        AllowCredentials: true,
+        MaxAge:           12 * time.Hour,
+    }))
 
 	r.POST("/signup", signupHandler)
 	r.POST("/confirm_signup", confirmSignUpHandler)
@@ -337,12 +382,27 @@ func main() {
     r.GET("/ws/index/:indexId", handlers.IndexDetailWebSocket(redisClient))
     
     // Search endpoint
-    // r.GET("/search", handlers.SearchStocks(redisClient))
+    r.GET("/search", handlers.SearchStocks(redisClient, db))
+	// Get data
+	r.GET("/stocks", handlers.GetAllStocks(redisClient))
+
 
 	protected := r.Group("/")
 	protected.Use(AuthMiddleware())
 	protected.GET("/hello", helloWorldHandler)
 	protected.POST("/deposit", depositHandler) 
+	protected.GET("/user", getUserInfoHandler)
+
+	// Trading rule endpoints
+    protected.POST("/trading-rules", handlers.CreateTradingRule(db))
+    protected.GET("/trading-rules", handlers.ListTradingRules(db))
+    protected.PUT("/trading-rules/:id", handlers.UpdateTradingRule(db))
+    protected.DELETE("/trading-rules/:id", handlers.DeleteTradingRule(db))
+
+    // Portfolio endpoints
+    protected.GET("/portfolio", handlers.GetPortfolio(portfolioService))
+    protected.GET("/ws/portfolio", handlers.PortfolioWebSocket(portfolioService))
+
 
 	go func() {
         if err := r.Run(":8080"); err != nil {
@@ -356,6 +416,5 @@ func main() {
     <-quit
 
     log.Println("Shutting down server...")
-
     log.Println("Server exited")
 }

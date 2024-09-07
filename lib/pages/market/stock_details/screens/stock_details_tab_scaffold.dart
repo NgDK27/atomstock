@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:oppenhomies/domain/models/stock/stock_model.dart';
+import 'package:oppenhomies/domain/helpers/stock_item_type_from_string.dart';
 import 'package:oppenhomies/pages/market/stock_details/models/stock_details_tab_destinations.dart';
 import 'package:oppenhomies/pages/market/stock_details/screens/stock_details_ai.dart';
 import 'package:oppenhomies/pages/market/stock_details/screens/stock_details_automation.dart';
@@ -13,24 +13,25 @@ import 'package:oppenhomies/pages/market/stock_details/screens/stock_details_ove
 import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/styles/text.dart';
-import 'package:oppenhomies/widgets/gradients/gradient.dart';
-import 'package:oppenhomies/widgets/helpers/stock_formatter.dart';
 
 class StockDetails extends HookConsumerWidget {
-  const StockDetails({super.key});
+  final String? identifier;
+  final String type;
+
+  const StockDetails({super.key, required this.identifier, required this.type});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Stock data
-    final stock = StockModel.detailedSample();
-
-    // Coloring based on change
-    final accentColor =
-        StockColoring.determineStockColor(context, stock.priceChange);
-    final accentColorScheme = ColorScheme.fromSeed(
-      seedColor: accentColor,
-      brightness: WidgetsBinding.instance.platformDispatcher.platformBrightness,
-    );
+    // // Coloring based on change
+    // final Color accentColor = stockDataAsync.when(
+    //     data: (stock) =>
+    //         StockColoring.determineStockColor(context, stock.priceChange),
+    //     error: (_, __) => OpDynamicColor.surface(context),
+    //     loading: () => OpDynamicColor.surface(context));
+    // final accentColorScheme = ColorScheme.fromSeed(
+    //   seedColor: accentColor,
+    //   brightness: WidgetsBinding.instance.platformDispatcher.platformBrightness,
+    // );
 
     // TABS
 
@@ -82,18 +83,18 @@ class StockDetails extends HookConsumerWidget {
 
     // UI
     return PlatformScaffold(
-      material: (_, __) =>
-          MaterialScaffoldData(backgroundColor: accentColorScheme.surface),
+      // material: (_, __) =>
+      // MaterialScaffoldData(backgroundColor: accentColorScheme.surface),
       appBar: PlatformAppBar(
-        title: Text(stock.symbol),
+        title: Text(identifier ?? "PROBLEM"),
         material: (_, __) => MaterialAppBarData(
           centerTitle: true,
-          backgroundColor: accentColorScheme.surface,
+          // backgroundColor: accentColorScheme.surface,
           bottom:
               // region Android Tab
               TabBar(
-            indicatorColor: accentColorScheme.primary,
-            labelColor: accentColorScheme.primary,
+            // indicatorColor: accentColorScheme.primary,
+            // labelColor: accentColorScheme.primary,
             controller: tabController,
             tabs: DetailsTabDestinations.values
                 .map((tab) => Tab(text: tab.label))
@@ -105,15 +106,15 @@ class StockDetails extends HookConsumerWidget {
       body: Stack(
         children: [
           //region Background Gradient
-          Container(
-            decoration: BoxDecoration(
-              gradient: OpGradient.pageGradient(
-                context,
-                center: Alignment.topRight,
-                beginColor: accentColor,
-              ),
-            ),
-          ),
+          // Container(
+          //   decoration: BoxDecoration(
+          //     gradient: OpGradient.pageGradient(
+          //       context,
+          //       center: Alignment.topRight,
+          //       // beginColor: accentColor,
+          //     ),
+          //   ),
+          // ),
           //endregion
 
           //region Body UI
@@ -125,11 +126,13 @@ class StockDetails extends HookConsumerWidget {
               child: TabBarView(
                 controller: tabController,
                 physics: const NeverScrollableScrollPhysics(),
-
                 children: DetailsTabDestinations.values.map((tab) {
                   switch (tab) {
                     case DetailsTabDestinations.overview:
-                      return StockDetailsOverview(stock: stock, accentColor: accentColor,);
+                      return StockDetailsOverview(
+                        identifier: identifier!,
+                        type: type.toStockItemType()!,
+                      );
                     case DetailsTabDestinations.automations:
                       return const StockDetailsAutomation();
                     case DetailsTabDestinations.ai:
@@ -169,9 +172,10 @@ class StockDetails extends HookConsumerWidget {
                         groupValue: cupertinoSelectedTab.value,
                         onValueChanged: (value) {
                           cupertinoSelectedTab.value = value;
-                          tabController.index = DetailsTabDestinations.values
-                              .indexOf(
-                                  value ?? DetailsTabDestinations.overview,);
+                          tabController.index =
+                              DetailsTabDestinations.values.indexOf(
+                            value ?? DetailsTabDestinations.overview,
+                          );
                         },
                         children: {
                           for (final tab in DetailsTabDestinations.values)

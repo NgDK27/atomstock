@@ -15,10 +15,10 @@ project_root = get_project_root()
 dotenv_path = project_root / 'oppenhomies/server/.env'
 load_dotenv('.env')
 
-DB_HOST = os.getenv('HOST')
-DB_NAME = os.getenv('DB_NAME')
-DB_USER = os.getenv('USER')
-DB_PASSWORD = os.getenv('PASSWORD')
+DB_HOST = os.getenv('HOST') or 'localhost'
+DB_NAME = os.getenv('DB_NAME') or 'capstone'
+DB_USER = os.getenv('USER') or 'quando'
+DB_PASSWORD = os.getenv('PASSWORD') or '808225'
 
 client = fc_md_client.MarketDataClient(config)
 
@@ -33,9 +33,9 @@ def get_securities_list(market: str):
     
     # Connect to the database
     conn = psycopg2.connect(
-        host='localhost',
-        dbname='capstone',
-        user='quando',
+        host=DB_HOST,
+        dbname=DB_NAME,
+        user=DB_USER,
         password=DB_PASSWORD
     )
     

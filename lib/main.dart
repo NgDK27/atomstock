@@ -108,7 +108,7 @@ class OppenhomiesApp extends ConsumerWidget {
             cupertinoDarkTheme: opCupertinoDarkTheme,
             builder: (context) => PlatformApp.router(
               title: 'Atomstock',
-              routerConfig: OpRouter.router,
+              routerConfig: OpRouter.router(ref),
               debugShowCheckedModeBanner: false,
               // Hide "Debug" banner
               localizationsDelegates: const <LocalizationsDelegate<dynamic>>[

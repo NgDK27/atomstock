@@ -20,9 +20,9 @@ ExchangeModel _$ExchangeModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ExchangeModel {
-  String get id => throw _privateConstructorUsedError;
+  String? get id => throw _privateConstructorUsedError;
   String get symbol => throw _privateConstructorUsedError;
-  String get name => throw _privateConstructorUsedError;
+  String? get name => throw _privateConstructorUsedError;
 
   /// Serializes this ExchangeModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -40,7 +40,7 @@ abstract class $ExchangeModelCopyWith<$Res> {
           ExchangeModel value, $Res Function(ExchangeModel) then) =
       _$ExchangeModelCopyWithImpl<$Res, ExchangeModel>;
   @useResult
-  $Res call({String id, String symbol, String name});
+  $Res call({String? id, String symbol, String? name});
 }
 
 /// @nodoc
@@ -58,23 +58,23 @@ class _$ExchangeModelCopyWithImpl<$Res, $Val extends ExchangeModel>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? id = freezed,
     Object? symbol = null,
-    Object? name = null,
+    Object? name = freezed,
   }) {
     return _then(_value.copyWith(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       symbol: null == symbol
           ? _value.symbol
           : symbol // ignore: cast_nullable_to_non_nullable
               as String,
-      name: null == name
+      name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ) as $Val);
   }
 }
@@ -87,7 +87,7 @@ abstract class _$$ExchangeModelImplCopyWith<$Res>
       __$$ExchangeModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, String symbol, String name});
+  $Res call({String? id, String symbol, String? name});
 }
 
 /// @nodoc
@@ -103,23 +103,23 @@ class __$$ExchangeModelImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? id = freezed,
     Object? symbol = null,
-    Object? name = null,
+    Object? name = freezed,
   }) {
     return _then(_$ExchangeModelImpl(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       symbol: null == symbol
           ? _value.symbol
           : symbol // ignore: cast_nullable_to_non_nullable
               as String,
-      name: null == name
+      name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
@@ -127,19 +127,17 @@ class __$$ExchangeModelImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$ExchangeModelImpl extends _ExchangeModel with DiagnosticableTreeMixin {
-  _$ExchangeModelImpl(
-      {required this.id, required this.symbol, required this.name})
-      : super._();
+  _$ExchangeModelImpl({this.id, required this.symbol, this.name}) : super._();
 
   factory _$ExchangeModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$ExchangeModelImplFromJson(json);
 
   @override
-  final String id;
+  final String? id;
   @override
   final String symbol;
   @override
-  final String name;
+  final String? name;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -188,20 +186,20 @@ class _$ExchangeModelImpl extends _ExchangeModel with DiagnosticableTreeMixin {
 
 abstract class _ExchangeModel extends ExchangeModel {
   factory _ExchangeModel(
-      {required final String id,
+      {final String? id,
       required final String symbol,
-      required final String name}) = _$ExchangeModelImpl;
+      final String? name}) = _$ExchangeModelImpl;
   _ExchangeModel._() : super._();
 
   factory _ExchangeModel.fromJson(Map<String, dynamic> json) =
       _$ExchangeModelImpl.fromJson;
 
   @override
-  String get id;
+  String? get id;
   @override
   String get symbol;
   @override
-  String get name;
+  String? get name;
 
   /// Create a copy of ExchangeModel
   /// with the given fields replaced by the non-null parameter values.

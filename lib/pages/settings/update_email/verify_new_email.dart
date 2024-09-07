@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:go_router/go_router.dart';
+
 import 'package:oppenhomies/navigation/routes.dart';
 import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/opacities.dart';
@@ -27,13 +28,13 @@ class VerifyNewEmail extends HookWidget {
         ),
         actions: [
           PlatformDialogAction(
-            onPressed: () => Navigator.of(context, rootNavigator: true).pop(),
+            onPressed: () => context.pop(),
             child: Text('Cancel', style: OpTextStyle.bold()),
           ),
           PlatformDialogAction(
             onPressed: () => {
-              Navigator.of(context, rootNavigator: true).pop(),
-              Navigator.of(context, rootNavigator: true).pop(),
+              context.pop(),
+              context.pushReplacementNamed(OpRoutes.inputNewEmail.name),
             },
             child: Text('Change email', style: OpTextStyle.bold()),
           ),
@@ -78,8 +79,10 @@ class VerifyNewEmail extends HookWidget {
             child: Text('Stay here', style: OpTextStyle.bold()),
           ),
           PlatformDialogAction(
-            onPressed: () =>
-                context.goNamed(OpRoutes.updateEmailCompleted.name),
+            onPressed: () => {
+              context.pop(),
+              context.pushReplacementNamed(OpRoutes.updateEmailCompleted.name),
+            },
             child: Text('Continue', style: OpTextStyle.bold()),
           ),
         ],

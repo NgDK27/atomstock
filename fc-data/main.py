@@ -17,6 +17,7 @@ from collections import defaultdict
 import threading
 from queue import Queue, Empty
 import time
+from fastapi.middleware.cors import CORSMiddleware
 
 import sys
 
@@ -80,6 +81,13 @@ stocks, indexes = get_symbols()
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  
+    allow_credentials=True,
+    allow_methods=["*"], 
+    allow_headers=["*"], 
+)
 
 class StockPriceRequest(BaseModel):
     symbol: str
@@ -172,7 +180,8 @@ async def fetch_daily_data(symbol: str, start_date: datetime, end_date: datetime
 
     if response['status'] != 'Success':
         return []
-
+    
+    time.sleep(1)
     if is_index:
         return [{'TradingDate': item['TradingDate'], 'IndexValue': item['IndexValue']} for item in response['data']]
     else:
@@ -211,7 +220,7 @@ async def fetch_stock_prices(symbol: str, start_date: datetime, end_date: dateti
 
 
 
-@app.get("/stock/{symbol}")
+@app.get("/ticker/{symbol}")
 async def get_stock_details(symbol: str, range: str = "1d"):
     try:
         is_index = symbol in [index[0] for index in indexes]

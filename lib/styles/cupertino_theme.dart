@@ -6,7 +6,7 @@ final opCupertinoLightTheme = const CupertinoThemeData().copyWith(
   textTheme: opCupertinoTextTheme,
   primaryColor: OpLightDarkColor.primary,
   primaryContrastingColor: OpLightDarkColor.onSurface,
-  barBackgroundColor: OpLightDarkColor.surface.withAlpha(240),
+  barBackgroundColor: OpLightDarkColor.surface.withOpacity(0.8),
   scaffoldBackgroundColor: OpLightDarkColor.surface,
   applyThemeToAll: true,
 );
@@ -16,7 +16,7 @@ final opCupertinoDarkTheme = const CupertinoThemeData().copyWith(
   textTheme: opCupertinoTextTheme,
   primaryColor: OpLightDarkColor.primary,
   primaryContrastingColor: OpLightDarkColor.surface,
-  barBackgroundColor: OpLightDarkColor.surface.withAlpha(240),
+  barBackgroundColor: OpLightDarkColor.surface.withOpacity(0.8),
   scaffoldBackgroundColor: OpLightDarkColor.surface,
   applyThemeToAll: true,
 );

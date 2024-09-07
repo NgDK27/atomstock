@@ -54,35 +54,50 @@ class OpRoutes {
     path: '/home',
     name: 'home',
     pageBuilder: (context, state) => buildPageWithFadeTransition(
-        context: context, state: state, child: const Home(),),
+      context: context,
+      state: state,
+      child: const Home(),
+    ),
   );
 
   static final ai = RouteModel(
     path: '/ai',
     name: 'ai',
     pageBuilder: (context, state) => buildPageWithFadeTransition(
-    context: context, state: state, child: const Ai(),),
+      context: context,
+      state: state,
+      child: const Ai(),
+    ),
   );
 
   static final automations = RouteModel(
     path: '/automations',
     name: 'automations',
     pageBuilder: (context, state) => buildPageWithFadeTransition(
-        context: context, state: state, child: const Automations(),),
+      context: context,
+      state: state,
+      child: const Automations(),
+    ),
   );
 
   static final market = RouteModel(
     path: '/market',
     name: 'market',
     pageBuilder: (context, state) => buildPageWithFadeTransition(
-        context: context, state: state, child: const Market(),),
+      context: context,
+      state: state,
+      child: const Market(),
+    ),
   );
 
   static final portfolio = RouteModel(
     path: '/portfolio',
     name: 'portfolio',
     pageBuilder: (context, state) => buildPageWithFadeTransition(
-        context: context, state: state, child: const Portfolio(),),
+      context: context,
+      state: state,
+      child: const Portfolio(),
+    ),
   );
 
   // Onboarding routes
@@ -109,7 +124,10 @@ class OpRoutes {
     path: '/settings',
     name: 'settings',
     pageBuilder: (context, state) => buildPageWithFadeTransition(
-      context: context, state: state, child: const Settings(),),
+      context: context,
+      state: state,
+      child: const Settings(),
+    ),
   );
 
   static final automationDetails = RouteModel(
@@ -131,9 +149,12 @@ class OpRoutes {
   );
 
   static final stockDetails = RouteModel(
-    path: 'stock_details',
+    path: '/stock_details/:type/:identifier',
     name: 'stock_details',
-    builder: (context, state) => const StockDetails(),
+    builder: (context, state) => StockDetails(
+      identifier: state.pathParameters["identifier"],
+      type: state.pathParameters['type']!,
+    ),
   );
 
   static final signInLanding = RouteModel(
@@ -172,38 +193,36 @@ class OpRoutes {
     builder: (context, state) => const ResetPassword(),
   );
 
-
   //region Home sub-routes
   static final indexes = RouteModel(
-    path: 'indexes',
+    path: '/indexes',
     name: 'indexes',
-    builder: (context, state) =>
-    const Indexes(), // Replace with actual widget
+    builder: (context, state) => const Indexes(), // Replace with actual widget
   );
 
   static final topPerformers = RouteModel(
-    path: 'top_performers',
+    path: '/top_performers',
     name: 'top_performers',
     builder: (context, state) =>
-    const TopPerformers(), // Replace with actual widget
+        const TopPerformers(), // Replace with actual widget
   );
 
   static final topDecliners = RouteModel(
-    path: 'top_decliners',
+    path: '/top_decliners',
     name: 'top_decliners',
     builder: (context, state) =>
-    const TopDecliners(), // Replace with actual widget
+        const TopDecliners(), // Replace with actual widget
   );
 
   static final topMovers = RouteModel(
-    path: 'top_movers',
+    path: '/top_movers',
     name: 'top_movers',
     builder: (context, state) =>
-    const TopMovers(), // Replace with actual widget
+        const TopMovers(), // Replace with actual widget
   );
+
   //endregion
 
-  // region Settings sub-routes
   static final addFunds = RouteModel(
     path: '/add_funds',
     name: 'add_funds',
@@ -217,21 +236,22 @@ class OpRoutes {
         const WithdrawFunds(), // Replace with actual widget
   );
 
+  // region Settings sub-routes
   static final connectedAccounts = RouteModel(
-    path: 'connected_accounts',
+    path: '/connected_accounts',
     name: 'connected_accounts',
     builder: (context, state) =>
         const ConnectedAccounts(), // Replace with actual widget
   );
 
   static final yourName = RouteModel(
-    path: 'your_name',
+    path: '/your_name',
     name: 'your_name',
     builder: (context, state) => const YourName(), // Replace with actual widget
   );
 
   static final verifyCurrentEmail = RouteModel(
-    path: 'verify_current_email',
+    path: '/verify_current_email',
     name: 'verify_current_email',
     builder: (context, state) => const VerifyCurrentEmail(),
   );
@@ -255,7 +275,7 @@ class OpRoutes {
   );
 
   static final verifyCurrentPassword = RouteModel(
-    path: 'verify_current_password',
+    path: '/verify_current_password',
     name: 'verify_current_password',
     builder: (context, state) =>
         const VerifyCurrentPassword(), // Replace with actual widget
@@ -276,33 +296,33 @@ class OpRoutes {
   );
 
   static final thirdPartySignIn = RouteModel(
-    path: 'third_party_sign_in',
+    path: '/third_party_sign_in',
     name: 'third_party_sign_in',
     builder: (context, state) =>
         const ThirdPartySignIn(), // Replace with actual widget
   );
 
   static final appearance = RouteModel(
-    path: 'appearance',
+    path: '/appearance',
     name: 'appearance',
     builder: (context, state) =>
         const Appearance(), // Replace with actual widget
   );
 
   static final language = RouteModel(
-    path: 'language',
+    path: '/language',
     name: 'language',
     builder: (context, state) => const Language(), // Replace with actual widget
   );
 
   static final faq = RouteModel(
-    path: 'faq',
+    path: '/faq',
     name: 'faq',
     builder: (context, state) => const Faq(), // Replace with actual widget
   );
 
   static final contactSupport = RouteModel(
-    path: 'contact_support',
+    path: '/contact_support',
     name: 'contact_support',
     builder: (context, state) =>
         const ContactSupport(), // Replace with actual widget

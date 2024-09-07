@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:oppenhomies/domain/providers/auth/auth_provider.dart';
 import 'package:oppenhomies/navigation/routes.dart';
 import 'package:oppenhomies/pages/onboarding/ai_select/models/AiSelectCardData.dart';
 import 'package:oppenhomies/pages/settings/settings/layouts/ai_select_card_settings.dart';
@@ -14,7 +15,7 @@ import 'package:oppenhomies/widgets/buttons/neutral/OpFilledNeutralButton.dart';
 import 'package:oppenhomies/widgets/divider/divider_variant.dart';
 import 'package:oppenhomies/widgets/scaffolds/platform_sliver_scaffold.dart';
 
-class Settings extends ConsumerWidget {
+class Settings extends HookConsumerWidget {
   const Settings({super.key});
 
   @override
@@ -88,15 +89,25 @@ class Settings extends ConsumerWidget {
       ),
     ];
 
-    void handleSignOut() {
+    void handleSignOut(WidgetRef ref) {
       showPlatformDialog(
         context: context,
         builder: (_) => PlatformAlertDialog(
-          title: const Text("Sign out attempted"),
+          title: const Text("Sign out?"),
+          content: const Text("All of your data will be cleared from the app"),
           actions: [
             PlatformDialogAction(
-              child: const Text("OK"),
+              child: const Text("Stay signed in"),
               onPressed: () => context.pop(),
+            ),
+            PlatformDialogAction(
+              child: const Text("Sign out"),
+              onPressed: () async {
+                await ref.read(authProvider.notifier).signOut();
+                if (context.mounted) {
+                  context.goNamed(OpRoutes.onboarding.name);
+                }
+              },
             ),
           ],
         ),
@@ -163,7 +174,7 @@ class Settings extends ConsumerWidget {
                   return Padding(
                     padding: const EdgeInsets.all(OpSpacing.md),
                     child: OpFilledNeutralButton(
-                      onPressed: handleSignOut,
+                      onPressed: () =>handleSignOut(ref),
                       text: 'Sign out',
                     ),
                   );

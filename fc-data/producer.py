@@ -18,10 +18,10 @@ dotenv_path = project_root / 'oppenhomies/server/.env'
 load_dotenv(dotenv_path)
 
 # Database configuration
-DB_HOST = os.getenv('HOST')
-DB_NAME = os.getenv('DB_NAME')
-DB_USER = os.getenv('USER')
-DB_PASSWORD = os.getenv('PASSWORD') 
+DB_HOST = os.getenv('HOST') or 'localhost'
+DB_NAME = os.getenv('DB_NAME') or 'capstone'
+DB_USER = os.getenv('USER') or 'quando'
+DB_PASSWORD = os.getenv('PASSWORD') or '808225'
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -71,8 +71,8 @@ load_dotenv()
 stocks, indexes = get_symbols()
 
 # Kafka configuration
-KAFKA_HOST = os.getenv('KAFKA_HOST')
-KAFKA_PORT = os.getenv('KAFKA_PORT')
+KAFKA_HOST = os.getenv('KAFKA_HOST') or '192.168.25.229'
+KAFKA_PORT = os.getenv('KAFKA_PORT') or '9092'
 
 kafka_config = {
     'bootstrap.servers': f"{KAFKA_HOST}:{KAFKA_PORT}",
