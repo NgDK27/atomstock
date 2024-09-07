@@ -42,10 +42,11 @@ CREATE TABLE trading_rules (
     user_id VARCHAR(50) NOT NULL REFERENCES users(id),
     symbol VARCHAR(10) NOT NULL REFERENCES stocks(symbol),
     shares INTEGER NOT NULL,
-    entry_condition_type VARCHAR(20) NOT NULL CHECK (entry_condition_type IN ('PRICE', 'VOLUME')),
+    entry_condition_type VARCHAR(20) NOT NULL CHECK (entry_condition_type IN ('PRICE')),
     entry_trigger_value NUMERIC(10, 2) NOT NULL,
     entry_range_type VARCHAR(10) NOT NULL CHECK (entry_range_type IN ('ABOVE', 'BELOW')),
     trailing_stop_loss_percentage NUMERIC(5, 2) NOT NULL,
+    take_profit_percentage NUMERIC(5, 2) NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -56,10 +57,12 @@ CREATE TABLE trades (
     user_id VARCHAR(50) NOT NULL REFERENCES users(id),
     symbol VARCHAR(10) NOT NULL REFERENCES stocks(symbol),
     entry_price NUMERIC(10, 2) NOT NULL,
+    highest_price NUMERIC(10, 2) NOT NULL;
     entry_time TIMESTAMP NOT NULL,
     shares INTEGER NOT NULL,
     exit_price NUMERIC(10, 2),
     exit_time TIMESTAMP,
     exit_type VARCHAR(20) CHECK (exit_type IN ('STOP_LOSS', 'TAKE_PROFIT', 'MANUAL')),
-    status VARCHAR(20) NOT NULL CHECK (status IN ('OPEN', 'CLOSED'))
+    status VARCHAR(20) NOT NULL CHECK (status IN ('OPEN', 'CLOSED')),
+    take_profit_price NUMERIC(10, 2) NOT NULL
 );

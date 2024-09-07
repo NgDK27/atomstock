@@ -27,6 +27,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
     "oppenhomies/server/internal/handlers"
+	"oppenhomies/server/internal/services"
 	_ "github.com/lib/pq"
 )
 
@@ -351,11 +352,12 @@ func main() {
     }
     log.Println("Successfully connected to Redis")
 	
+    portfolioService := services.NewPortfolioService(db, redisClient)
 
 	r := gin.Default()
 
 	r.Use(cors.New(cors.Config{
-        AllowOrigins:     []string{"*"},  // Allow all origins
+        AllowOrigins:     []string{"*"},  
         AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
         AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
         ExposeHeaders:    []string{"Content-Length"},
@@ -384,11 +386,23 @@ func main() {
 	// Get data
 	r.GET("/stocks", handlers.GetAllStocks(redisClient))
 
+
 	protected := r.Group("/")
 	protected.Use(AuthMiddleware())
 	protected.GET("/hello", helloWorldHandler)
 	protected.POST("/deposit", depositHandler) 
 	protected.GET("/user", getUserInfoHandler)
+
+	// Trading rule endpoints
+    protected.POST("/trading-rules", handlers.CreateTradingRule(db))
+    protected.GET("/trading-rules", handlers.ListTradingRules(db))
+    protected.PUT("/trading-rules/:id", handlers.UpdateTradingRule(db))
+    protected.DELETE("/trading-rules/:id", handlers.DeleteTradingRule(db))
+
+    // Portfolio endpoints
+    protected.GET("/portfolio", handlers.GetPortfolio(portfolioService))
+    protected.GET("/ws/portfolio", handlers.PortfolioWebSocket(portfolioService))
+
 
 	go func() {
         if err := r.Run(":8080"); err != nil {
@@ -402,6 +416,5 @@ func main() {
     <-quit
 
     log.Println("Shutting down server...")
-
     log.Println("Server exited")
 }
