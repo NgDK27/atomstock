@@ -4,12 +4,15 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:oppenhomies/domain/models/stock/index_model.dart';
+import 'package:oppenhomies/domain/models/stock/stock_model.dart';
 import 'package:oppenhomies/domain/providers/stock/market/stock_market_provider.dart';
 import 'package:oppenhomies/navigation/routes.dart';
 import 'package:oppenhomies/pages/home/layouts/stock_list.dart';
 import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/widgets/scaffolds/platform_sliver_scaffold.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class Home extends ConsumerWidget {
   const Home({super.key});
@@ -54,6 +57,27 @@ class Home extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final stockMarketAsyncValue = ref.watch(stockMarketProvider);
 
+    final sampleStocks = [
+      StockModel.detailedSample(),
+      StockModel.detailedSample(),
+      StockModel.detailedSample(),
+    ];
+
+    final sampleIndex = IndexModel(
+        indexId: '123',
+        indexValue: 123456,
+        priceChange: 123,
+        percentChange: 50,
+        trade: 123,
+        quantity: 123,
+        totalValue: 12345);
+
+    final sampleIndexes = [
+      sampleIndex,
+      sampleIndex,
+      sampleIndex,
+    ];
+
     return OpPlatformSliverScaffold(
       title: "Home",
       transitionBetweenRoutes: false,
@@ -96,7 +120,8 @@ class Home extends ConsumerWidget {
                         size: 22,
                         color: OpDynamicColor.aquaHarmonized(context),
                       ),
-                      onPressed: () => navigateToTopPerformers(context: context),
+                      onPressed: () =>
+                          navigateToTopPerformers(context: context),
                       stocks: stockMarket.topIncrease,
                     ),
                     marketStockList(
@@ -112,12 +137,68 @@ class Home extends ConsumerWidget {
                     ),
                   ],
                 ),
-                error: (error, stack) => Text("Error: $error"),
-                loading: () => Center(
-                  child: SizedBox(
-                    width: OpSpacing.md,
-                    height: OpSpacing.md,
-                    child: PlatformCircularProgressIndicator(),
+                error: (error, stack) => Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: OpSpacing.md, vertical: OpSpacing.xl2),
+                  child: Column(children: [
+                    Icon(Symbols.error_circle_rounded_error),
+                    const SizedBox(
+                      height: OpSpacing.md,
+                    ),
+                    Text("Error: $error"),
+                  ]),
+                ),
+                loading: () => Skeletonizer(
+                  containersColor: OpDynamicColor.primaryVariant(context),
+                  child: Column(
+                    children: [
+                      marketIndexList(
+                        title: "Indexes",
+                        icon: Icon(
+                          Symbols.bar_chart_rounded,
+                          weight: 800,
+                          size: 22,
+                          color: OpDynamicColor.onSurface(context),
+                        ),
+                        onPressed: () => navigateToIndexes(context: context),
+                        indexes: sampleIndexes,
+                      ),
+                      marketStockList(
+                        title: "Top movers today",
+                        icon: Icon(
+                          Symbols.swap_horiz_rounded,
+                          weight: 800,
+                          size: 22,
+                          color: OpDynamicColor.onSurface(context),
+                        ),
+                        onPressed: () => navigateToTopMovers(context: context),
+                        stocks: sampleStocks,
+                      ),
+                      marketStockList(
+                        title: "Top performers today",
+                        icon: Icon(
+                          Symbols.north_east_rounded,
+                          weight: 800,
+                          size: 22,
+                          color: OpDynamicColor.aquaHarmonized(context),
+                        ),
+                        onPressed: () =>
+                            navigateToTopPerformers(context: context),
+                        stocks: sampleStocks,
+                      ),
+                      marketStockList(
+                        title: "Top decliners today",
+                        icon: Icon(
+                          Symbols.south_east_rounded,
+                          weight: 800,
+                          size: 22,
+                          color: OpDynamicColor.cherryHarmonized(context),
+                        ),
+                        onPressed: () =>
+                            navigateToTopDecliners(context: context),
+                        stocks: sampleStocks,
+                      ),
+                    ],
                   ),
                 ),
               ),

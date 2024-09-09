@@ -5,6 +5,7 @@ import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/widgets/list_tiles/index_list_tile.dart';
 import 'package:oppenhomies/widgets/list_tiles/stock_list_tile.dart';
 import 'package:oppenhomies/widgets/typography/title_large.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 Widget marketIndexList({
   required String title,
@@ -14,7 +15,9 @@ Widget marketIndexList({
 }) {
   return Column(
     children: [
-      OpTitleLarge(title, onPressed: onPressed, leading: icon),
+      Skeleton.keep(
+        child: OpTitleLarge(title, onPressed: onPressed, leading: icon),
+      ),
       ...indexes.map((index) => IndexListTile(index: index)),
       const SizedBox(height: OpSpacing.lg),
     ],
@@ -29,7 +32,9 @@ Widget marketStockList({
 }) {
   return Column(
     children: [
-      OpTitleLarge(title, onPressed: onPressed, leading: icon),
+      Skeleton.keep(
+        child: OpTitleLarge(title, onPressed: onPressed, leading: icon),
+      ),
       ...stocks.map((stock) => StockListTile(stock: stock)),
       const SizedBox(height: OpSpacing.lg),
     ],

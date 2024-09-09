@@ -150,7 +150,7 @@ func listenForUpdates(ctx context.Context, redisClient *redis.Client, stockChan 
 
 func getInitialMainMarketData(ctx context.Context, redisClient *redis.Client) gin.H {
     return gin.H{
-        "topVolume":  getTopN(ctx, redisClient, "stock_volume", 3),
+        "topVolume":  getTopN(ctx, redisClient, "stock_volume", 10),
         "topIncrease": getTopN(ctx, redisClient, "stock_increase", 3),
         "topDecrease":  getTopN(ctx, redisClient, "stock_decrease", 3),
         "indexes":    getDefaultIndexes(ctx, redisClient),
