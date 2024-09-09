@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:oppenhomies/domain/models/auth/auth_token_response.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -6,15 +7,15 @@ part 'auth_repository.g.dart';
 
 class AuthRepository {
   final Dio _dio;
-  // final FlutterSecureStorage _storage;
+  final FlutterSecureStorage _storage;
   final String _apiEndpoint;
 
   AuthRepository({
     required Dio dio,
-    // required FlutterSecureStorage storage,
+    required FlutterSecureStorage storage,
     required String apiEndpoint,
   })  : _dio = dio,
-        // _storage = storage,
+        _storage = storage,
         _apiEndpoint = apiEndpoint;
 
   Future<AuthTokenResponse> signIn({
@@ -49,20 +50,20 @@ class AuthRepository {
   }
 
   Future<void> saveTokens(AuthTokenResponse tokens) async {
-    // await _storage.write(key: 'access_token', value: tokens.accessToken);
-    // await _storage.write(key: 'id_token', value: tokens.idToken);
-    // await _storage.write(key: 'refresh_token', value: tokens.refreshToken);
+    await _storage.write(key: 'access_token', value: tokens.accessToken);
+    await _storage.write(key: 'id_token', value: tokens.idToken);
+    await _storage.write(key: 'refresh_token', value: tokens.refreshToken);
   }
 
   Future<bool> hasValidToken() async {
-    // final accessToken = await _storage.read(key: 'access_token');
-    // return accessToken != null && accessToken.isNotEmpty;
+    final accessToken = await _storage.read(key: 'access_token');
+    return accessToken != null && accessToken.isNotEmpty;
 
-    return true;
+    // return true;
   }
 
   Future<void> clearTokens() async {
-    // await _storage.deleteAll();
+    await _storage.deleteAll();
   }
 }
 
@@ -70,7 +71,7 @@ class AuthRepository {
 AuthRepository authRepository(AuthRepositoryRef ref) {
   return AuthRepository(
     dio: Dio(),
-    // storage: const FlutterSecureStorage(),
+    storage: const FlutterSecureStorage(),
     apiEndpoint: 'http://192.168.25.229:8080',
   );
 }
