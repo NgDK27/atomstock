@@ -1,18 +1,21 @@
-import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:developer';
+
+import 'package:dio/dio.dart' as dio;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart' as secure_storage;
 import 'package:oppenhomies/domain/models/auth/auth_token_response.dart';
+import 'package:oppenhomies/domain/models/user/user_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_repository.g.dart';
 
 class AuthRepository {
-  final Dio _dio;
-  final FlutterSecureStorage _storage;
+  final dio.Dio _dio;
+  final secure_storage.FlutterSecureStorage _storage;
   final String _apiEndpoint;
 
   AuthRepository({
-    required Dio dio,
-    required FlutterSecureStorage storage,
+    required dio.Dio dio,
+    required secure_storage.FlutterSecureStorage storage,
     required String apiEndpoint,
   })  : _dio = dio,
         _storage = storage,
@@ -65,13 +68,24 @@ class AuthRepository {
   Future<void> clearTokens() async {
     await _storage.deleteAll();
   }
+
+  Future<UserModel?> getUserInfo() async{
+    final String? accessToken = await _storage.read(key: 'access_token');
+
+    final response = await _dio.get('$_apiEndpoint/user', options: dio.Options(headers: {'authorization': 'Bearer $accessToken'}));
+
+    final user = UserModel.fromJson(response.data);
+    log(user.toString());
+
+    return UserModel.fromJson(response.data);
+  }
 }
 
 @riverpod
 AuthRepository authRepository(AuthRepositoryRef ref) {
   return AuthRepository(
-    dio: Dio(),
-    storage: const FlutterSecureStorage(),
-    apiEndpoint: 'http://192.168.25.229:8080',
+    dio: dio.Dio(),
+    storage: const secure_storage.FlutterSecureStorage(),
+    apiEndpoint: 'http://192.168.25.122:8080',
   );
 }

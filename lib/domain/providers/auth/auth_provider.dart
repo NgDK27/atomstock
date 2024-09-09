@@ -6,15 +6,14 @@ part 'auth_provider.g.dart';
 @riverpod
 class Auth extends _$Auth {
   late final AuthRepository _repository;
-  // final _storage = const FlutterSecureStorage();
 
   @override
   Future<bool> build() async {
     _repository = ref.read(authRepositoryProvider);
-    return _checkAuthStatus();
+    return checkAuthStatus();
   }
 
-  Future<bool> _checkAuthStatus() async {
+  Future<bool> checkAuthStatus() async {
     return await _repository.hasValidToken();
   }
 

@@ -4,6 +4,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:oppenhomies/domain/providers/auth/auth_provider.dart';
+import 'package:oppenhomies/domain/providers/auth/auth_user_info_provider.dart';
 import 'package:oppenhomies/navigation/routes.dart';
 import 'package:oppenhomies/pages/onboarding/ai_select/models/AiSelectCardData.dart';
 import 'package:oppenhomies/pages/settings/settings/layouts/ai_select_card_settings.dart';
@@ -11,9 +12,11 @@ import 'package:oppenhomies/pages/settings/settings/model/SettingsDestination.da
 import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/opacities.dart';
 import 'package:oppenhomies/styles/spacings.dart';
+import 'package:oppenhomies/styles/text.dart';
 import 'package:oppenhomies/widgets/buttons/neutral/OpFilledNeutralButton.dart';
 import 'package:oppenhomies/widgets/divider/divider_variant.dart';
 import 'package:oppenhomies/widgets/scaffolds/platform_sliver_scaffold.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class Settings extends HookConsumerWidget {
   const Settings({super.key});
@@ -114,6 +117,8 @@ class Settings extends HookConsumerWidget {
       );
     }
 
+    final signedInEmail = ref.watch(authUserInfoProvider);
+
     return OpPlatformSliverScaffold(
       title: "Settings",
       transitionBetweenRoutes: false,
@@ -126,7 +131,33 @@ class Settings extends HookConsumerWidget {
                 if (index == 0) {
                   // Add AiSelectCardSettings as the first item
                   return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: OpSpacing.md),
+                        child: signedInEmail.when(
+                          data: (data) => Text(
+                            data?.email ?? "",
+                            textAlign: TextAlign.start,
+                            style: OpTextStyle.titleLarge(context),
+                          ),
+                          error: (err, stack) => Text(
+                            "Failed to get email",
+                            textAlign: TextAlign.start,
+                            style: OpTextStyle.titleLarge(context),
+                          ),
+                          loading: () => Skeletonizer(
+                            containersColor:
+                                OpDynamicColor.primaryVariant(context),
+                            child: Text(
+                              "testEmail@email.com",
+                              textAlign: TextAlign.start,
+                              style: OpTextStyle.titleLarge(context),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: OpSpacing.xl),
                       AiSelectCardSettings(
                         model: AiSelectCardData.slowAndSteadyAi,
                       ),
@@ -159,7 +190,8 @@ class Settings extends HookConsumerWidget {
                           ),
                         ),
                         cupertino: (_, __) => CupertinoListTileData(
-                          padding: const EdgeInsets.symmetric(vertical: OpSpacing.sm, horizontal: OpSpacing.md),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: OpSpacing.sm, horizontal: OpSpacing.md),
                         ),
                       ),
                       if (index == 3 || index == 7 || index == 9)
@@ -174,7 +206,7 @@ class Settings extends HookConsumerWidget {
                   return Padding(
                     padding: const EdgeInsets.all(OpSpacing.md),
                     child: OpFilledNeutralButton(
-                      onPressed: () =>handleSignOut(ref),
+                      onPressed: () => handleSignOut(ref),
                       text: 'Sign out',
                     ),
                   );
