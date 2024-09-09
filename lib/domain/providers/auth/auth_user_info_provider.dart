@@ -1,6 +1,6 @@
 import 'package:oppenhomies/domain/models/user/user_model.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:oppenhomies/domain/providers/auth/auth_repository.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_user_info_provider.g.dart';
 
@@ -15,12 +15,14 @@ class AuthUserInfo extends _$AuthUserInfo {
   }
 
   Future<UserModel?> _getUserModel() async {
-    if (await _repository.hasValidToken()) {
-      final userInfo = await _repository.getUserInfo();
-      return userInfo;
-    } else {
-      return null;
-    }
+    final userInfo = await _repository.getUserInfo();
+    return userInfo;
+  }
+
+  Future<bool> deposit(double amount) async {
+    final res = await _repository.deposit(amount);
+    refresh();
+    return res;
   }
 
   Future<void> refresh() async {

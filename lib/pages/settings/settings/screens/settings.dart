@@ -30,12 +30,12 @@ class Settings extends HookConsumerWidget {
         materialIcon: Icons.add,
         cupertinoIcon: CupertinoIcons.add,
       ),
-      SettingsDestination(
-        title: "Withdraw funds",
-        route: OpRoutes.withdrawFunds.name,
-        materialIcon: Icons.account_balance_wallet,
-        cupertinoIcon: CupertinoIcons.creditcard,
-      ),
+      // SettingsDestination(
+      //   title: "Withdraw funds",
+      //   route: OpRoutes.withdrawFunds.name,
+      //   materialIcon: Icons.account_balance_wallet,
+      //   cupertinoIcon: CupertinoIcons.creditcard,
+      // ),
       SettingsDestination(
         title: "Connected accounts",
         route: OpRoutes.connectedAccounts.name,
@@ -194,7 +194,7 @@ class Settings extends HookConsumerWidget {
                               vertical: OpSpacing.sm, horizontal: OpSpacing.md),
                         ),
                       ),
-                      if (index == 3 || index == 7 || index == 9)
+                      if (index == 2 || index == 6 || index == 8)
                         const Padding(
                           padding:
                               EdgeInsets.symmetric(horizontal: OpSpacing.md),

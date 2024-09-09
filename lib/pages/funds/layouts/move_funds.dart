@@ -5,6 +5,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:oppenhomies/domain/providers/auth/auth_user_info_provider.dart';
+import 'package:oppenhomies/navigation/routes.dart';
 import 'package:oppenhomies/pages/funds/helpers/currency_input_formatter.dart';
 import 'package:oppenhomies/pages/funds/models/move_funds_type.dart';
 import 'package:oppenhomies/styles/colors.dart';
@@ -21,13 +23,10 @@ import 'package:oppenhomies/widgets/tables/simple_row.dart';
 
 class MoveFunds extends HookConsumerWidget {
   final MoveFundsType type;
-  final double
-      currentBalance; // TODO: Figure out the right way to pass this data. Probably use Riverpod
 
   const MoveFunds({
     super.key,
     required this.type,
-    this.currentBalance = 123456789, // TODO: Remove default value
   });
 
   void handleChangeAccount({required BuildContext context}) {
@@ -50,28 +49,69 @@ class MoveFunds extends HookConsumerWidget {
 
   void handleMoveFunds({
     required BuildContext context,
+    required WidgetRef ref,
+    required double currentBalance,
     required MoveFundsType type,
     required double amount,
-  }) {
-    showPlatformDialog(
-      context: context,
-      builder: (_) => PlatformAlertDialog(
-        title: Text("${type.label}ing funds attempted"),
-        content: Text(
-          "Amount: ${amount.vndFormat()}",
-        ),
-        actions: [
-          PlatformDialogAction(
-            child: const Text("OK"),
-            onPressed: () => context.pop(),
-          ),
-        ],
-      ),
-    );
+  }) async {
+    switch (type) {
+      case MoveFundsType.add:
+        {
+          final Future<bool> res =
+              ref.read(authUserInfoProvider.notifier).deposit(amount);
+
+          if (await res) {
+            if (context.mounted) {
+              showPlatformDialog(
+                context: context,
+                builder: (_) => PlatformAlertDialog(
+                  title: Text("${type.label}ing funds successful"),
+                  content: Text(
+                    "New balance: ${(currentBalance + amount).vndFormat()}",
+                  ),
+                  actions: [
+                    PlatformDialogAction(
+                      child: const Text("Back to portfolio"),
+                      onPressed: () => context.goNamed(OpRoutes.portfolio.name),
+                    ),
+                  ],
+                ),
+              );
+            }
+          } else {
+            if (context.mounted) {
+              showPlatformDialog(
+                context: context,
+                builder: (_) => PlatformAlertDialog(
+                  title: Text("${type.label}ing funds failed"),
+                  content: const Text(
+                    "Please try again",
+                  ),
+                  actions: [
+                    PlatformDialogAction(
+                      child: const Text("OK"),
+                      onPressed: () => context.pop(),
+                    ),
+                  ],
+                ),
+              );
+            }
+            break;
+          }
+        }
+      // TODO: Handle this case.
+      case MoveFundsType.withdraw:
+        {
+          throw UnimplementedError();
+        }
+    }
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final userInfo = ref.watch(authUserInfoProvider);
+    final currentBalance = userInfo.requireValue?.balance ?? 0;
+
     final inputController = useTextEditingController();
     final accountController =
         useTextEditingController(text: "TymeX • Free Testing Account");
@@ -283,9 +323,12 @@ class MoveFunds extends HookConsumerWidget {
               onPressed: isButtonEnabled.value
                   ? () => handleMoveFunds(
                         context: context,
+                        ref: ref,
+                        currentBalance: currentBalance,
                         type: type,
-                        amount: double.parse(inputController.text
-                            .replaceAll(RegExp(r'[^0-9]'), ''),),
+                        amount: double.parse(
+                          inputController.text.replaceAll(RegExp(r'[^\d]'), ''),
+                        ),
                       )
                   : null,
             ),

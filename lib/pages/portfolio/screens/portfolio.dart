@@ -138,12 +138,12 @@ class Portfolio extends HookConsumerWidget {
                           text: "Add",
                           onPressed: () => navigateToAddFunds(context: context),
                         ),
-                        OpIconButton(
-                          icon: PlatformIcons(context).downArrow,
-                          text: "Withdraw",
-                          onPressed: () =>
-                              navigateToWithdrawFunds(context: context),
-                        ),
+                        // OpIconButton(
+                        //   icon: PlatformIcons(context).downArrow,
+                        //   text: "Withdraw",
+                        //   onPressed: () =>
+                        //       navigateToWithdrawFunds(context: context),
+                        // ),
                       ],
                     ),
                     const SizedBox(
