@@ -1,11 +1,11 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:oppenhomies/domain/models/stock/stock_model.dart';
+import 'package:oppenhomies/domain/providers/auth/auth_user_info_provider.dart';
 import 'package:oppenhomies/navigation/routes.dart';
 import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/spacings.dart';
@@ -16,6 +16,7 @@ import 'package:oppenhomies/widgets/list_tiles/portfolio_list_tile.dart';
 import 'package:oppenhomies/widgets/scaffolds/platform_sliver_scaffold.dart';
 import 'package:oppenhomies/widgets/typography/title.dart';
 import 'package:oppenhomies/widgets/typography/title_small.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class Portfolio extends HookConsumerWidget {
   const Portfolio({super.key});
@@ -46,8 +47,10 @@ class Portfolio extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final vndFund = useState<double>(200500000);
-    final totalPortfolioValue = useState<double>(1007000000);
+    final userInfo = ref.watch(authUserInfoProvider);
+
+    // final vndFund = useState<double>(200500000);
+    // final totalPortfolioValue = useState<double>(1007000000);
 
     final sampleStocks = [
       StockModel.sample(),
@@ -109,11 +112,20 @@ class Portfolio extends HookConsumerWidget {
                     const SizedBox(
                       height: OpSpacing.xs3,
                     ),
-                    Text(
-                      totalPortfolioValue.value.vndFormat(),
-                      style: OpTextStyle.display(context).spacedOut().copyWith(
-                            color: OpDynamicColor.onSurface(context),
-                          ),
+                    Skeletonizer(
+                      enabled: !userInfo.hasValue,
+                      enableSwitchAnimation: true,
+                      containersColor: OpDynamicColor.primaryVariant(context),
+                      child: Text(
+                        userInfo.hasValue
+                            ? userInfo.value!.balance.vndFormat()
+                            : "5000",
+                        style:
+                            OpTextStyle.display(context).spacedOut().copyWith(
+                                  color: OpDynamicColor.onSurface(context),
+                                ),
+                        textAlign: TextAlign.start,
+                      ),
                     ),
                     const SizedBox(
                       height: OpSpacing.xl,
@@ -144,11 +156,16 @@ class Portfolio extends HookConsumerWidget {
 
               //region Funds
               const OpTitle("Funds"),
-              PortfolioListTile(
-                leadingText: "VND",
-                subtitleText: 'Vietnam Dong',
-                topTrailingText: vndFund.value.vndFormat(),
-                bottomTrailingText: "",
+              Skeletonizer(
+                enabled: !userInfo.hasValue,
+                enableSwitchAnimation: true,
+                containersColor: OpDynamicColor.primaryVariant(context),
+                child: PortfolioListTile(
+                  leadingText: "VND",
+                  subtitleText: 'Vietnam Dong',
+                  topTrailingText: userInfo.hasValue ? userInfo.value!.balance.vndFormat() : "1000",
+                  bottomTrailingText: "",
+                ),
               ),
               const SizedBox(
                 height: OpSpacing.xl,

@@ -4,6 +4,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/styles/text.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class PortfolioListTile extends HookWidget {
   final String leadingText;
@@ -30,11 +31,14 @@ class PortfolioListTile extends HookWidget {
 
     return PlatformListTile(
       onTap: onPressed,
-      title: Text(
-        leadingText,
-        style: titleStyle,
+      title: Skeleton.keep(
+        child: Text(
+          leadingText,
+          style: titleStyle,
+        ),
       ),
-      subtitle: Text(subtitleText, style: subtitleStyle),
+      subtitle:
+          Skeleton.keep(child: Text(subtitleText, style: subtitleStyle)),
       trailing: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [

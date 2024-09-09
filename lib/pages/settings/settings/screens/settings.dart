@@ -117,7 +117,7 @@ class Settings extends HookConsumerWidget {
       );
     }
 
-    final signedInEmail = ref.watch(authUserInfoProvider);
+    final userInfo = ref.watch(authUserInfoProvider);
 
     return OpPlatformSliverScaffold(
       title: "Settings",
@@ -135,7 +135,7 @@ class Settings extends HookConsumerWidget {
                     children: [
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: OpSpacing.md),
-                        child: signedInEmail.when(
+                        child: userInfo.when(
                           data: (data) => Text(
                             data?.email ?? "",
                             textAlign: TextAlign.start,
