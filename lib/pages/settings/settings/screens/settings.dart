@@ -10,6 +10,7 @@ import 'package:oppenhomies/pages/onboarding/ai_select/models/AiSelectCardData.d
 import 'package:oppenhomies/pages/settings/settings/layouts/ai_select_card_settings.dart';
 import 'package:oppenhomies/pages/settings/settings/model/SettingsDestination.dart';
 import 'package:oppenhomies/styles/colors.dart';
+import 'package:oppenhomies/styles/effects.dart';
 import 'package:oppenhomies/styles/opacities.dart';
 import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/styles/text.dart';
@@ -147,8 +148,7 @@ class Settings extends HookConsumerWidget {
                             style: OpTextStyle.titleLarge(context),
                           ),
                           loading: () => Skeletonizer(
-                            containersColor:
-                                OpDynamicColor.primaryVariant(context),
+                            effect:  opShimmerEffect(context),
                             child: Text(
                               "testEmail@email.com",
                               textAlign: TextAlign.start,

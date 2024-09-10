@@ -208,7 +208,7 @@ class StockRepository {
 StockRepository stockRepository(StockRepositoryRef ref) {
   return StockRepository(
     dio: Dio(),
-    apiEndpoint: 'http://192.168.25.229',
+    apiEndpoint: 'http://192.168.25.122',
     wsManager: ref.watch(webSocketManagerProvider),
   );
 }

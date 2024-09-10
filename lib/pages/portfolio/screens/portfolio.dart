@@ -8,6 +8,7 @@ import 'package:oppenhomies/domain/models/stock/stock_model.dart';
 import 'package:oppenhomies/domain/providers/auth/auth_user_info_provider.dart';
 import 'package:oppenhomies/navigation/routes.dart';
 import 'package:oppenhomies/styles/colors.dart';
+import 'package:oppenhomies/styles/effects.dart';
 import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/styles/text.dart';
 import 'package:oppenhomies/widgets/buttons/icon_button.dart';
@@ -115,7 +116,7 @@ class Portfolio extends HookConsumerWidget {
                     Skeletonizer(
                       enabled: !userInfo.hasValue,
                       enableSwitchAnimation: true,
-                      containersColor: OpDynamicColor.primaryVariant(context),
+                         effect:  opShimmerEffect(context),
                       child: Text(
                         userInfo.hasValue
                             ? userInfo.value!.balance.vndFormat()
@@ -159,7 +160,7 @@ class Portfolio extends HookConsumerWidget {
               Skeletonizer(
                 enabled: !userInfo.hasValue,
                 enableSwitchAnimation: true,
-                containersColor: OpDynamicColor.primaryVariant(context),
+                   effect:  opShimmerEffect(context),
                 child: PortfolioListTile(
                   leadingText: "VND",
                   subtitleText: 'Vietnam Dong',

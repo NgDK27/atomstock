@@ -64,14 +64,14 @@ class StockModel with _$StockModel {
 
   factory StockModel.detailedSample() => StockModel(
         // id: 'stock-004',
-        name: 'Cà Phê Sữa Đá Tech',
+        name: 'Cà Phê Sữa Đá Tech and Milktea with Boba plus Snack',
         symbol: 'CAFE',
         currentPrice: 186000,
         priceChange: 8000,
         percentChange: 4.49,
         floor: 170000,
         ceiling: 198000,
-        totalVolume: 3141592,
+        totalVolume: 584336112000,
         totalValue: 584336112000,
         open: 178000,
         close: 186000,

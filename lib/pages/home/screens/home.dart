@@ -10,6 +10,7 @@ import 'package:oppenhomies/domain/providers/stock/market/stock_market_provider.
 import 'package:oppenhomies/navigation/routes.dart';
 import 'package:oppenhomies/pages/home/layouts/stock_list.dart';
 import 'package:oppenhomies/styles/colors.dart';
+import 'package:oppenhomies/styles/effects.dart';
 import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/widgets/scaffolds/platform_sliver_scaffold.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -61,6 +62,8 @@ class Home extends ConsumerWidget {
       StockModel.detailedSample(),
       StockModel.detailedSample(),
       StockModel.detailedSample(),
+      StockModel.detailedSample(),
+      StockModel.detailedSample(),
     ];
 
     final sampleIndex = IndexModel(
@@ -73,7 +76,6 @@ class Home extends ConsumerWidget {
         totalValue: 12345);
 
     final sampleIndexes = [
-      sampleIndex,
       sampleIndex,
       sampleIndex,
     ];
@@ -149,7 +151,7 @@ class Home extends ConsumerWidget {
                   ]),
                 ),
                 loading: () => Skeletonizer(
-                  containersColor: OpDynamicColor.primaryVariant(context),
+                     effect: opShimmerEffect(context),
                   child: Column(
                     children: [
                       marketIndexList(
