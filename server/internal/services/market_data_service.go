@@ -96,8 +96,8 @@ func (s *MarketDataService) processStockData(data []byte, symbol string) error {
     } else {
         _, err = s.redisClient.HSet(ctx, key, map[string]interface{}{
             "Price":       stockData.Change * -1,
-            "Change":      stockData.Change + stockData.Change,
-            "RatioChange": stockData.RatioChange + stockData.RatioChange,
+            "Change":      stockData.Change - stockData.Change,
+            "RatioChange": stockData.RatioChange - stockData.RatioChange,
             "Volume":      stockData.Volume,
         }).Result()
     
