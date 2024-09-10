@@ -208,6 +208,11 @@ class StockRepository {
     final response = await _dio.get('$_apiEndpoint:8080/search');
     return StockMarketStocksModel.fromJsonList(response.data);
   }
+
+  Future<StockMarketStocksModel> searchStock(String query) async {
+    final response = await _dio.get('$_apiEndpoint:8080/search?q=$query');
+    return StockMarketStocksModel.fromJsonList(response.data);
+  }
 }
 
 @riverpod

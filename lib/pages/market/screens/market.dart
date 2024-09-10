@@ -69,7 +69,11 @@ class Market extends ConsumerWidget {
   Widget _searchBar(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
-          OpSpacing.md, OpSpacing.none, OpSpacing.md, OpSpacing.md),
+        OpSpacing.md,
+        OpSpacing.none,
+        OpSpacing.md,
+        OpSpacing.md,
+      ),
       child: PlatformWidget(
         cupertino: (_, __) => CupertinoSearchTextField(
           placeholder: "Search for stocks and indexes",
@@ -81,7 +85,7 @@ class Market extends ConsumerWidget {
             child: Icon(Icons.search),
           ),
           hintText: "Search for stocks and indexes",
-          elevation: const MaterialStatePropertyAll(0),
+          elevation: const WidgetStatePropertyAll(0),
           onTap: () => navigateMarketSearch(context),
         ),
       ),

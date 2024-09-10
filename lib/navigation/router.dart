@@ -9,8 +9,9 @@ class OpRouter {
   OpRouter._();
 
   static router(WidgetRef ref) => GoRouter(
-        initialLocation: OpRoutes.onboarding.path,
-        redirect: (BuildContext context, GoRouterState state) async {
+        // initialLocation: OpRoutes.onboarding.path,
+    initialLocation: "${ OpRoutes.market.path}/${OpRoutes.search.path}",
+  redirect: (BuildContext context, GoRouterState state) async {
           final isSignedIn = await ref.read(authProvider.future);
           final isOnboardingRoute =
               state.matchedLocation.startsWith(OpRoutes.onboarding.path);

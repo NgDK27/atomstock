@@ -16,6 +16,7 @@ import 'package:oppenhomies/pages/home/screens/top_decliners.dart';
 import 'package:oppenhomies/pages/home/screens/top_movers.dart';
 import 'package:oppenhomies/pages/home/screens/top_performers.dart';
 import 'package:oppenhomies/pages/market/screens/market.dart';
+import 'package:oppenhomies/pages/market/screens/search.dart';
 import 'package:oppenhomies/pages/market/stock_details/screens/stock_details_tab_scaffold.dart';
 import 'package:oppenhomies/pages/notifications/screens/notifications.dart';
 import 'package:oppenhomies/pages/onboarding/ai_select/screens/ai_select.dart';
@@ -145,7 +146,7 @@ class OpRoutes {
   static final search = RouteModel(
     path: 'search',
     name: 'search',
-    builder: (context, state) => const Placeholder(),
+    builder: (context, state) => const Search(),
   );
 
   static final stockDetails = RouteModel(
