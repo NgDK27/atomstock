@@ -12,7 +12,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"reflect"
 	"os/signal"
     "syscall"
 	"time"
@@ -228,36 +227,64 @@ func signInHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-func depositHandler(c *gin.Context) {
-	var input UpdateBalanceInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
-		return
-	}
+func depositHandler(redisClient *redis.Client) gin.HandlerFunc {
+    return func(c *gin.Context) {
+        var input UpdateBalanceInput
+        if err := c.ShouldBindJSON(&input); err != nil {
+            c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+            return
+        }
 
-	amount, err := strconv.ParseFloat(input.Amount, 64)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid amount"})
-		return
-	}
+        amount, err := strconv.ParseFloat(input.Amount, 64)
+        if err != nil {
+            c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid amount"})
+            return
+        }
 
-	tokenString := c.GetHeader("Authorization")
-	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
-	userID, err := extractUserIDFromToken(tokenString)
-	fmt.Println(reflect.TypeOf(amount))
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
-		return
-	}
+        userID, _ := c.Get("userID")
+        userIDStr, ok := userID.(string)
+        if !ok {
+            c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user ID"})
+            return
+        }
 
-	_, err = db.Exec("UPDATE users SET balance = balance + $1 WHERE id = $2", amount, userID)
-	if err != nil {
-		log.Printf("Failed to deposit for user %s: %v", userID, err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to deposit"})
-		return
-	}
+        // Start a transaction
+        tx, err := db.BeginTx(c.Request.Context(), nil)
+        if err != nil {
+            log.Printf("Failed to begin transaction: %v", err)
+            c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process deposit"})
+            return
+        }
+        defer tx.Rollback()
 
-	c.JSON(http.StatusOK, gin.H{"message": "Balance updated successfully"})
+        // Update balance in database
+        var newBalance float64
+        err = tx.QueryRow("UPDATE users SET balance = balance + $1 WHERE id = $2 RETURNING balance", amount, userIDStr).Scan(&newBalance)
+        if err != nil {
+            log.Printf("Failed to deposit for user %s: %v", userIDStr, err)
+            c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to deposit"})
+            return
+        }
+
+        // Commit the transaction
+        if err := tx.Commit(); err != nil {
+            log.Printf("Failed to commit transaction: %v", err)
+            c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process deposit"})
+            return
+        }
+
+        // Update Redis balance
+        _, err = redisClient.HSet(c.Request.Context(), fmt.Sprintf("user:%s", userIDStr), "balance", newBalance).Result()
+        if err != nil {
+            log.Printf("Failed to update Redis balance for user %s: %v", userIDStr, err)
+        }
+
+        log.Printf("Deposit successful for user %s. New balance: %f", userIDStr, newBalance)
+        c.JSON(http.StatusOK, gin.H{
+            "message": "Balance updated successfully",
+            "new_balance": newBalance,
+        })
+    }
 }
 
 func getUserInfoHandler(c *gin.Context) {
@@ -390,7 +417,7 @@ func main() {
 	protected := r.Group("/")
 	protected.Use(AuthMiddleware())
 	protected.GET("/hello", helloWorldHandler)
-	protected.POST("/deposit", depositHandler) 
+	protected.POST("/deposit", depositHandler(redisClient))	 
 	protected.GET("/user", getUserInfoHandler)
 
 	// Trading rule endpoints

@@ -281,7 +281,11 @@ func (s *AutomatedTradingService) closeTrade(tx *sql.Tx, trade models.Trade, exi
         return fmt.Errorf("error setting rule to inactive: %v", err)
     }
 
-    // Update Redis (consider moving this outside the transaction if it's slow)
+    if err := tx.Commit(); err != nil {
+        log.Printf("Error committing transaction: %v", err)
+    }
+
+    // Update Redis 
     s.redisClient.HIncrByFloat(context.Background(), fmt.Sprintf("user:%s", trade.UserID), "balance", tradeValue)
 
     // Publish trade closure
