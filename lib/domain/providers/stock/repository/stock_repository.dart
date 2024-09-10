@@ -202,6 +202,12 @@ class StockRepository {
   void disconnectWebSocket(String endpoint) {
     _wsManager.disconnect(endpoint);
   }
+
+  // Search
+  Future<StockMarketStocksModel> fetchAllStocks() async {
+    final response = await _dio.get('$_apiEndpoint:8080/search');
+    return StockMarketStocksModel.fromJsonList(response.data);
+  }
 }
 
 @riverpod
