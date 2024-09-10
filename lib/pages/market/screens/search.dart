@@ -13,65 +13,69 @@ class Search extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return CustomScrollView(
-      slivers: [
-        // Header here
-        SliverPersistentHeader(
-          pinned: true,
-          delegate: _MyHeaderDelegate(
-            child: Container(
-              color: OpDynamicColor.surface(context),
-              child: SafeArea(
-                top: true,
-                bottom: false,
-                minimum: const EdgeInsets.symmetric(horizontal: OpSpacing.md),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: PlatformWidget(
-                        cupertino: (_, __) => CupertinoSearchTextField(
-                          placeholder: "Search for stocks and indexes",
-                          autofocus: true,
-                          onTap: () {},
-                        ),
-                        material: (_, __) => SearchBar(
-                          leading: BackButton(),
-                          hintText: "Search for stocks and indexes",
-                          elevation: const WidgetStatePropertyAll(0),
-                          autoFocus: true,
-                          onTap: () {},
+    return Container(
+      color: OpDynamicColor.surface(context),
+      child: CustomScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        slivers: [
+          // Header here
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: _MyHeaderDelegate(
+              child: Container(
+                color: OpDynamicColor.surface(context),
+                child: SafeArea(
+                  top: true,
+                  bottom: false,
+                  minimum: const EdgeInsets.symmetric(horizontal: OpSpacing.md),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: PlatformWidget(
+                          cupertino: (_, __) => CupertinoSearchTextField(
+                            placeholder: "Search for stocks and indexes",
+                            autofocus: true,
+                            onTap: () {},
+                          ),
+                          material: (_, __) => SearchBar(
+                            leading: BackButton(),
+                            hintText: "Search for stocks and indexes",
+                            elevation: const WidgetStatePropertyAll(0),
+                            autoFocus: true,
+                            onTap: () {},
+                          ),
                         ),
                       ),
-                    ),
-                    // iOS Done Button
-                    PlatformWidget(
-                      cupertino: (_, __) => PlatformTextButton(
-                        onPressed: () => context.pop(),
-                        padding: EdgeInsets.fromLTRB(OpSpacing.md,
-                            OpSpacing.none, OpSpacing.none, OpSpacing.none),
-                        child: Text("Done"),
-                      ),
-                    )
-                  ],
+                      // iOS Done Button
+                      PlatformWidget(
+                        cupertino: (_, __) => PlatformTextButton(
+                          onPressed: () => context.pop(),
+                          padding: EdgeInsets.fromLTRB(OpSpacing.md,
+                              OpSpacing.none, OpSpacing.none, OpSpacing.none),
+                          child: Text("Done"),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
+              minHeight: 120,
+              maxHeight: 120,
             ),
-            minHeight: 120,
-            maxHeight: 120,
           ),
-        ),
 
-        // Body
-        SliverSafeArea(
-          top: false,
-          sliver: SliverList.builder(
-            itemBuilder: (context, index) {
-              return StockListTile(stock: StockModel.sample());
-            },
-            itemCount: 20,
-          ),
-        )
-      ],
+          // Body
+          SliverSafeArea(
+            top: false,
+            sliver: SliverList.builder(
+              itemBuilder: (context, index) {
+                return StockListTile(stock: StockModel.sample());
+              },
+              itemCount: 20,
+            ),
+          )
+        ],
+      ),
     );
   }
 }
