@@ -209,9 +209,14 @@ class StockRepository {
     return StockMarketStocksModel.fromJsonList(response.data);
   }
 
-  Future<StockMarketStocksModel> searchStock(String query) async {
+  Future<StockMarketStocksModel?> searchStock(String query) async {
     final response = await _dio.get('$_apiEndpoint:8080/search?q=$query');
-    return StockMarketStocksModel.fromJsonList(response.data);
+     try {
+       final result = StockMarketStocksModel.fromJsonList(response.data);
+       return result;
+     } catch (e) {
+       return null;
+    }
   }
 }
 

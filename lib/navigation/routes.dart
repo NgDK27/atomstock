@@ -146,7 +146,11 @@ class OpRoutes {
   static final search = RouteModel(
     path: 'search',
     name: 'search',
-    builder: (context, state) => const Search(),
+    pageBuilder: (context, state) => buildPageWithFloatTransition(
+      context: context,
+      state: state,
+      child: const Search(),
+    ),
   );
 
   static final stockDetails = RouteModel(

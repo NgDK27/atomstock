@@ -1,19 +1,32 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
+import 'package:oppenhomies/domain/models/stock/stock_model.dart';
+import 'package:oppenhomies/domain/providers/stock/market/stock_search.dart';
 import 'package:oppenhomies/styles/colors.dart';
+import 'package:oppenhomies/styles/effects.dart';
 import 'package:oppenhomies/styles/opacities.dart';
 import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/styles/text.dart';
+import 'package:oppenhomies/widgets/list_tiles/stock_list_tile.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
-class Search extends ConsumerWidget {
+class Search extends HookConsumerWidget {
   const Search({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final searchResult = ref.watch(stockSearchProvider);
+    final queryController = useTextEditingController();
+
+    void handleQueryChange() {
+      ref.read(stockSearchProvider.notifier).searchStock(queryController.text);
+    }
+
     return Container(
       color: OpDynamicColor.surface(context),
       child: CustomScrollView(
@@ -34,16 +47,18 @@ class Search extends ConsumerWidget {
                       Expanded(
                         child: PlatformWidget(
                           cupertino: (_, __) => CupertinoSearchTextField(
-                            placeholder: "Search for stocks and indexes",
+                            controller: queryController,
+                            placeholder: "Search for stocks",
                             autofocus: true,
-                            onTap: () {},
+                            onChanged: (_) => handleQueryChange(),
                           ),
                           material: (_, __) => SearchBar(
+                            controller: queryController,
                             leading: BackButton(),
                             hintText: "Search for stocks",
                             elevation: const WidgetStatePropertyAll(0),
                             autoFocus: true,
-                            onTap: () {},
+                            onChanged: (_) => handleQueryChange(),
                           ),
                         ),
                       ),
@@ -68,40 +83,106 @@ class Search extends ConsumerWidget {
           // Body
           SliverSafeArea(
             top: false,
-            sliver: SliverList.builder(
-              itemBuilder: (context, index) {
-                return Center(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: OpSpacing.md, vertical: OpSpacing.xl2),
-                    child: Column(
-                      children: [
-                        Icon(
-                          Symbols.search_rounded,
-                          color: OpDynamicColor.onSurface(context)
-                              .withOpacity(OpOpacity.secondary),
-                          size: 48,
-                          weight: 600,
-                        ),
-                        SizedBox(
-                          height: OpSpacing.xs,
-                        ),
-                        Text(
-                          "Search with a name or symbol",
-                          style: OpTextStyle.body(context)?.copyWith(
-                            color: OpDynamicColor.onSurface(context)
-                                .withOpacity(OpOpacity.secondary),
-                          ),
-                        ),
-                      ],
+            sliver: queryController.text.isEmpty
+                ? _searchPlaceholder(context)
+                : searchResult.when(
+                    data: (data) => data != null
+                        ? SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (context, idx) {
+                                return StockListTile(
+                                  stock: searchResult.requireValue!.stocks[idx],
+                                );
+                              },
+                              childCount: (searchResult.hasValue
+                                  ? searchResult.requireValue!.stocks.length
+                                  : 10),
+                            ),
+                          )
+                        : _searchNoResult(context),
+                    error: (_, __) => _searchNoResult(context),
+                    loading: () => SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, idx) {
+                          return Skeletonizer(
+                            effect: opShimmerEffect(context),
+                            child: StockListTile(
+                              stock: StockModel.sample(),
+                            ),
+                          );
+                        },
+                        childCount: 10,
+                      ),
                     ),
                   ),
-                );
-              },
-              itemCount: 1,
-            ),
-          )
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _searchPlaceholder(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: OpSpacing.md, vertical: OpSpacing.xl2),
+          child: Column(
+            children: [
+              Icon(
+                Symbols.search_rounded,
+                color: OpDynamicColor.onSurface(context)
+                    .withOpacity(OpOpacity.secondary),
+                size: 48,
+                weight: 600,
+              ),
+              SizedBox(
+                height: OpSpacing.xs,
+              ),
+              Text(
+                "Search with a name or symbol",
+                style: OpTextStyle.body(context)?.copyWith(
+                  color: OpDynamicColor.onSurface(context)
+                      .withOpacity(OpOpacity.secondary),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _searchNoResult(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: OpSpacing.md,
+            vertical: OpSpacing.xl2,
+          ),
+          child: Column(
+            children: [
+              Icon(
+                Symbols.search_off_rounded,
+                color: OpDynamicColor.onSurface(context)
+                    .withOpacity(OpOpacity.secondary),
+                size: 48,
+                weight: 600,
+              ),
+              SizedBox(
+                height: OpSpacing.xs,
+              ),
+              Text(
+                "No results found",
+                style: OpTextStyle.body(context)?.copyWith(
+                  color: OpDynamicColor.onSurface(context)
+                      .withOpacity(OpOpacity.secondary),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

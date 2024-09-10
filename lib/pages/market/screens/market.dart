@@ -75,18 +75,27 @@ class Market extends ConsumerWidget {
         OpSpacing.md,
       ),
       child: PlatformWidget(
-        cupertino: (_, __) => CupertinoSearchTextField(
-          placeholder: "Search for stocks and indexes",
+        cupertino: (_, __) => GestureDetector(
           onTap: () => navigateMarketSearch(context),
-        ),
-        material: (_, __) => SearchBar(
-          leading: const Padding(
-            padding: EdgeInsets.only(left: OpSpacing.xs),
-            child: Icon(Icons.search),
+          child: AbsorbPointer(
+            child: CupertinoSearchTextField(
+              placeholder: "Search for stocks",
+            ),
           ),
-          hintText: "Search for stocks",
-          elevation: const WidgetStatePropertyAll(0),
+        ),
+        material: (_, __) => InkWell(
           onTap: () => navigateMarketSearch(context),
+          child: AbsorbPointer(
+            child: SearchBar(
+              leading: const Padding(
+                padding: EdgeInsets.only(left: OpSpacing.xs),
+                child: Icon(Icons.search),
+              ),
+              hintText: "Search for stocks",
+              elevation: const WidgetStatePropertyAll(0),
+              onTap: () => navigateMarketSearch(context),
+            ),
+          ),
         ),
       ),
     );
