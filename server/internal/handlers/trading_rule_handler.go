@@ -4,6 +4,7 @@ import (
     "net/http"
     "strconv"
 	"database/sql"
+    "time"
 
     "github.com/gin-gonic/gin"
     "oppenhomies/server/internal/models"
@@ -94,14 +95,14 @@ func CreateTradingRule(db *sql.DB) gin.HandlerFunc {
         err = db.QueryRow(`
             INSERT INTO trading_rules (
                 user_id, symbol, shares, entry_condition_type, entry_trigger_value, 
-                entry_range_type, trailing_stop_loss_percentage, take_profit_percentage, is_active
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-            RETURNING id`,
+                entry_range_type, trailing_stop_loss_percentage, take_profit_percentage, is_active, created_at
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+            RETURNING id, is_active, created_at`,
             rule.UserID, rule.Symbol, rule.Shares, rule.EntryConditionType, rule.EntryTriggerValue,
-            rule.EntryRangeType, rule.TrailingStopLossPercentage, rule.TakeProfitPercentage, true).Scan(&rule.ID)
+            rule.EntryRangeType, rule.TrailingStopLossPercentage, rule.TakeProfitPercentage, true, time.Now()).Scan(&rule.ID, &rule.IsActive, &rule.CreatedAt)
 
         if err != nil {
-            c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create trading rule"})
+            c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
             return
         }
 
@@ -130,6 +131,20 @@ func UpdateTradingRule(db *sql.DB) gin.HandlerFunc {
             return
         }
 
+        // Check for trade associated with this rule
+        var openTradesCount int
+        err = db.QueryRow("SELECT COUNT(*) FROM trades WHERE rule_id = $1", id).Scan(&openTradesCount)
+        if err != nil {
+            c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check for trade"})
+            return
+        }
+
+        if openTradesCount > 0 {
+            c.JSON(http.StatusBadRequest, gin.H{"error": "Cannot update rule that has trade"})
+            return
+        }
+
+        // Update if there are no trade
         var updatedRule models.TradingRule
         if err := c.ShouldBindJSON(&updatedRule); err != nil {
             c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -207,6 +222,20 @@ func DeleteTradingRule(db *sql.DB) gin.HandlerFunc {
 
         userID, _ := c.Get("userID")
 
+        // Check for trade associated with this rule
+        var openTradesCount int
+        err = db.QueryRow("SELECT COUNT(*) FROM trades WHERE rule_id = $1", id).Scan(&openTradesCount)
+        if err != nil {
+            c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check for trade"})
+            return
+        }
+
+        if openTradesCount > 0 {
+            c.JSON(http.StatusBadRequest, gin.H{"error": "Cannot delete rule with trade"})
+            return
+        }
+
+        // Delete if there are no trades
         _, err = db.Exec("DELETE FROM trading_rules WHERE id = $1 AND user_id = $2", id, userID)
         if err != nil {
             c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete trading rule"})

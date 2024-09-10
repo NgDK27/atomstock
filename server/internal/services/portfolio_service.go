@@ -216,7 +216,7 @@ func (s *PortfolioService) GetPortfolio(userID string) (models.Portfolio, error)
         SELECT t.symbol, t.shares, t.entry_price
         FROM trades t
         WHERE t.user_id = $1 AND t.status = 'OPEN'
-        GROUP BY t.symbol, t.entry_price`, userID)
+        GROUP BY t.symbol, t.entry_price, t.shares`, userID)
     if err != nil {
         return portfolio, err
     }

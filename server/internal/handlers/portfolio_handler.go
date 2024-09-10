@@ -10,12 +10,18 @@ import (
 func GetPortfolio(portfolioService *services.PortfolioService) gin.HandlerFunc {
     return func(c *gin.Context) {
         userID, _ := c.Get("userID")
-        portfolio, err := portfolioService.GetPortfolio(userID.(string))
+        fullPortfolio, err := portfolioService.GetPortfolio(userID.(string))
         if err != nil {
-            c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch portfolio"})
+            c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
             return
         }
-        c.JSON(http.StatusOK, portfolio)
+
+        portfolioResponse := gin.H{
+            "totalValue": fullPortfolio.TotalValue,
+            "positions": fullPortfolio.Positions,
+        }
+
+        c.JSON(http.StatusOK, portfolioResponse)
     }
 }
 
