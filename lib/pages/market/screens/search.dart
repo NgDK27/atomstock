@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:oppenhomies/domain/models/stock/stock_model.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:oppenhomies/styles/colors.dart';
+import 'package:oppenhomies/styles/opacities.dart';
 import 'package:oppenhomies/styles/spacings.dart';
-import 'package:oppenhomies/widgets/list_tiles/stock_list_tile.dart';
+import 'package:oppenhomies/styles/text.dart';
 
 class Search extends ConsumerWidget {
   const Search({super.key});
@@ -39,7 +40,7 @@ class Search extends ConsumerWidget {
                           ),
                           material: (_, __) => SearchBar(
                             leading: BackButton(),
-                            hintText: "Search for stocks and indexes",
+                            hintText: "Search for stocks",
                             elevation: const WidgetStatePropertyAll(0),
                             autoFocus: true,
                             onTap: () {},
@@ -69,9 +70,35 @@ class Search extends ConsumerWidget {
             top: false,
             sliver: SliverList.builder(
               itemBuilder: (context, index) {
-                return StockListTile(stock: StockModel.sample());
+                return Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: OpSpacing.md, vertical: OpSpacing.xl2),
+                    child: Column(
+                      children: [
+                        Icon(
+                          Symbols.search_rounded,
+                          color: OpDynamicColor.onSurface(context)
+                              .withOpacity(OpOpacity.secondary),
+                          size: 48,
+                          weight: 600,
+                        ),
+                        SizedBox(
+                          height: OpSpacing.xs,
+                        ),
+                        Text(
+                          "Search with a name or symbol",
+                          style: OpTextStyle.body(context)?.copyWith(
+                            color: OpDynamicColor.onSurface(context)
+                                .withOpacity(OpOpacity.secondary),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
               },
-              itemCount: 20,
+              itemCount: 1,
             ),
           )
         ],

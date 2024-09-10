@@ -84,7 +84,7 @@ class Market extends ConsumerWidget {
             padding: EdgeInsets.only(left: OpSpacing.xs),
             child: Icon(Icons.search),
           ),
-          hintText: "Search for stocks and indexes",
+          hintText: "Search for stocks",
           elevation: const WidgetStatePropertyAll(0),
           onTap: () => navigateMarketSearch(context),
         ),
