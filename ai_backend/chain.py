@@ -29,9 +29,12 @@ def get_chain() -> Runnable:
     "Use the following pieces of retrieved context to answer "
     "the question. If you don't know the answer, say that you "
     "don't know. Keep the answer concise. Do not hallucinate."
-    "Answer the questions in Vietnamese if the questions are asked in Vietnamese,"
-    "English otherwise."
+    "Do not give opinion based financial advice."
+    "Answer the questions in Vietnamese if the original "
+    "question is asked in Vietnamese, English otherwise."
     "\n\n"
+    "Context:"
+    "\n"
     "{context}"
   )
 
