@@ -74,19 +74,45 @@ func (s *AutomatedTradingService) processMessage(message kafka.Message) {
         return
     }
 
+    // Check open trades first
+    s.checkOpenTrades(stockData)
+
     rules, err := s.fetchActiveRules(stockData.Symbol)
     if err != nil {
-        log.Printf("Error fetching active rules: %v", err)
+        log.Printf("Error fetching active rules for symbol %s: %v", stockData.Symbol, err)
         return
     }
 
     for _, rule := range rules {
+        // Check if there's an open trade for this rule
+        hasOpenTrade, err := s.hasOpenTradeForRule(rule.ID)
+        if err != nil {
+            log.Printf("Error checking open trade for rule %d: %v", rule.ID, err)
+            continue
+        }
+
+        if hasOpenTrade {
+            // Skip execution if there's an open trade
+            log.Printf("Skipping execution for rule %d as there's an open trade", rule.ID)
+            continue
+        }
+
         if s.shouldExecuteTrade(rule, stockData) {
-            s.executeTrade(rule, stockData)
+            err := s.executeTrade(rule, stockData)
+            if err != nil {
+                log.Printf("Error executing trade for rule %d: %v", rule.ID, err)
+            }
         }
     }
+}
 
-    s.checkOpenTrades(stockData)
+func (s *AutomatedTradingService) hasOpenTradeForRule(ruleID int) (bool, error) {
+    var count int
+    err := s.db.QueryRow("SELECT COUNT(*) FROM trades WHERE rule_id = $1 AND status = 'OPEN'", ruleID).Scan(&count)
+    if err != nil {
+        return false, err
+    }
+    return count > 0, nil
 }
 
 func (s *AutomatedTradingService) fetchActiveRules(symbol string) ([]models.TradingRule, error) {
@@ -122,18 +148,18 @@ func (s *AutomatedTradingService) shouldExecuteTrade(rule models.TradingRule, da
     return false
 }
 
-func (s *AutomatedTradingService) executeTrade(rule models.TradingRule, data models.StockData) {
+func (s *AutomatedTradingService) executeTrade(rule models.TradingRule, data models.StockData) (error) {
     // Check user's balance
     balance, err := s.getUserBalance(rule.UserID)
     if err != nil {
         log.Printf("Error getting user balance: %v", err)
-        return
+        return err
     }
 
     tradeValue := float64(rule.Shares) * data.Price
     if balance < tradeValue {
         log.Printf("Insufficient balance for user %s to execute trade", rule.UserID)
-        return
+        return nil
     }
 
     // Calculate take profit price
@@ -143,7 +169,7 @@ func (s *AutomatedTradingService) executeTrade(rule models.TradingRule, data mod
     tx, err := s.db.BeginTx(context.Background(), nil)
     if err != nil {
         log.Printf("Error starting transaction: %v", err)
-        return
+        return err
     }
     defer tx.Rollback()
 
@@ -157,19 +183,19 @@ func (s *AutomatedTradingService) executeTrade(rule models.TradingRule, data mod
         rule.ID, rule.UserID, rule.Symbol, data.Price, rule.Shares, takeProfitPrice)
     if err != nil {
         log.Printf("Error inserting trade: %v", err)
-        return
+        return err
     }
 
     // Update user's balance
     _, err = tx.Exec("UPDATE users SET balance = balance - $1 WHERE id = $2", tradeValue, rule.UserID)
     if err != nil {
         log.Printf("Error updating user balance: %v", err)
-        return
+        return err
     }
 
     if err := tx.Commit(); err != nil {
         log.Printf("Error committing transaction: %v", err)
-        return
+        return err
     }
 
     // Update Redis
@@ -187,26 +213,31 @@ func (s *AutomatedTradingService) executeTrade(rule models.TradingRule, data mod
     s.redisClient.Publish(context.Background(), "trade_executions", tradeJSON)
 
     log.Printf("Trade executed for user %s: %d shares of %s at %f", rule.UserID, rule.Shares, rule.Symbol, data.Price)
+
+    return nil
 }
 
-func (s *AutomatedTradingService) updateHighestPrice(tx *sql.Tx, trade *models.Trade, currentPrice float64) error {
+func (s *AutomatedTradingService)  updateHighestPrice(trade *models.Trade, currentPrice float64) error {
     if currentPrice > trade.HighestPrice {
         trade.HighestPrice = currentPrice
-        _, err := tx.Exec("UPDATE trades SET highest_price = $1 WHERE id = $2", currentPrice, trade.ID)
+        _, err := s.db.Exec("UPDATE trades SET highest_price = $1 WHERE id = $2", currentPrice, trade.ID)
+        log.Printf("Updated highest price")
         return err
+    } else {
+        log.Printf("Current price is not higher than the highest price for trade %d", trade.ID)
     }
     return nil
 }
 
 func (s *AutomatedTradingService) checkOpenTrades(data models.StockData) {
-    tx, err := s.db.BeginTx(context.Background(), nil)
-    if err != nil {
-        log.Printf("Error starting transaction: %v", err)
-        return
-    }
-    defer tx.Rollback()
+    // tx, err := s.db.BeginTx(context.Background(), nil)
+    // if err != nil {
+    //     log.Printf("Error starting transaction: %v", err)
+    //     return
+    // }
+    // defer tx.Rollback()
 
-    rows, err := tx.Query(`
+    rows, err := s.db.Query(`
         SELECT t.id, t.user_id, t.entry_price, t.highest_price, t.shares, t.take_profit_price, r.trailing_stop_loss_percentage, r.id
         FROM trades t
         JOIN trading_rules r ON t.rule_id = r.id
@@ -231,58 +262,55 @@ func (s *AutomatedTradingService) checkOpenTrades(data models.StockData) {
         trade.Symbol = data.Symbol
         trade.RuleID = ruleID
 
-        if err := s.updateHighestPrice(tx, &trade, data.Price); err != nil {
+        if err := s.updateHighestPrice(&trade, data.Price); err != nil {
             log.Printf("Error updating highest price: %v", err)
             continue
         }
 
         if data.Price >= trade.TakeProfitPrice {
-            if err := s.closeTrade(tx, trade, data.Price, "TAKE_PROFIT"); err != nil {
+            if err := s.closeTrade(trade, data.Price, "TAKE_PROFIT"); err != nil {
                 log.Printf("Error closing trade for take profit: %v", err)
+                continue
+            } else {
+                log.Printf("no take price for trade %d", trade.ID)
                 continue
             }
         } else {
             stopLossPrice := trade.HighestPrice * (1 - trailingStopLoss/100)
             if data.Price <= stopLossPrice {
-                if err := s.closeTrade(tx, trade, data.Price, "STOP_LOSS"); err != nil {
+                if err := s.closeTrade(trade, data.Price, "STOP_LOSS"); err != nil {
                     log.Printf("Error closing trade for stop loss: %v", err)
                     continue
                 }
+            } else {
+                log.Printf("No stop loss for trade %d", trade.ID)
+                continue
             }
         }
     }
 
-    if err := tx.Commit(); err != nil {
-        log.Printf("Error committing transaction: %v", err)
-    }
 }
 
-func (s *AutomatedTradingService) closeTrade(tx *sql.Tx, trade models.Trade, exitPrice float64, exitType string) error {
+func (s *AutomatedTradingService) closeTrade(trade models.Trade, exitPrice float64, exitType string) error {
     // Update trade record
-    _, err := tx.Exec(`
-        UPDATE trades 
-        SET exit_price = $1, exit_time = NOW(), exit_type = $2, status = 'CLOSED'
-        WHERE id = $3`,
-        exitPrice, exitType, trade.ID)
+    _, err := s.db.Exec(`UPDATE trades SET exit_price = $1, exit_time = NOW(), exit_type = $2, status = 'CLOSED' WHERE id = $3`,
+    exitPrice, exitType, trade.ID)
+   
     if err != nil {
         return fmt.Errorf("error updating trade: %v", err)
     }
 
     // Update user's balance
     tradeValue := float64(trade.Shares) * exitPrice
-    _, err = tx.Exec("UPDATE users SET balance = balance + $1 WHERE id = $2", tradeValue, trade.UserID)
+    _, err = s.db.Exec("UPDATE users SET balance = balance + $1 WHERE id = $2", tradeValue, trade.UserID)
     if err != nil {
         return fmt.Errorf("error updating user balance: %v", err)
     }
 
     // Set the associated rule to inactive
-    _, err = tx.Exec("UPDATE trading_rules SET is_active = false WHERE id = $1", trade.RuleID)
+    _, err = s.db.Exec("UPDATE trading_rules SET is_active = false WHERE id = $1", trade.RuleID)
     if err != nil {
         return fmt.Errorf("error setting rule to inactive: %v", err)
-    }
-
-    if err := tx.Commit(); err != nil {
-        log.Printf("Error committing transaction: %v", err)
     }
 
     // Update Redis 

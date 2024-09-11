@@ -191,7 +191,7 @@ class Settings extends HookConsumerWidget {
                         ),
                         cupertino: (_, __) => CupertinoListTileData(
                           padding: const EdgeInsets.symmetric(
-                              vertical: OpSpacing.sm, horizontal: OpSpacing.md),
+                              vertical: OpSpacing.sm, horizontal: OpSpacing.md,),
                         ),
                       ),
                       if (index == 2 || index == 6 || index == 8)

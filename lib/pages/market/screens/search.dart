@@ -67,10 +67,10 @@ class Search extends HookConsumerWidget {
                         cupertino: (_, __) => PlatformTextButton(
                           onPressed: () => context.pop(),
                           padding: EdgeInsets.fromLTRB(OpSpacing.md,
-                              OpSpacing.none, OpSpacing.none, OpSpacing.none),
+                              OpSpacing.none, OpSpacing.none, OpSpacing.none,),
                           child: Text("Done"),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -126,7 +126,7 @@ class Search extends HookConsumerWidget {
       child: Center(
         child: Padding(
           padding: EdgeInsets.symmetric(
-              horizontal: OpSpacing.md, vertical: OpSpacing.xl2),
+              horizontal: OpSpacing.md, vertical: OpSpacing.xl2,),
           child: Column(
             children: [
               Icon(
@@ -207,7 +207,7 @@ class _MyHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
+      BuildContext context, double shrinkOffset, bool overlapsContent,) {
     return SizedBox.expand(child: child);
   }
 

@@ -123,7 +123,7 @@ class StockDetails extends _$StockDetails {
       identifier: identifier,
       type: type,
       timeRange: timeRange,
-    ));
+    ),);
     _listenToUpdates(state.value!, identifier, type);
   }
 //

@@ -120,13 +120,19 @@ func (s *PortfolioService) processTradeExecution(tradeExecution models.TradeExec
     }
 
     var tradeValue float64
+    var newValue float64
     if tradeExecution.ExitPrice > 0 {
         tradeValue = float64(tradeExecution.Shares) * tradeExecution.ExitPrice
+        if tradeValue > portfolio.TotalValue{
+            newValue = tradeValue - portfolio.TotalValue
+        } else {
+            newValue = portfolio.TotalValue - tradeValue
+        }
     } else {
         tradeValue = float64(tradeExecution.Shares) * tradeExecution.EntryPrice
+        newValue = portfolio.TotalValue + tradeValue
     }
 
-    newValue := portfolio.TotalValue + tradeValue
 
     // Update Redis
     s.redisClient.HSet(context.Background(), fmt.Sprintf("portfolio:%s", tradeExecution.UserID), "total_value", newValue)

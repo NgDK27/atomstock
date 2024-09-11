@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:oppenhomies/domain/models/stock/stock_item_type.dart';
 import 'package:oppenhomies/domain/models/stock/stock_model.dart';
-import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/effects.dart';
 import 'package:oppenhomies/widgets/list_tiles/index_list_tile.dart';
 import 'package:oppenhomies/widgets/list_tiles/stock_list_tile.dart';

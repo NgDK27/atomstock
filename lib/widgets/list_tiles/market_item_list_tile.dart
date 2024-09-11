@@ -47,13 +47,13 @@ class MarketItemListTile extends HookWidget {
       ).animate(CurvedAnimation(
         parent: animationController,
         curve: Curves.easeInOut,
-      )),
+      ),),
     );
 
     useEffect(() {
       animationController.forward(from: 0.0);
       return null;
-    }, [currentValue, change]);
+    }, [currentValue, change],);
 
     return PlatformListTile(
       onTap: onTap,

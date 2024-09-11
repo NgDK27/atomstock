@@ -1,6 +1,4 @@
-import 'dart:developer';
 
-import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:oppenhomies/domain/models/stock/stock_model.dart';
 

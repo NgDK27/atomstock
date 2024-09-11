@@ -76,7 +76,7 @@ class AuthRepository {
 
       final response = await _dio.get('$_apiEndpoint/user',
           options:
-              dio.Options(headers: {'authorization': 'Bearer $accessToken'}));
+              dio.Options(headers: {'authorization': 'Bearer $accessToken'}),);
 
       final user = UserModel.fromJson(response.data);
       log(user.toString());

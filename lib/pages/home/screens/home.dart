@@ -73,7 +73,7 @@ class Home extends ConsumerWidget {
         percentChange: 50,
         trade: 123,
         quantity: 123,
-        totalValue: 12345);
+        totalValue: 12345,);
 
     final sampleIndexes = [
       sampleIndex,
@@ -141,14 +141,14 @@ class Home extends ConsumerWidget {
                 ),
                 error: (error, stack) => Padding(
                   padding: EdgeInsets.symmetric(
-                      horizontal: OpSpacing.md, vertical: OpSpacing.xl2),
+                      horizontal: OpSpacing.md, vertical: OpSpacing.xl2,),
                   child: Column(children: [
                     Icon(Symbols.error_circle_rounded_error),
                     const SizedBox(
                       height: OpSpacing.md,
                     ),
                     Text("Error: $error"),
-                  ]),
+                  ],),
                 ),
                 loading: () => Skeletonizer(
                      effect: opShimmerEffect(context),
