@@ -4,18 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:oppenhomies/domain/models/stock/stock_model.dart';
 import 'package:oppenhomies/domain/providers/auth/auth_user_info_provider.dart';
+import 'package:oppenhomies/domain/providers/portfolio/portfolio_provider.dart';
 import 'package:oppenhomies/navigation/routes.dart';
 import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/effects.dart';
+import 'package:oppenhomies/styles/opacities.dart';
 import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/styles/text.dart';
 import 'package:oppenhomies/widgets/buttons/icon_button.dart';
 import 'package:oppenhomies/widgets/helpers/money_formatter.dart';
 import 'package:oppenhomies/widgets/list_tiles/portfolio_list_tile.dart';
+import 'package:oppenhomies/widgets/list_tiles/stock_list_tile.dart';
 import 'package:oppenhomies/widgets/scaffolds/platform_sliver_scaffold.dart';
-import 'package:oppenhomies/widgets/typography/title.dart';
 import 'package:oppenhomies/widgets/typography/title_small.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -49,9 +52,7 @@ class Portfolio extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userInfo = ref.watch(authUserInfoProvider);
-
-    // final vndFund = useState<double>(200500000);
-    // final totalPortfolioValue = useState<double>(1007000000);
+    final portfolio = ref.watch(portfolioProvider);
 
     final sampleStocks = [
       StockModel.sample(),
@@ -59,14 +60,6 @@ class Portfolio extends HookConsumerWidget {
       StockModel.negativeSample(),
       StockModel.detailedSample(),
     ];
-    const int mockSharesOwned = 8;
-
-    final sortedStocks =
-        sampleStocks.sorted((a, b) => a.symbol.compareTo(b.symbol));
-    final groupedStocks = groupBy(
-      sortedStocks,
-      (StockModel stock) => stock.symbol[0].toUpperCase(),
-    );
 
     return OpPlatformSliverScaffold(
       title: "Portfolio",
@@ -96,113 +89,220 @@ class Portfolio extends HookConsumerWidget {
         SliverSafeArea(
           top: false,
           sliver: SliverList(
-            delegate: SliverChildListDelegate([
-              //region Funds heading
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: OpSpacing.md),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(
-                      height: OpSpacing.xs2,
-                    ),
-                    Text(
-                      "Total value",
-                      style: OpTextStyle.titleLarge(context),
-                    ),
-                    const SizedBox(
-                      height: OpSpacing.xs3,
-                    ),
-                    Skeletonizer(
-                      enabled: !userInfo.hasValue,
-                      enableSwitchAnimation: true,
-                         effect:  opShimmerEffect(context),
-                      child: Text(
-                        userInfo.hasValue
-                            ? userInfo.value!.balance.vndFormat()
-                            : "5000",
-                        style:
-                            OpTextStyle.display(context).spacedOut().copyWith(
+            delegate: SliverChildListDelegate(
+              [
+                //region Funds heading
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: OpSpacing.md),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        height: OpSpacing.xs2,
+                      ),
+                      Text(
+                        "Funds",
+                        style: OpTextStyle.titleLarge(context),
+                      ),
+                      const SizedBox(
+                        height: OpSpacing.xs3,
+                      ),
+                      Skeletonizer(
+                        enabled: !userInfo.hasValue,
+                        enableSwitchAnimation: true,
+                        effect: opShimmerEffect(context),
+                        child: Text(
+                          userInfo.hasValue
+                              ? userInfo.value!.balance.vndFormat()
+                              : "5000",
+                          style:
+                              OpTextStyle.display(context).spacedOut().copyWith(
+                                    color: OpDynamicColor.onSurface(context),
+                                  ),
+                          textAlign: TextAlign.start,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: OpSpacing.xl,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          OpIconButton(
+                            icon: PlatformIcons(context).add,
+                            text: "Add",
+                            onPressed: () =>
+                                navigateToAddFunds(context: context),
+                          ),
+                          // OpIconButton(
+                          //   icon: PlatformIcons(context).downArrow,
+                          //   text: "Withdraw",
+                          //   onPressed: () =>
+                          //       navigateToWithdrawFunds(context: context),
+                          // ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: OpSpacing.xl2,
+                      ),
+                    ],
+                  ),
+                ),
+                //endregion
+
+                //region Funds
+                // const OpTitle("Funds"),
+                // Skeletonizer(
+                //   enabled: !userInfo.hasValue,
+                //   enableSwitchAnimation: true,
+                //      effect:  opShimmerEffect(context),
+                //   child: PortfolioListTile(
+                //     leadingText: "VND",
+                //     subtitleText: 'Vietnam Dong',
+                //     topTrailingText: userInfo.hasValue ? userInfo.value!.balance.vndFormat() : "1000",
+                //     bottomTrailingText: "",
+                //   ),
+                // ),
+                // const SizedBox(
+                //   height: OpSpacing.xl,
+                // ),
+                //endregion
+
+                //region Holdings
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: OpSpacing.md),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Holdings",
+                          style: OpTextStyle.bodyLarge(context),
+                        ),
+                        const SizedBox(
+                          height: OpSpacing.xs3,
+                        ),
+                        Skeletonizer(
+                          enabled: !portfolio.hasValue,
+                          enableSwitchAnimation: true,
+                          effect: opShimmerEffect(context),
+                          child: Text(
+                            portfolio.hasValue
+                                ? portfolio.value!.totalValue.vndFormat()
+                                : "5000",
+                            style: OpTextStyle.headline(context)
+                                .spacedOut()
+                                .copyWith(
                                   color: OpDynamicColor.onSurface(context),
                                 ),
-                        textAlign: TextAlign.start,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: OpSpacing.xl,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        OpIconButton(
-                          icon: PlatformIcons(context).add,
-                          text: "Add",
-                          onPressed: () => navigateToAddFunds(context: context),
+                            textAlign: TextAlign.start,
+                          ),
                         ),
-                        // OpIconButton(
-                        //   icon: PlatformIcons(context).downArrow,
-                        //   text: "Withdraw",
-                        //   onPressed: () =>
-                        //       navigateToWithdrawFunds(context: context),
-                        // ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: OpSpacing.xl2,
-                    ),
-                  ],
+                      ]),
                 ),
-              ),
-              //endregion
 
-              //region Funds
-              const OpTitle("Funds"),
-              Skeletonizer(
-                enabled: !userInfo.hasValue,
-                enableSwitchAnimation: true,
-                   effect:  opShimmerEffect(context),
-                child: PortfolioListTile(
-                  leadingText: "VND",
-                  subtitleText: 'Vietnam Dong',
-                  topTrailingText: userInfo.hasValue ? userInfo.value!.balance.vndFormat() : "1000",
-                  bottomTrailingText: "",
-                ),
-              ),
-              const SizedBox(
-                height: OpSpacing.xl,
-              ),
-              //endregion
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  transitionBuilder:
+                      (Widget child, Animation<double> animation) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      portfolio.when(
+                        data: (data) {
+                          if (data != null) {
+                            final sortedStocks = data.positions
+                                .sorted((a, b) => a.symbol.compareTo(b.symbol));
+                            final groupedStocks = groupBy(
+                              sortedStocks,
+                              (stock) => stock.symbol[0].toUpperCase(),
+                            );
 
-              //region Holdings
-              const OpTitle("Holdings"),
-              // Generate alphabetical sections
-              ...groupedStocks.entries.map((entry) {
-                final letter = entry.key;
-                final stocks = entry.value;
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: OpSpacing.lg),
-                    OpTitleSmall(letter),
-                    ...stocks.map(
-                      (stock) => PortfolioListTile(
-                        onPressed: () =>
-                            navigateToStockDetails(context: context),
-                        leadingText: stock.symbol,
-                        subtitleText: stock.name,
-                        topTrailingText:
-                            (stock.currentPrice * mockSharesOwned).vndFormat(),
-                        bottomTrailingText: '$mockSharesOwned shares',
+                            return Column(
+                              children: [
+                                ...groupedStocks.entries.map((entry) {
+                                  final letter = entry.key;
+                                  final stocks = entry.value;
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const SizedBox(height: OpSpacing.lg),
+                                      OpTitleSmall(letter),
+                                      ...stocks.map(
+                                        (stock) => PortfolioListTile(
+                                          stock: stock,
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }),
+                              ],
+                            );
+                          } else {
+                            return _portfolioErrorState(context);
+                          }
+                        },
+                        error: (_, __) => _portfolioErrorState(context),
+                        loading: () => Skeletonizer(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: OpSpacing.lg),
+                              OpTitleSmall('A'),
+                              ...sampleStocks.map(
+                                (stock) => StockListTile(
+                                  stock: stock,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
-                );
-              }),
-              //endregion
-            ]),
+                    ],
+                  ),
+                ),
+                //endregion
+              ],
+            ),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _portfolioErrorState(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: OpSpacing.md,
+            vertical: OpSpacing.xl2,
+          ),
+          child: Column(
+            children: [
+              Icon(
+                Symbols.error_circle_rounded_error,
+                color: OpDynamicColor.onSurface(context)
+                    .withOpacity(OpOpacity.secondary),
+                size: 48,
+                weight: 600,
+              ),
+              SizedBox(
+                height: OpSpacing.xs,
+              ),
+              Text(
+                "Failed to load portfolio",
+                style: OpTextStyle.body(context)?.copyWith(
+                  color: OpDynamicColor.onSurface(context)
+                      .withOpacity(OpOpacity.secondary),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

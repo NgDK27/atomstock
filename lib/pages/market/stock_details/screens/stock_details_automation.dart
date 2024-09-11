@@ -8,7 +8,7 @@ class StockDetailsAutomation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Padding(
+    return Padding(
         padding: const EdgeInsets.symmetric(horizontal: OpSpacing.lg),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -35,7 +35,6 @@ class StockDetailsAutomation extends StatelessWidget {
             ),
           ],
         ),
-
     );
   }
 }

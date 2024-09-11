@@ -4,6 +4,7 @@ import 'package:dio/dio.dart' as dio;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart'
     as secure_storage;
 import 'package:oppenhomies/domain/models/auth/auth_token_response.dart';
+import 'package:oppenhomies/domain/models/stock/portfolio/portfolio.dart';
 import 'package:oppenhomies/domain/models/user/user_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -74,12 +75,10 @@ class AuthRepository {
     if (await hasValidToken()) {
       final String? accessToken = await _storage.read(key: 'access_token');
 
-      final response = await _dio.get('$_apiEndpoint/user',
-          options:
-              dio.Options(headers: {'authorization': 'Bearer $accessToken'}),);
-
-      final user = UserModel.fromJson(response.data);
-      log(user.toString());
+      final response = await _dio.get(
+        '$_apiEndpoint/user',
+        options: dio.Options(headers: {'authorization': 'Bearer $accessToken'}),
+      );
 
       return UserModel.fromJson(response.data);
     }
@@ -90,8 +89,6 @@ class AuthRepository {
   Future<bool> deposit(double amount) async {
     if (await hasValidToken()) {
       final String? accessToken = await _storage.read(key: 'access_token');
-log(amount.toString());
-      log('$amount');
 
       final response = await _dio.post(
         '$_apiEndpoint/deposit',
@@ -101,14 +98,26 @@ log(amount.toString());
         },
       );
 
-      log(response.toString());
-
       if (response.data['message'] == 'Balance updated successfully') {
         return true;
       }
     }
 
     return false;
+  }
+
+  // Portfolio - Owned stock
+  Future<PortfolioModel?> fetchPortfolio() async {
+    final String? accessToken = await _storage.read(key: 'access_token');
+    final response = await _dio.get('$_apiEndpoint/portfolio',
+        options:
+            dio.Options(headers: {'authorization': 'Bearer $accessToken'}));
+    try {
+      final portfolio = PortfolioModel.fromJson(response.data);
+      return portfolio;
+    } catch (e) {
+      return null;
+    }
   }
 }
 

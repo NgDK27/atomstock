@@ -1,26 +1,29 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:go_router/go_router.dart';
+import 'package:oppenhomies/domain/models/stock/portfolio/stock_portfolio.dart';
+import 'package:oppenhomies/domain/models/stock/stock_item_type.dart';
+import 'package:oppenhomies/navigation/routes.dart';
 import 'package:oppenhomies/styles/colors.dart';
 import 'package:oppenhomies/styles/spacings.dart';
 import 'package:oppenhomies/styles/text.dart';
-import 'package:skeletonizer/skeletonizer.dart';
+import 'package:oppenhomies/widgets/helpers/money_formatter.dart';
 
 class PortfolioListTile extends HookWidget {
-  final String leadingText;
-  final String subtitleText;
-  final String topTrailingText;
-  final String bottomTrailingText;
-  final VoidCallback? onPressed;
+  final StockPortfolioModel stock;
 
-  const PortfolioListTile({
-    super.key,
-    required this.leadingText,
-    required this.subtitleText,
-    required this.topTrailingText,
-    required this.bottomTrailingText,
-    this.onPressed,
-  });
+  const PortfolioListTile({super.key, required this.stock});
+
+  void _navigateToDetails(BuildContext context, String stockSymbol) {
+    context.pushNamed(
+      OpRoutes.stockDetails.name,
+      pathParameters: {
+        'identifier': stockSymbol,
+        'type': StockItemType.stock.value,
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,24 +33,24 @@ class PortfolioListTile extends HookWidget {
         .copyWith(color: OpDynamicColor.onSurfaceVariant(context));
 
     return PlatformListTile(
-      onTap: onPressed,
-      title: Skeleton.keep(
-        child: Text(
-          leadingText,
-          style: titleStyle,
-        ),
+      key: ValueKey('${stock.symbol}-${stock.currentPrice}'),
+      onTap: () => _navigateToDetails(context, stock.symbol),
+      title: Text(
+        stock.symbol,
+        style: titleStyle,
       ),
-      subtitle:
-          Skeleton.keep(child: Text(subtitleText, style: subtitleStyle)),
+      subtitle: Text("${stock.shares} shares owned", style: subtitleStyle),
       trailing: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            topTrailingText,
+            stock.value.vndFormat(),
             style: titleStyle.spacedOut(),
           ),
+          SizedBox(height: OpSpacing.xs3,),
           Text(
-            bottomTrailingText,
+            "${stock.price.vndFormat()} / share",
             style: subtitleStyle.spacedOut(),
           ),
         ],

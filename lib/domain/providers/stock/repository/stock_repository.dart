@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:oppenhomies/domain/helpers/index_model_converter.dart';
 import 'package:oppenhomies/domain/helpers/market_hours_service.dart';
+import 'package:oppenhomies/domain/models/stock/details_update.dart';
 import 'package:oppenhomies/domain/models/stock/exchange_model.dart';
 import 'package:oppenhomies/domain/models/stock/index_model.dart';
 import 'package:oppenhomies/domain/models/stock/market_list/stock_market_indexes_model.dart';
@@ -16,7 +18,6 @@ import 'package:oppenhomies/domain/models/stock/stock_price_points.dart';
 import 'package:oppenhomies/domain/models/stock/stock_update.dart';
 import 'package:oppenhomies/domain/models/ws/websocket.dart';
 import 'package:oppenhomies/domain/providers/websocket_provider.dart';
-import 'package:oppenhomies/domain/models/stock/details_update.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'stock_repository.g.dart';
@@ -75,8 +76,10 @@ class StockRepository {
     return StockMarketStocksModel.fromJson(response.data);
   }
 
-  Future<StockModel> fetchStockDetails(
-      {required String symbol, String? timeRange,}) async {
+  Future<StockModel> fetchStockDetails({
+    required String symbol,
+    String? timeRange,
+  }) async {
     try {
       final stockFuture = _dio.get('$_apiEndpoint:8080/stock/$symbol');
       final tickerFuture = timeRange != null
@@ -118,7 +121,6 @@ class StockRepository {
         ),
         pricePoints: StockPricePoints(points: pricePoints),
       );
-
     } catch (e) {
       // Handle errors
       log(e.toString());
@@ -126,8 +128,10 @@ class StockRepository {
     }
   }
 
-  Future<StockModel> fetchIndexDetails(
-      {required String id, String? timeRange,}) async {
+  Future<StockModel> fetchIndexDetails({
+    required String id,
+    String? timeRange,
+  }) async {
     {
       try {
         final stockFuture = _dio.get('$_apiEndpoint:8080/index/$id');
@@ -176,11 +180,9 @@ class StockRepository {
 
   Stream<StockDetailUpdate> getStockDetailUpdates(String symbol) {
     if (MarketHoursService.isMarketOpen()) {
-      return _wsManager
-        .connect('/ws/stock/$symbol')
-        .map((event) {
-          return StockDetailUpdate.fromJson(jsonDecode(event));
-        });
+      return _wsManager.connect('/ws/stock/$symbol').map((event) {
+        return StockDetailUpdate.fromJson(jsonDecode(event));
+      });
     } else {
       return Stream.empty();
     }
@@ -189,11 +191,9 @@ class StockRepository {
   Stream<IndexDetailUpdate> getIndexDetailUpdates(String indexId) {
     print("Setting up index detail stream for $indexId");
     if (MarketHoursService.isMarketOpen()) {
-      return _wsManager
-        .connect('/ws/index/$indexId')
-        .map((event) {
-          return IndexDetailUpdate.fromJson(jsonDecode(event));
-        });
+      return _wsManager.connect('/ws/index/$indexId').map((event) {
+        return IndexDetailUpdate.fromJson(jsonDecode(event));
+      });
     } else {
       return Stream.empty();
     }
@@ -211,11 +211,11 @@ class StockRepository {
 
   Future<StockMarketStocksModel?> searchStock(String query) async {
     final response = await _dio.get('$_apiEndpoint:8080/search?q=$query');
-     try {
-       final result = StockMarketStocksModel.fromJsonList(response.data);
-       return result;
-     } catch (e) {
-       return null;
+    try {
+      final result = StockMarketStocksModel.fromJsonList(response.data);
+      return result;
+    } catch (e) {
+      return null;
     }
   }
 }
