@@ -57,7 +57,7 @@ CREATE TABLE trades (
     user_id VARCHAR(50) NOT NULL REFERENCES users(id),
     symbol VARCHAR(10) NOT NULL REFERENCES stocks(symbol),
     entry_price NUMERIC(10, 2) NOT NULL,
-    highest_price NUMERIC(10, 2) NOT NULL;
+    highest_price NUMERIC(10, 2) NOT NULL,
     entry_time TIMESTAMP NOT NULL,
     shares INTEGER NOT NULL,
     exit_price NUMERIC(10, 2),

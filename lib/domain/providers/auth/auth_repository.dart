@@ -117,6 +117,6 @@ AuthRepository authRepository(AuthRepositoryRef ref) {
   return AuthRepository(
     dio: dio.Dio(),
     storage: const secure_storage.FlutterSecureStorage(),
-    apiEndpoint: 'http://192.168.25.122:8080',
+    apiEndpoint: 'http://10.147.20.102:8080',
   );
 }

@@ -71,7 +71,7 @@ load_dotenv()
 stocks, indexes = get_symbols()
 
 # Kafka configuration
-KAFKA_HOST = os.getenv('KAFKA_HOST') or '192.168.25.122'
+KAFKA_HOST = os.getenv('KAFKA_HOST') or '10.147.20.102'
 KAFKA_PORT = os.getenv('KAFKA_PORT') or '9092'
 
 kafka_config = {
