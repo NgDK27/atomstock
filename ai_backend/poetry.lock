@@ -404,7 +404,7 @@ dotenv = ["python-dotenv"]
 
 [[package]]
 name = "flask-cors"
-version = "4.0.1"
+version = "4.0.2"
 description = "A Flask extension adding a decorator for CORS support"
 optional = false
 python-versions = "*"
