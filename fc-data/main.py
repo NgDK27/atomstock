@@ -19,7 +19,7 @@ import math
 from fastapi.middleware.cors import CORSMiddleware
 
 # Import centralized symbol configuration
-from symbols_config import get_all_symbols, get_symbol_info, is_valid_symbol
+from symbols_config import get_all_symbols, get_symbol_info, is_valid_symbol, get_base_price
 
 import sys
 
@@ -84,19 +84,21 @@ def get_symbols():
             if db_stocks:
                 stock_symbols = [(row[0], row[1], row[2]) for row in db_stocks]
             else:
-                stock_symbols = config_stocks
+                stock_symbols = [(s[0], s[1], s[2]) for s in config_stocks]
 
             if db_indexes:
                 index_symbols = [(row[0], row[1]) for row in db_indexes]
             else:
-                index_symbols = config_indexes
+                index_symbols = [(i[0], i[1]) for i in config_indexes]
 
             print(f"📊 Using database symbols: {len(stock_symbols)} stocks, {len(index_symbols)} indexes")
 
         except Exception as error:
             print("Error while fetching symbols from database:", error)
             # Use configured symbols as fallback
-            stock_symbols, index_symbols = get_all_symbols()
+            config_stocks, config_indexes = get_all_symbols()
+            stock_symbols = [(s[0], s[1], s[2]) for s in config_stocks]
+            index_symbols = [(i[0], i[1]) for i in config_indexes]
             print(f"📊 Using configured fallback symbols: {len(stock_symbols)} stocks, {len(index_symbols)} indexes")
 
         finally:
@@ -106,7 +108,9 @@ def get_symbols():
     except Exception as db_error:
         print(f"Database connection error: {db_error}")
         # Use configured symbols as fallback
-        stock_symbols, index_symbols = get_all_symbols()
+        config_stocks, config_indexes = get_all_symbols()
+        stock_symbols = [(s[0], s[1], s[2]) for s in config_stocks]
+        index_symbols = [(i[0], i[1]) for i in config_indexes]
         print(f"📊 Using configured symbols: {len(stock_symbols)} stocks, {len(index_symbols)} indexes")
 
     return stock_symbols, index_symbols
@@ -126,9 +130,6 @@ app.add_middleware(
 class StockPriceRequest(BaseModel):
     symbol: str
     range: str
-
-def get_cache_key(symbol: str, start_date: datetime, end_date: datetime):
-    return f"mock_stock_data:{symbol}_{start_date.isoformat()}_{end_date.isoformat()}"
 
 def get_date_range(time_range: str):
     end_date = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
@@ -150,117 +151,186 @@ def get_date_range(time_range: str):
         raise ValueError("Invalid range. Use '1d', '1w', '1m', '3m', '6m', '1y', or '5y'.")
     return start_date, end_date
 
-def generate_base_price(symbol: str):
-    """Generate a consistent base price for each symbol"""
-    # Use symbol hash to ensure consistent prices across requests
-    hash_val = abs(hash(symbol)) % 1000000
+def get_current_realtime_price(symbol: str):
+    """Get the actual current price from real-time producer via Redis"""
+    try:
+        # Try to get current price from Redis (set by producer)
+        is_index = symbol in [index[0] for index in indexes]
 
-    # Check if it's an index
-    if symbol in [index[0] for index in indexes]:
-        # Index values typically 500-1500
-        return 500 + (hash_val % 1000)
-    else:
-        # Stock prices typically 10,000 - 500,000 VND
-        return 10000 + (hash_val % 490000)
+        if is_index:
+            current_price_key = f"current_index_price:{symbol}"
+        else:
+            current_price_key = f"current_stock_price:{symbol}"
 
-def generate_price_movement(base_price: float, days_ago: int, is_intraday: bool = False):
-    """Generate realistic price movement based on days ago"""
-    # Use a simple random walk with some trending
-    random.seed(hash(f"{base_price}_{days_ago}"))
+        cached_price = redis_client.get(current_price_key)
 
-    if is_intraday:
-        # Intraday movements are smaller
-        daily_volatility = 0.02  # 2% daily volatility
-        hourly_volatility = daily_volatility / 8  # Divide by trading hours
-        return base_price * (1 + random.gauss(0, hourly_volatility))
-    else:
-        # Daily movements
-        daily_volatility = 0.03  # 3% daily volatility
-        # Add some trending (slight upward bias over time)
-        trend = -0.0001 * days_ago  # Slight downward trend as we go back in time
-        return base_price * (1 + random.gauss(trend, daily_volatility))
+        if cached_price:
+            return float(cached_price)
+        else:
+            # Fallback to base price if no real-time data available
+            base_price = get_base_price(symbol)
+            if base_price:
+                print(f"⚠️ No real-time price for {symbol}, using base price: {base_price}")
+                return base_price
+            else:
+                print(f"❌ No base price configured for {symbol}")
+                return 10000.0  # Emergency fallback
+
+    except Exception as e:
+        print(f"❌ Error getting current price for {symbol}: {e}")
+        base_price = get_base_price(symbol)
+        return base_price if base_price else 10000.0
+
+def generate_smooth_trend(base_price: float, current_price: float, total_points: int, is_index: bool):
+    """Generate a smooth trend from base price to current price with realistic fluctuations"""
+    trend_data = []
+
+    # Create a smooth transition curve from base to current price
+    for i in range(total_points):
+        progress = i / (total_points - 1) if total_points > 1 else 1.0
+
+        # Use a slight S-curve for more natural progression
+        smooth_progress = 3 * progress**2 - 2 * progress**3
+
+        # Interpolate between base and current price
+        trend_price = base_price + (current_price - base_price) * smooth_progress
+
+        # Add small random fluctuations around the trend
+        if is_index:
+            daily_volatility = trend_price * 0.005  # ±0.5% daily volatility for indexes
+        else:
+            daily_volatility = trend_price * 0.015  # ±1.5% daily volatility for stocks
+
+        # Use consistent randomness based on point index
+        random.seed(hash(f"trend_{i}") % 2147483647)
+        fluctuation = random.uniform(-daily_volatility, daily_volatility)
+
+        final_price = trend_price + fluctuation
+        trend_data.append(final_price)
+
+    return trend_data
 
 async def fetch_mock_intraday_data(symbol: str, start_date: datetime, end_date: datetime, time_range: str):
-    """Generate mock intraday data"""
+    """Generate realistic intraday data with smooth trends"""
     print(f"🎭 Generating mock intraday data for {symbol}")
 
-    base_price = generate_base_price(symbol)
+    base_price = get_base_price(symbol)
+    current_realtime_price = get_current_realtime_price(symbol)
+    is_index = symbol in [index[0] for index in indexes]
+
+    if not base_price:
+        print(f"❌ No base price for {symbol}")
+        return []
+
     data = []
 
-    current_date = start_date
-    while current_date <= end_date:
-        # Skip weekends
-        if current_date.weekday() < 5:  # Monday=0, Sunday=6
-            # Generate data for trading hours (9:00 - 15:00)
+    # Calculate total points
+    total_points = 0
+    temp_date = start_date
+    while temp_date <= end_date:
+        if temp_date.weekday() < 5:
             for hour in range(9, 16):
-                for minute in [0, 15, 30, 45]:  # 15-minute intervals
+                for minute in [0, 15, 30, 45]:
+                    total_points += 1
+        temp_date += timedelta(days=1)
+
+    # Generate smooth trend prices
+    trend_prices = generate_smooth_trend(base_price, current_realtime_price, total_points, is_index)
+
+    point_index = 0
+    current_date = start_date
+
+    while current_date <= end_date:
+        if current_date.weekday() < 5:  # Skip weekends
+            for hour in range(9, 16):
+                for minute in [0, 15, 30, 45]:
                     time_str = f"{hour:02d}:{minute:02d}:00"
 
-                    # Include hour and minute in the seed for intraday variation
-                    time_seed = hour * 100 + minute
-                    days_ago = (datetime.now().date() - current_date.date()).days
-                    close_price = generate_price_movement_intraday(base_price, days_ago, time_seed)
+                    if point_index < len(trend_prices):
+                        price = trend_prices[point_index]
 
-                    data.append({
-                        'TradingDate': current_date.strftime('%d/%m/%Y'),
-                        'Time': time_str,
-                        'ClosePrice': float(round(close_price, 2))  # Ensure float
-                    })
+                        # Add small intraday fluctuations
+                        random.seed(hash(f"{symbol}_{current_date.strftime('%Y%m%d')}_{hour}_{minute}") % 2147483647)
+
+                        if is_index:
+                            intraday_range = price * 0.002  # ±0.2% intraday for indexes
+                        else:
+                            intraday_range = price * 0.005  # ±0.5% intraday for stocks
+
+                        intraday_fluctuation = random.uniform(-intraday_range, intraday_range)
+                        final_price = price + intraday_fluctuation
+
+                        data.append({
+                            'TradingDate': current_date.strftime('%d/%m/%Y'),
+                            'Time': time_str,
+                            'ClosePrice': float(round(final_price, 2))
+                        })
+
+                    point_index += 1
 
         current_date += timedelta(days=1)
 
     return data
 
-def generate_price_movement_intraday(base_price: float, days_ago: int, time_seed: int):
-    """Generate realistic intraday price movement"""
-    # Use time_seed for intraday variation
-    random.seed(hash(f"{base_price}_{days_ago}_{time_seed}"))
-
-    hourly_volatility = 0.02 / 8  # 2% daily volatility divided by trading hours
-    trend = -0.0001 * days_ago
-    return base_price * (1 + random.gauss(trend, hourly_volatility))
-
 async def fetch_mock_daily_data(symbol: str, start_date: datetime, end_date: datetime, is_index: bool):
-    """Generate mock daily data"""
+    """Generate realistic daily data with smooth trends"""
     print(f"🎭 Generating mock daily data for {symbol} (index: {is_index})")
 
-    base_price = generate_base_price(symbol)
+    base_price = get_base_price(symbol)
+    current_realtime_price = get_current_realtime_price(symbol)
+
+    if not base_price:
+        print(f"❌ No base price for {symbol}")
+        return []
+
     data = []
 
-    current_date = start_date
-    while current_date <= end_date:
-        # Skip weekends
-        if current_date.weekday() < 5:  # Monday=0, Sunday=6
-            days_ago = (datetime.now().date() - current_date.date()).days
-            price = generate_price_movement(base_price, days_ago)
+    # Calculate total trading days
+    trading_days = []
+    temp_date = start_date
+    while temp_date <= end_date:
+        if temp_date.weekday() < 5:  # Skip weekends
+            trading_days.append(temp_date)
+        temp_date += timedelta(days=1)
+
+    total_days = len(trading_days)
+
+    # Generate smooth trend prices
+    trend_prices = generate_smooth_trend(base_price, current_realtime_price, total_days, is_index)
+
+    for day_index, current_date in enumerate(trading_days):
+        if day_index < len(trend_prices):
+            price = trend_prices[day_index]
+
+            # Add small daily fluctuations
+            random.seed(hash(f"{symbol}_{current_date.strftime('%Y%m%d')}") % 2147483647)
+
+            if is_index:
+                daily_range = price * 0.008  # ±0.8% daily for indexes
+            else:
+                daily_range = price * 0.02   # ±2% daily for stocks
+
+            daily_fluctuation = random.uniform(-daily_range, daily_range)
+            final_price = price + daily_fluctuation
 
             if is_index:
                 data.append({
                     'TradingDate': current_date.strftime('%d/%m/%Y'),
-                    'IndexValue': float(round(price, 2))  # Ensure float
+                    'IndexValue': float(round(final_price, 2))
                 })
             else:
                 data.append({
                     'TradingDate': current_date.strftime('%d/%m/%Y'),
-                    'ClosePrice': float(round(price, 2))  # Ensure float
+                    'ClosePrice': float(round(final_price, 2))
                 })
-
-        current_date += timedelta(days=1)
 
     return data
 
 async def fetch_stock_prices(symbol: str, start_date: datetime, end_date: datetime, time_range: str):
-    """Fetch mock stock prices with caching"""
-    cache_key = get_cache_key(symbol, start_date, end_date)
-    cache_data = redis_client.get(cache_key)
-
-    if cache_data:
-        print(f"📦 Using cached data for {symbol}")
-        return json.loads(cache_data)
-
+    """Fetch fresh mock stock prices based on current Redis prices"""
     is_index = symbol in [index[0] for index in indexes]
 
-    print(f"🎭 Generating fresh mock data for {symbol} (range: {time_range})")
+    print(f"🎭 Generating fresh mock data for {symbol} (range: {time_range}) based on current Redis price")
 
     if time_range in ['1d', '1w']:
         all_data = await fetch_mock_intraday_data(symbol, start_date, end_date, time_range)
@@ -269,9 +339,6 @@ async def fetch_stock_prices(symbol: str, start_date: datetime, end_date: dateti
 
     # Sort by date
     all_data = sorted(all_data, key=lambda x: datetime.strptime(x['TradingDate'], '%d/%m/%Y'))
-
-    # Cache for 1 hour (shorter for mock data to see changes during development)
-    redis_client.setex(cache_key, 60*60, json.dumps(all_data))
 
     return all_data
 
@@ -368,22 +435,36 @@ async def get_symbols_by_market(market: str):
 
 @app.delete("/cache/clear")
 async def clear_cache():
-    """Clear all cached data"""
+    """Clear Redis current prices (no historical data cache)"""
     try:
-        redis_client.flushdb()
-        return {"message": "Cache cleared successfully"}
+        # Only clear current price keys, not all Redis data
+        stock_keys = redis_client.keys("current_stock_price:*")
+        index_keys = redis_client.keys("current_index_price:*")
+        all_keys = stock_keys + index_keys
+
+        if all_keys:
+            redis_client.delete(*all_keys)
+
+        return {"message": "Current price cache cleared successfully", "keys_deleted": len(all_keys)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to clear cache: {str(e)}")
 
 @app.delete("/cache/symbol/{symbol}")
 async def clear_symbol_cache(symbol: str):
-    """Clear cache for specific symbol"""
+    """Clear current price for specific symbol"""
     try:
-        pattern = f"mock_stock_data:{symbol}_*"
-        keys = redis_client.keys(pattern)
-        if keys:
-            redis_client.delete(*keys)
-        return {"message": f"Cache cleared for symbol {symbol}", "keys_deleted": len(keys)}
+        stock_key = f"current_stock_price:{symbol}"
+        index_key = f"current_index_price:{symbol}"
+
+        keys_deleted = 0
+        if redis_client.exists(stock_key):
+            redis_client.delete(stock_key)
+            keys_deleted += 1
+        if redis_client.exists(index_key):
+            redis_client.delete(index_key)
+            keys_deleted += 1
+
+        return {"message": f"Current price cleared for symbol {symbol}", "keys_deleted": keys_deleted}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to clear cache for {symbol}: {str(e)}")
 

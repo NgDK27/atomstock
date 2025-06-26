@@ -3,8 +3,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:oppenhomies/domain/helpers/calculateStockPriceChange.dart';
+import 'package:oppenhomies/domain/helpers/determine_stock_change_color.dart';
 import 'package:oppenhomies/domain/helpers/market_hours_service.dart';
 import 'package:oppenhomies/domain/models/stock/market_session.dart';
+import 'package:oppenhomies/domain/models/stock/stock_change_enum.dart';
 import 'package:oppenhomies/domain/models/stock/stock_item_type.dart';
 import 'package:oppenhomies/domain/models/stock/stock_model.dart';
 import 'package:oppenhomies/domain/models/stock/stock_price_date_filters.dart';
@@ -41,8 +43,6 @@ class StockDetailsOverview extends HookConsumerWidget {
     final provider = stockDetailsProvider(identifier, type);
     final data = ref.watch(provider);
 
-    print(data);
-
     final timeRange = useState(StockPriceDateFilter.oneDay);
 
     final marketSession = useState(
@@ -51,28 +51,107 @@ class StockDetailsOverview extends HookConsumerWidget {
           : MarketSession.closed,
     );
 
+    // Animation controllers for price changes
+    final priceAnimationController = useAnimationController(
+      duration: const Duration(milliseconds: 1000),
+    );
+
+    final tableAnimationController = useAnimationController(
+      duration: const Duration(milliseconds: 1000),
+    );
+
+    // Previous values to detect changes
+    final previousPrice = useRef<double?>(null);
+    final previousChange = useRef<StockChange?>(null);
+    final previousDetailFields = useRef<Map<String, double?>?>(null);
+
+    // Key for forcing chart updates
+    final chartKey = useState(UniqueKey());
+    final backgroundKey = useState(UniqueKey());
+
     const dateFilterOptions = StockPriceDateFilter.values;
+
     return data.when(
       skipLoadingOnRefresh: true,
       skipLoadingOnReload: true,
       error: (_, __) => const Text("Failed to load data"),
       data: (stock) {
+        // Determine current change for color animation
+        final currentChange = stock.priceChange > 0
+            ? StockChange.increase
+            : stock.priceChange < 0
+            ? StockChange.decrease
+            : null;
+
+        // Create color animations
+        final priceColorAnimation = useAnimation(
+          ColorTween(
+            begin: determineStockChangeColor(context: context, change: currentChange),
+            end: OpDynamicColor.onSurface(context),
+          ).animate(
+            CurvedAnimation(
+              parent: priceAnimationController,
+              curve: Curves.easeInOut,
+            ),
+          ),
+        );
+
+        final tableColorAnimation = useAnimation(
+          ColorTween(
+            begin: determineStockChangeColor(context: context, change: currentChange),
+            end: OpDynamicColor.onSurface(context),
+          ).animate(
+            CurvedAnimation(
+              parent: tableAnimationController,
+              curve: Curves.easeInOut,
+            ),
+          ),
+        );
+
+        // Trigger animations on price change (only for 1D view)
+        useEffect(() {
+          if (timeRange.value == StockPriceDateFilter.oneDay) {
+            if (previousPrice.value != null && previousPrice.value != stock.currentPrice) {
+              priceAnimationController.forward(from: 0.0);
+              // Force chart updates
+              chartKey.value = UniqueKey();
+            }
+            previousPrice.value = stock.currentPrice;
+            previousChange.value = currentChange;
+          }
+          return null;
+        }, [stock.currentPrice, currentChange, timeRange.value]);
+
+        // Trigger table animation on detail fields change (only for 1D view)
+        useEffect(() {
+          if (timeRange.value == StockPriceDateFilter.oneDay) {
+            if (previousDetailFields.value != null &&
+                previousDetailFields.value.toString() != stock.detailFields.toString()) {
+              tableAnimationController.forward(from: 0.0);
+            }
+            previousDetailFields.value = Map.from(stock.detailFields);
+          }
+          return null;
+        }, [stock.detailFields.toString(), timeRange.value]);
+
         // Get detail fields
         final detailFields = data.value!.detailFields.entries.toList();
         final split = (detailFields.length / 2).ceil();
 
-        // Get accent color
-        final accentColor = stock.pricePoints!.points.isNotEmpty
+        // Get accent color based on current change
+        final accentColor = currentChange != null
+            ? determineStockChangeColor(context: context, change: currentChange)
+            : (stock.pricePoints!.points.isNotEmpty
             ? StockColoring.determineStockColor(
-                context,
-                stock.pricePoints!.points.last.price -
-                    stock.pricePoints!.points.first.price,
-              )
-            : OpDynamicColor.primary(context);
+          context,
+          stock.pricePoints!.points.last.price -
+              stock.pricePoints!.points.first.price,
+        )
+            : OpDynamicColor.primary(context));
 
         // Calculate price and percentage changes
         final (calculatedPriceChange, calculatedPercentChange) =
-            calculatePriceChanges(
+        calculatePriceChanges(
           timeRange.value,
           stock.pricePoints?.points ?? [],
         );
@@ -112,13 +191,13 @@ class StockDetailsOverview extends HookConsumerWidget {
                     children: [
                       switch (marketSession.value) {
                         MarketSession.open => ChipMediumAqua(
-                            text:
-                                "${stock.exchange?.symbol} • ${marketSession.value.label}",
-                          ),
+                          text:
+                          "${stock.exchange?.symbol} • ${marketSession.value.label}",
+                        ),
                         MarketSession.closed => ChipMediumNeutral(
-                            text:
-                                "${stock.exchange?.symbol} • ${marketSession.value.label}",
-                          ),
+                          text:
+                          "${stock.exchange?.symbol} • ${marketSession.value.label}",
+                        ),
                       },
                       const SizedBox(height: OpSpacing.sm),
                       Text(
@@ -126,36 +205,47 @@ class StockDetailsOverview extends HookConsumerWidget {
                         style: OpTextStyle.titleLarge(context),
                       ),
                       const SizedBox(height: OpSpacing.xs3),
-                      Text(
-                        switch (type) {
-                          StockItemType.idx => stock.currentPrice.toString(),
-                          StockItemType.stock => stock.currentPrice.vndFormat(),
+                      // Animated current price
+                      AnimatedBuilder(
+                        animation: priceAnimationController,
+                        builder: (context, child) {
+                          return Text(
+                            switch (type) {
+                              StockItemType.idx => stock.currentPrice.toString(),
+                              StockItemType.stock => stock.currentPrice.vndFormat(),
+                            },
+                            key: ValueKey(stock.currentPrice),
+                            style: OpTextStyle.display(context).spacedOut().copyWith(
+                              color: timeRange.value == StockPriceDateFilter.oneDay
+                                  ? priceColorAnimation
+                                  : null,
+                            ),
+                          );
                         },
-                        style: OpTextStyle.display(context).spacedOut(),
                       ),
                       const SizedBox(height: OpSpacing.xs2),
                       Row(
                         children: [
                           switch (type) {
                             StockItemType.idx => StockPointChangeText(
-                                value: timeRange.value ==
-                                        StockPriceDateFilter.oneDay
-                                    ? stock.priceChange
-                                    : calculatedPriceChange,
-                              ),
+                              value: timeRange.value ==
+                                  StockPriceDateFilter.oneDay
+                                  ? stock.priceChange
+                                  : calculatedPriceChange,
+                            ),
                             StockItemType.stock => StockPriceChangeText(
-                                value: timeRange.value ==
-                                        StockPriceDateFilter.oneDay
-                                    ? stock.priceChange
-                                    : calculatedPriceChange,
-                              ),
+                              value: timeRange.value ==
+                                  StockPriceDateFilter.oneDay
+                                  ? stock.priceChange
+                                  : calculatedPriceChange,
+                            ),
                           },
                           const SizedBox(width: OpSpacing.sm),
                           StockPercentChangeText(
                             value:
-                                timeRange.value == StockPriceDateFilter.oneDay
-                                    ? stock.percentChange
-                                    : calculatedPercentChange,
+                            timeRange.value == StockPriceDateFilter.oneDay
+                                ? stock.percentChange
+                                : calculatedPercentChange,
                           ),
                           const SizedBox(width: OpSpacing.sm),
                           Text(
@@ -174,6 +264,7 @@ class StockDetailsOverview extends HookConsumerWidget {
                         alignment: Alignment.center,
                         children: [
                           StockLineChart(
+                            key: chartKey.value, // Force rebuild when data changes
                             stockPricePoints: stock.pricePoints!,
                             selectedDateFilter: timeRange.value,
                             accentColor: accentColor,
@@ -203,23 +294,23 @@ class StockDetailsOverview extends HookConsumerWidget {
                           children: dateFilterOptions
                               .map(
                                 (filter) => filter == timeRange.value
-                                    ? OpTonalPrimaryButton(
-                                        text: filter.label,
-                                        onPressed: () {},
-                                      )
-                                    : OpNeutralTextButton(
-                                        text: filter.label,
-                                        onPressed: () {
-                                          timeRange.value = filter;
-                                          ref
-                                              .read(provider.notifier)
-                                              .updateDetailsWithTimeRange(
-                                                timeRange: filter,
-                                              );
-                                        },
-                                        tightPadding: true,
-                                      ),
-                              )
+                                ? OpTonalPrimaryButton(
+                              text: filter.label,
+                              onPressed: () {},
+                            )
+                                : OpNeutralTextButton(
+                              text: filter.label,
+                              onPressed: () {
+                                timeRange.value = filter;
+                                ref
+                                    .read(provider.notifier)
+                                    .updateDetailsWithTimeRange(
+                                  timeRange: filter,
+                                );
+                              },
+                              tightPadding: true,
+                            ),
+                          )
                               .toList(),
                         ),
                       ),
@@ -237,6 +328,9 @@ class StockDetailsOverview extends HookConsumerWidget {
                         child: _buildHalfColumn(
                           detailFields.sublist(0, split),
                           context,
+                          tableColorAnimation,
+                          tableAnimationController,
+                          timeRange.value == StockPriceDateFilter.oneDay,
                         ),
                       ),
                       const SizedBox(
@@ -246,6 +340,9 @@ class StockDetailsOverview extends HookConsumerWidget {
                         child: _buildHalfColumn(
                           detailFields.sublist(split),
                           context,
+                          tableColorAnimation,
+                          tableAnimationController,
+                          timeRange.value == StockPriceDateFilter.oneDay,
                         ),
                       ),
                     ],
@@ -263,7 +360,7 @@ class StockDetailsOverview extends HookConsumerWidget {
         final split = (detailFields.length / 2).ceil();
 
         return Skeletonizer(
-          effect:  opShimmerEffect(context),
+          effect: opShimmerEffect(context),
           child: Stack(
             children: [
               //endregion
@@ -279,13 +376,13 @@ class StockDetailsOverview extends HookConsumerWidget {
                       children: [
                         switch (marketSession.value) {
                           MarketSession.open => ChipMediumAqua(
-                              text:
-                                  "${sampleStock.exchange?.symbol} • ${marketSession.value.label}",
-                            ),
+                            text:
+                            "${sampleStock.exchange?.symbol} • ${marketSession.value.label}",
+                          ),
                           MarketSession.closed => ChipMediumNeutral(
-                              text:
-                                  "${sampleStock.exchange?.symbol} • ${marketSession.value.label}",
-                            ),
+                            text:
+                            "${sampleStock.exchange?.symbol} • ${marketSession.value.label}",
+                          ),
                         },
                         const SizedBox(height: OpSpacing.sm),
                         Text(
@@ -296,9 +393,9 @@ class StockDetailsOverview extends HookConsumerWidget {
                         Text(
                           switch (type) {
                             StockItemType.idx =>
-                              sampleStock.currentPrice.toString(),
+                                sampleStock.currentPrice.toString(),
                             StockItemType.stock =>
-                              sampleStock.currentPrice.vndFormat(),
+                                sampleStock.currentPrice.vndFormat(),
                           },
                           style: OpTextStyle.display(context).spacedOut(),
                         ),
@@ -307,11 +404,11 @@ class StockDetailsOverview extends HookConsumerWidget {
                           children: [
                             switch (type) {
                               StockItemType.idx => StockPointChangeText(
-                                  value: sampleStock.priceChange,
-                                ),
+                                value: sampleStock.priceChange,
+                              ),
                               StockItemType.stock => StockPriceChangeText(
-                                  value: sampleStock.priceChange,
-                                ),
+                                value: sampleStock.priceChange,
+                              ),
                             },
                             const SizedBox(width: OpSpacing.sm),
                             StockPercentChangeText(
@@ -342,9 +439,7 @@ class StockDetailsOverview extends HookConsumerWidget {
                                   OpSpacing.none,
                                   OpSpacing.none,
                                 ),
-                                child: const SizedBox(
-
-                                ),
+                                child: const SizedBox(),
                               ),
                             ),
                           ],
@@ -358,23 +453,23 @@ class StockDetailsOverview extends HookConsumerWidget {
                             children: dateFilterOptions
                                 .map(
                                   (filter) => filter == timeRange.value
-                                      ? OpTonalPrimaryButton(
-                                          text: filter.label,
-                                          onPressed: () {},
-                                        )
-                                      : OpNeutralTextButton(
-                                          text: filter.label,
-                                          onPressed: () {
-                                            timeRange.value = filter;
-                                            ref
-                                                .read(provider.notifier)
-                                                .updateDetailsWithTimeRange(
-                                                  timeRange: filter,
-                                                );
-                                          },
-                                          tightPadding: true,
-                                        ),
-                                )
+                                  ? OpTonalPrimaryButton(
+                                text: filter.label,
+                                onPressed: () {},
+                              )
+                                  : OpNeutralTextButton(
+                                text: filter.label,
+                                onPressed: () {
+                                  timeRange.value = filter;
+                                  ref
+                                      .read(provider.notifier)
+                                      .updateDetailsWithTimeRange(
+                                    timeRange: filter,
+                                  );
+                                },
+                                tightPadding: true,
+                              ),
+                            )
                                 .toList(),
                           ),
                         ),
@@ -392,6 +487,9 @@ class StockDetailsOverview extends HookConsumerWidget {
                           child: _buildHalfColumn(
                             detailFields.sublist(0, split),
                             context,
+                            null,
+                            null,
+                            false,
                           ),
                         ),
                         const SizedBox(
@@ -401,6 +499,9 @@ class StockDetailsOverview extends HookConsumerWidget {
                           child: _buildHalfColumn(
                             detailFields.sublist(split),
                             context,
+                            null,
+                            null,
+                            false,
                           ),
                         ),
                       ],
@@ -416,16 +517,26 @@ class StockDetailsOverview extends HookConsumerWidget {
   }
 
   Widget _buildHalfColumn(
-    List<MapEntry<String, double?>> entries,
-    BuildContext context,
-  ) {
+      List<MapEntry<String, double?>> entries,
+      BuildContext context,
+      Color? animationColor,
+      AnimationController? animationController,
+      bool shouldAnimate,
+      ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         for (final entry in entries) ...[
-          SimpleRow(
-            label: entry.key,
-            value: entry.value,
+          AnimatedBuilder(
+            animation: animationController ?? const AlwaysStoppedAnimation(0.0),
+            builder: (context, child) {
+              return SimpleRow(
+                key: ValueKey('${entry.key}-${entry.value}'),
+                label: entry.key,
+                value: entry.value,
+                valueColor: shouldAnimate ? animationColor : null,
+              );
+            },
           ),
           if (entry != entries.last)
             Divider(

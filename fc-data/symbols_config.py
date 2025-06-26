@@ -2,90 +2,90 @@
 # Centralized configuration for Vietnamese stock symbols
 # This ensures consistency across producer, consumer, and API
 
-# Major Vietnamese Stock Indexes
+# Major Vietnamese Stock Indexes with realistic base values
 VIETNAMESE_INDEXES = [
-    ('VNIndex', 'HOSE'),      # Ho Chi Minh Stock Exchange Index
-    ('VN30', 'HOSE'),         # VN30 Index (Top 30 companies)
-    ('VNMidCap', 'HOSE'),     # VN MidCap Index
-    ('VNSmallCap', 'HOSE'),   # VN SmallCap Index
-    ('VNAllShare', 'HOSE'),   # VN AllShare Index
-    ('HNXIndex', 'HNX'),      # Hanoi Stock Exchange Index
-    ('HNX30', 'HNX'),         # HNX30 Index
-    ('HNXCon', 'HNX'),        # HNX Construction Index
-    ('HNXFin', 'HNX'),        # HNX Finance Index
-    ('HNXLCap', 'HNX'),       # HNX Large Cap Index
-    ('HNXMSci', 'HNX'),       # HNX Manufacturing & Science Index
-    ('UpcomIndex', 'UPCOM'),  # UPCoM Index
+    ('VNIndex', 'HOSE', 1250.0),      # Ho Chi Minh Stock Exchange Index
+    ('VN30', 'HOSE', 1450.0),         # VN30 Index (Top 30 companies)
+    ('VNMidCap', 'HOSE', 890.0),      # VN MidCap Index
+    ('VNSmallCap', 'HOSE', 520.0),    # VN SmallCap Index
+    ('VNAllShare', 'HOSE', 1180.0),   # VN AllShare Index
+    ('HNXIndex', 'HNX', 245.0),       # Hanoi Stock Exchange Index
+    ('HNX30', 'HNX', 380.0),          # HNX30 Index
+    ('HNXCon', 'HNX', 165.0),         # HNX Construction Index
+    ('HNXFin', 'HNX', 290.0),         # HNX Finance Index
+    ('HNXLCap', 'HNX', 320.0),        # HNX Large Cap Index
+    ('HNXMSci', 'HNX', 195.0),        # HNX Manufacturing & Science Index
+    ('UpcomIndex', 'UPCOM', 85.0),    # UPCoM Index
 ]
 
-# Top 50 Vietnamese Stocks (Major companies across sectors)
+# Top Vietnamese Stocks with realistic base prices (in VND)
 VIETNAMESE_STOCKS = [
-    # Banking & Finance (VN30 Banks)
-    ('VCB', 'Vietcombank', 'HOSE'),
-    ('BID', 'BIDV', 'HOSE'),
-    ('CTG', 'VietinBank', 'HOSE'),
-    ('TCB', 'Techcombank', 'HOSE'),
-    ('ACB', 'Asia Commercial Bank', 'HOSE'),
-    ('MBB', 'Military Bank', 'HOSE'),
-    ('STB', 'Sacombank', 'HOSE'),
-    ('VPB', 'VPBank', 'HOSE'),
-    ('TPB', 'Tien Phong Bank', 'HOSE'),
-    ('EIB', 'Eximbank', 'HOSE'),
-    
-    # Real Estate & Construction
-    ('VIC', 'Vingroup', 'HOSE'),
-    ('VHM', 'Vinhomes', 'HOSE'),
-    ('VRE', 'Vincom Retail', 'HOSE'),
-    ('BCM', 'Becamex IDC', 'HOSE'),
-    ('KDH', 'Khang Dien House', 'HOSE'),
-    ('NVL', 'Novaland', 'HOSE'),
-    ('PDR', 'Phat Dat Real Estate', 'HOSE'),
-    ('DXG', 'Dat Xanh Group', 'HOSE'),
-    
+    # Banking & Finance (VN30 Banks) - Higher prices for major banks
+    ('VCB', 'Vietcombank', 'HOSE', 82500.0),
+    ('BID', 'BIDV', 'HOSE', 45800.0),
+    ('CTG', 'VietinBank', 'HOSE', 38200.0),
+    ('TCB', 'Techcombank', 'HOSE', 28900.0),
+    ('ACB', 'Asia Commercial Bank', 'HOSE', 24600.0),
+    ('MBB', 'Military Bank', 'HOSE', 22400.0),
+    ('STB', 'Sacombank', 'HOSE', 18750.0),
+    ('VPB', 'VPBank', 'HOSE', 16200.0),
+    ('TPB', 'Tien Phong Bank', 'HOSE', 26800.0),
+    ('EIB', 'Eximbank', 'HOSE', 19400.0),
+
+    # Real Estate & Construction - Premium stocks
+    ('VIC', 'Vingroup', 'HOSE', 65800.0),
+    ('VHM', 'Vinhomes', 'HOSE', 58200.0),
+    ('VRE', 'Vincom Retail', 'HOSE', 32500.0),
+    ('BCM', 'Becamex IDC', 'HOSE', 28400.0),
+    ('KDH', 'Khang Dien House', 'HOSE', 34600.0),
+    ('NVL', 'Novaland', 'HOSE', 12800.0),
+    ('PDR', 'Phat Dat Real Estate', 'HOSE', 25700.0),
+    ('DXG', 'Dat Xanh Group', 'HOSE', 19200.0),
+
     # Manufacturing & Heavy Industry
-    ('HPG', 'Hoa Phat Group', 'HOSE'),
-    ('HSG', 'Hoa Sen Group', 'HOSE'),
-    ('NKG', 'Nam Kim Group', 'HOSE'),
-    ('POM', 'Pomina Steel', 'HOSE'),
-    ('TVN', 'Vietnam Tanker', 'HOSE'),
-    
-    # Consumer Goods & Food
-    ('VNM', 'Vinamilk', 'HOSE'),
-    ('MSN', 'Masan Group', 'HOSE'),
-    ('SAB', 'Sabeco', 'HOSE'),
-    ('BHN', 'Bien Hoa Sugar', 'HOSE'),
-    ('KDC', 'Kinh Do Corporation', 'HOSE'),
-    ('MCH', 'Masan Consumer Holdings', 'HOSE'),
-    
+    ('HPG', 'Hoa Phat Group', 'HOSE', 24800.0),
+    ('HSG', 'Hoa Sen Group', 'HOSE', 15600.0),
+    ('NKG', 'Nam Kim Group', 'HOSE', 42300.0),
+    ('POM', 'Pomina Steel', 'HOSE', 18900.0),
+    ('TVN', 'Vietnam Tanker', 'HOSE', 22100.0),
+
+    # Consumer Goods & Food - Stable high-value stocks
+    ('VNM', 'Vinamilk', 'HOSE', 76500.0),
+    ('MSN', 'Masan Group', 'HOSE', 98200.0),
+    ('SAB', 'Sabeco', 'HOSE', 156000.0),
+    ('BHN', 'Bien Hoa Sugar', 'HOSE', 14200.0),
+    ('KDC', 'Kinh Do Corporation', 'HOSE', 35800.0),
+    ('MCH', 'Masan Consumer Holdings', 'HOSE', 67400.0),
+
     # Technology & Telecommunications
-    ('FPT', 'FPT Corporation', 'HOSE'),
-    ('CMG', 'CMC Corporation', 'HOSE'),
-    ('ELC', 'Electronics Corporation', 'HOSE'),
-    ('ITD', 'IT&T Development', 'HOSE'),
-    
-    # Energy & Utilities
-    ('GAS', 'PetroVietnam Gas', 'HOSE'),
-    ('PLX', 'Petrolimex', 'HOSE'),
-    ('POW', 'PetroVietnam Power', 'HOSE'),
-    ('REE', 'Refrigeration Electrical Engineering', 'HOSE'),
-    ('NT2', 'Nam Theun 2 Power', 'HOSE'),
-    
+    ('FPT', 'FPT Corporation', 'HOSE', 89600.0),
+    ('CMG', 'CMC Corporation', 'HOSE', 28500.0),
+    ('ELC', 'Electronics Corporation', 'HOSE', 22800.0),
+    ('ITD', 'IT&T Development', 'HOSE', 18700.0),
+
+    # Energy & Utilities - Mid-range prices
+    ('GAS', 'PetroVietnam Gas', 'HOSE', 125000.0),
+    ('PLX', 'Petrolimex', 'HOSE', 54200.0),
+    ('POW', 'PetroVietnam Power', 'HOSE', 38600.0),
+    ('REE', 'Refrigeration Electrical Engineering', 'HOSE', 68900.0),
+    ('NT2', 'Nam Theun 2 Power', 'HOSE', 26400.0),
+
     # Healthcare & Pharmaceuticals
-    ('DHG', 'Hau Giang Pharmaceutical', 'HOSE'),
-    ('IMP', 'Imexpharm', 'HOSE'),
-    ('PME', 'Petrovietnam Medical', 'HOSE'),
-    
+    ('DHG', 'Hau Giang Pharmaceutical', 'HOSE', 42800.0),
+    ('IMP', 'Imexpharm', 'HOSE', 78900.0),
+    ('PME', 'Petrovietnam Medical', 'HOSE', 32100.0),
+
     # Transportation & Logistics
-    ('VJC', 'VietJet Aviation', 'HOSE'),
-    ('HVN', 'Vietnam Airlines', 'HOSE'),
-    ('GMD', 'Gemadept Corporation', 'HOSE'),
-    ('PVT', 'PetroVietnam Transportation', 'HOSE'),
-    
+    ('VJC', 'VietJet Aviation', 'HOSE', 112000.0),
+    ('HVN', 'Vietnam Airlines', 'HOSE', 18600.0),
+    ('GMD', 'Gemadept Corporation', 'HOSE', 46200.0),
+    ('PVT', 'PetroVietnam Transportation', 'HOSE', 29800.0),
+
     # Retail & Services
-    ('MWG', 'Mobile World Group', 'HOSE'),
-    ('FRT', 'FPT Retail', 'HOSE'),
-    ('PNJ', 'Phu Nhuan Jewelry', 'HOSE'),
-    ('SBT', 'Saigon Beer Alcohol Beverage', 'HOSE'),
+    ('MWG', 'Mobile World Group', 'HOSE', 48500.0),
+    ('FRT', 'FPT Retail', 'HOSE', 72300.0),
+    ('PNJ', 'Phu Nhuan Jewelry', 'HOSE', 95600.0),
+    ('SBT', 'Saigon Beer Alcohol Beverage', 'HOSE', 58700.0),
 ]
 
 def get_all_symbols():
@@ -118,18 +118,30 @@ def get_symbol_info(symbol):
                 'type': 'stock',
                 'symbol': stock[0],
                 'name': stock[1],
-                'market': stock[2]
+                'market': stock[2],
+                'base_price': stock[3]
             }
-    
+
     # Check indexes
     for index in VIETNAMESE_INDEXES:
         if index[0] == symbol:
             return {
                 'type': 'index',
                 'symbol': index[0],
-                'market': index[1]
+                'market': index[1],
+                'base_value': index[2]
             }
-    
+
+    return None
+
+def get_base_price(symbol):
+    """Get the base price for a symbol"""
+    symbol_info = get_symbol_info(symbol)
+    if symbol_info:
+        if symbol_info['type'] == 'stock':
+            return symbol_info['base_price']
+        else:
+            return symbol_info['base_value']
     return None
 
 # For backward compatibility

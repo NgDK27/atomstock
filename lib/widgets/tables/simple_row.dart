@@ -7,8 +7,14 @@ import 'package:oppenhomies/widgets/helpers/money_formatter.dart';
 class SimpleRow extends HookWidget {
   final String label;
   final double? value;
+  final Color? valueColor;
 
-  const SimpleRow({super.key, required this.label, required this.value});
+  const SimpleRow({
+    super.key,
+    required this.label,
+    required this.value,
+    this.valueColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +23,13 @@ class SimpleRow extends HookWidget {
       spacing: OpSpacing.sm,
       runSpacing: OpSpacing.xs3,
       children: [
-        Text(label, style: OpTextStyle.labelLarge(context),),
-        Text(value?.vndNoSymbolFormat() ?? '-', style: OpTextStyle.labelLarge(context).bold(),),
+        Text(label, style: OpTextStyle.labelLarge(context)),
+        Text(
+          value?.vndNoSymbolFormat() ?? '-',
+          style: OpTextStyle.labelLarge(context).bold().copyWith(
+            color: valueColor,
+          ),
+        ),
       ],
     );
   }
