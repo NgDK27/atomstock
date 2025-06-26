@@ -41,13 +41,15 @@ class StockRepository {
   }
 
   Stream<StockUpdate> getMainMarketUpdates() {
-    if (MarketHoursService.isMarketOpen()) {
-      print("bruh");
+    // Temporarily bypass market hours check for development
+    // if (MarketHoursService.isMarketOpen()) {
+    if (true) { // Development mode - always connect
+      print("🔌 Connecting to main market WebSocket");
       return _wsManager
           .connect('/ws/main-market')
           .map((event) => StockUpdate.fromJson(jsonDecode(event)));
     } else {
-      print("nobruh");
+      print("❌ Market closed - no WebSocket connection");
       return const Stream.empty();
     }
   }
@@ -95,34 +97,35 @@ class StockRepository {
       final dateTimeFormat = DateFormat('dd/MM/yyyy HH:mm:ss');
 
       final List<StockPricePoint> pricePoints =
-          (tickerData['historical_data'] as List).map((point) {
+      (tickerData['historical_data'] as List).map((point) {
         final date = dateFormat.parse(point['TradingDate']);
         final time = point['Time'];
         final timestamp = time != null
             ? dateTimeFormat.parse('${point['TradingDate']} $time')
             : DateTime(date.year, date.month, date.day);
 
+        // Ensure price is converted to double
+        final price = (point['ClosePrice'] as num).toDouble();
+
         return StockPricePoint(
           timestamp: timestamp,
-          price: double.parse(point['ClosePrice']),
-          // price: 123456.25,
+          price: price,
         );
       }).toList();
 
       return StockModel(
         name: tickerData['name'],
         symbol: stockData['Symbol'],
-        currentPrice: stockData['Price'].toDouble(),
-        priceChange: stockData['Change'].toDouble(),
-        percentChange: stockData['RatioChange'].toDouble(),
-        totalVolume: stockData['Volume'].toDouble(),
+        currentPrice: (stockData['Price'] as num).toDouble(),
+        priceChange: (stockData['Change'] as num).toDouble(),
+        percentChange: (stockData['RatioChange'] as num).toDouble(),
+        totalVolume: (stockData['Volume'] as num?)?.toDouble(),
         exchange: ExchangeModel(
           symbol: tickerData['market'],
         ),
         pricePoints: StockPricePoints(points: pricePoints),
       );
     } catch (e) {
-      // Handle errors
       log(e.toString());
       throw Exception('Failed to fetch stock details: $e');
     }
@@ -132,69 +135,77 @@ class StockRepository {
     required String id,
     String? timeRange,
   }) async {
-    {
-      try {
-        final stockFuture = _dio.get('$_apiEndpoint:8080/index/$id');
-        final tickerFuture = timeRange != null
-            ? _dio.get('$_apiEndpoint:8000/ticker/$id?range=$timeRange')
-            : _dio.get('$_apiEndpoint:8000/ticker/$id');
+    try {
+      final stockFuture = _dio.get('$_apiEndpoint:8080/index/$id');
+      final tickerFuture = timeRange != null
+          ? _dio.get('$_apiEndpoint:8000/ticker/$id?range=$timeRange')
+          : _dio.get('$_apiEndpoint:8000/ticker/$id');
 
-        final responses = await Future.wait([stockFuture, tickerFuture]);
+      final responses = await Future.wait([stockFuture, tickerFuture]);
 
-        final indexData = responses[0].data;
-        final tickerData = responses[1].data;
+      final indexData = responses[0].data;
+      final tickerData = responses[1].data;
 
-        final dateFormat = DateFormat('dd/MM/yyyy');
-        final dateTimeFormat = DateFormat('dd/MM/yyyy HH:mm:ss');
+      final dateFormat = DateFormat('dd/MM/yyyy');
+      final dateTimeFormat = DateFormat('dd/MM/yyyy HH:mm:ss');
 
-        final List<StockPricePoint> pricePoints =
-            (tickerData['historical_data'] as List).map((point) {
-          final date = dateFormat.parse(point['TradingDate']);
-          final time = point['Time'];
-          final timestamp = time != null
-              ? dateTimeFormat.parse('${point['TradingDate']} $time')
-              : DateTime(date.year, date.month, date.day);
+      final List<StockPricePoint> pricePoints =
+      (tickerData['historical_data'] as List).map((point) {
+        final date = dateFormat.parse(point['TradingDate']);
+        final time = point['Time'];
+        final timestamp = time != null
+            ? dateTimeFormat.parse('${point['TradingDate']} $time')
+            : DateTime(date.year, date.month, date.day);
 
-          return StockPricePoint(
-            timestamp: timestamp,
-            price: double.parse(point['ClosePrice'] ?? point['IndexValue']),
-          );
-        }).toList();
+        // Handle both ClosePrice and IndexValue, ensure conversion to double
+        final priceValue = point['ClosePrice'] ?? point['IndexValue'];
+        final price = (priceValue as num).toDouble();
 
-        final index = IndexModel.fromJson(indexData);
-        final stockFromIndex = index.toStockModel();
-
-        return stockFromIndex.copyWith(
-          exchange: ExchangeModel(
-            symbol: tickerData['market'],
-          ),
-          pricePoints: StockPricePoints(points: pricePoints),
+        return StockPricePoint(
+          timestamp: timestamp,
+          price: price,
         );
-      } catch (e) {
-        // Handle errors
-        log(e.toString());
-        throw Exception('Failed to fetch index details: $e');
-      }
+      }).toList();
+
+      final index = IndexModel.fromJson(indexData);
+      final stockFromIndex = index.toStockModel();
+
+      return stockFromIndex.copyWith(
+        exchange: ExchangeModel(
+          symbol: tickerData['market'],
+        ),
+        pricePoints: StockPricePoints(points: pricePoints),
+      );
+    } catch (e) {
+      log(e.toString());
+      throw Exception('Failed to fetch index details: $e');
     }
   }
 
   Stream<StockDetailUpdate> getStockDetailUpdates(String symbol) {
-    if (MarketHoursService.isMarketOpen()) {
+    // Temporarily bypass market hours check for development
+    // if (MarketHoursService.isMarketOpen()) {
+    if (true) { // Development mode - always connect
+      print("🔌 Connecting to stock detail WebSocket for $symbol");
       return _wsManager.connect('/ws/stock/$symbol').map((event) {
         return StockDetailUpdate.fromJson(jsonDecode(event));
       });
     } else {
+      print("❌ Market closed - no stock detail WebSocket for $symbol");
       return Stream.empty();
     }
   }
 
   Stream<IndexDetailUpdate> getIndexDetailUpdates(String indexId) {
-    print("Setting up index detail stream for $indexId");
-    if (MarketHoursService.isMarketOpen()) {
+    print("🔌 Setting up index detail stream for $indexId");
+    // Temporarily bypass market hours check for development
+    // if (MarketHoursService.isMarketOpen()) {
+    if (true) { // Development mode - always connect
       return _wsManager.connect('/ws/index/$indexId').map((event) {
         return IndexDetailUpdate.fromJson(jsonDecode(event));
       });
     } else {
+      print("❌ Market closed - no index detail WebSocket for $indexId");
       return Stream.empty();
     }
   }

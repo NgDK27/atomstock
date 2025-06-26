@@ -7,71 +7,124 @@ import (
     "log"
     "time"
 	"fmt"
+    "strings"
 
     "github.com/redis/go-redis/v9"
-    "github.com/segmentio/kafka-go"
+    "github.com/confluentinc/confluent-kafka-go/v2/kafka"
     "oppenhomies/server/internal/models"
 )
 
 type AutomatedTradingService struct {
-    db          *sql.DB
-    redisClient *redis.Client
-    kafkaReader *kafka.Reader
-    stopChan    chan struct{}
+    db           *sql.DB
+    redisClient  *redis.Client
+    kafkaConsumer *kafka.Consumer
+    stopChan     chan struct{}
+    running      bool
 }
 
-
 func NewAutomatedTradingService(db *sql.DB, redisClient *redis.Client, kafkaBrokers []string, topics []string) *AutomatedTradingService {
-    stockTopics := topics
-    
-    reader := kafka.NewReader(kafka.ReaderConfig{
-        Brokers: kafkaBrokers,
-        GroupID: "automated-trading-group",
-        GroupTopics:    stockTopics,
-        CommitInterval: 200 * time.Millisecond,
-        StartOffset:    kafka.LastOffset,
-        MaxWait:        500 * time.Millisecond,
-    })
+    config := &kafka.ConfigMap{
+        "bootstrap.servers":      strings.Join(kafkaBrokers, ","),
+        "group.id":              "automated-trading-group",
+        "auto.offset.reset":     "latest",
+        "enable.auto.commit":    false,
+        // Use the new consumer group protocol for Kafka 4.0 compatibility
+        "group.protocol":        "consumer",
+    }
+
+    consumer, err := kafka.NewConsumer(config)
+    if err != nil {
+        log.Fatalf("Failed to create consumer for automated trading: %v", err)
+    }
+
+    err = consumer.SubscribeTopics(topics, nil)
+    if err != nil {
+        consumer.Close()
+        log.Fatalf("Failed to subscribe to topics for automated trading: %v", err)
+    }
 
     return &AutomatedTradingService{
-        db:          db,
-        redisClient: redisClient,
-        kafkaReader: reader,
-        stopChan:    make(chan struct{}),
+        db:           db,
+        redisClient:  redisClient,
+        kafkaConsumer: consumer,
+        stopChan:     make(chan struct{}),
+        running:      false,
     }
 }
 
 func (s *AutomatedTradingService) Start() {
+    s.running = true
     go s.run()
 }
 
 func (s *AutomatedTradingService) Stop() {
+    s.running = false
     close(s.stopChan)
-    s.kafkaReader.Close()
+    if s.kafkaConsumer != nil {
+        s.kafkaConsumer.Close()
+    }
 }
 
 func (s *AutomatedTradingService) run() {
-    for {
+    log.Println("Starting automated trading service...")
+
+    for s.running {
         select {
         case <-s.stopChan:
+            log.Println("Automated trading service stopping...")
             return
         default:
-            message, err := s.kafkaReader.ReadMessage(context.Background())
-            if err != nil {
-                log.Printf("Error reading Kafka message: %v", err)
-                continue
+            // Poll for messages with a timeout
+            ev := s.kafkaConsumer.Poll(100) // 100ms timeout
+
+            switch e := ev.(type) {
+            case *kafka.Message:
+                // Process the message
+                if err := s.processMessage(e); err != nil {
+                    log.Printf("Error processing message in automated trading: %v", err)
+                } else {
+                    // Commit the message after successful processing
+                    if _, err := s.kafkaConsumer.CommitMessage(e); err != nil {
+                        log.Printf("Error committing message in automated trading: %v", err)
+                    }
+                }
+
+            case kafka.Error:
+                // Handle errors
+                log.Printf("Error in automated trading service: %v", e)
+                if e.Code() == kafka.ErrAllBrokersDown {
+                    log.Printf("All brokers down, retrying...")
+                    time.Sleep(1 * time.Second)
+                }
+
+            case nil:
+                // No message received within timeout, continue
+
+            default:
+                // Other events (like partition assignment changes)
+                log.Printf("Kafka event in automated trading: %v", e)
             }
-            s.processMessage(message)
         }
     }
 }
 
-func (s *AutomatedTradingService) processMessage(message kafka.Message) {
+func (s *AutomatedTradingService) processMessage(message *kafka.Message) error {
     var stockData models.StockData
     err := json.Unmarshal(message.Value, &stockData)
     if err != nil {
-        log.Printf("Error unmarshaling stock data: %v", err)
-        return
+        return fmt.Errorf("error unmarshaling stock data: %v", err)
+    }
+
+    // Extract symbol from topic name
+    if message.TopicPartition.Topic == nil {
+        return fmt.Errorf("message topic is nil")
+    }
+
+    topic := *message.TopicPartition.Topic
+    if strings.HasPrefix(topic, "stock-") {
+        stockData.Symbol = strings.TrimPrefix(topic, "stock-")
+    } else {
+        return fmt.Errorf("unknown topic format: %s", topic)
     }
 
     // Check open trades first
@@ -79,8 +132,7 @@ func (s *AutomatedTradingService) processMessage(message kafka.Message) {
 
     rules, err := s.fetchActiveRules(stockData.Symbol)
     if err != nil {
-        log.Printf("Error fetching active rules for symbol %s: %v", stockData.Symbol, err)
-        return
+        return fmt.Errorf("error fetching active rules for symbol %s: %v", stockData.Symbol, err)
     }
 
     for _, rule := range rules {
@@ -104,6 +156,8 @@ func (s *AutomatedTradingService) processMessage(message kafka.Message) {
             }
         }
     }
+
+    return nil
 }
 
 func (s *AutomatedTradingService) hasOpenTradeForRule(ruleID int) (bool, error) {

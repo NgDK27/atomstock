@@ -1,3 +1,4 @@
+// server/engine/engine.go
 package main
 
 import (
@@ -14,7 +15,6 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
-	"github.com/segmentio/kafka-go"
 	"oppenhomies/server/internal/services"
 	_ "github.com/lib/pq"
 )
@@ -57,34 +57,9 @@ func getTopics() ([]string, error) {
 		topics = append(topics, fmt.Sprintf("stock-%s", symbol))
 	}
 
-	rows, err = db.Query("SELECT symbol FROM indexes")
-	if err != nil {
-		return nil, fmt.Errorf("error querying indexes: %v", err)
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var symbol string
-		if err := rows.Scan(&symbol); err != nil {
-			return nil, fmt.Errorf("error scanning index symbol: %v", err)
-		}
-		topics = append(topics, fmt.Sprintf("index-%s", symbol))
-	}
-
 	return topics, nil
 }
 
-func setupKafkaReader(brokers []string, topics []string) (*kafka.Reader, error) {
-    reader := kafka.NewReader(kafka.ReaderConfig{
-        Brokers:        brokers,
-        GroupID:        "market-data-consumer",
-        GroupTopics:    topics,
-        CommitInterval: 200 * time.Millisecond,
-        StartOffset:    kafka.LastOffset,
-        MaxWait:        500 * time.Millisecond,
-    })
-    return reader, nil
-}
 
 func checkRedisConnection(client *redis.Client) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -102,6 +77,11 @@ func main() {
 	ConnectDatabase()
 	defer db.Close()
 
+	topics, err := getTopics()
+	if err != nil {
+		log.Fatalf("Failed to get topics from database: %v", err)
+	}
+
 	redisClient := redis.NewClient(&redis.Options{
 		Addr: os.Getenv("REDIS_ADDR"),
 	})
@@ -111,42 +91,22 @@ func main() {
 	}
 	log.Println("Successfully connected to Redis")
 
-	topics, err := getTopics()
-	if err != nil {
-		log.Fatalf("Failed to get topics from database: %v", err)
-	}
 
-	kafkaBrokers := os.Getenv("KAFKA_BROKERS")
-	
-	brokers := strings.Split(kafkaBrokers, ",")
+	kafkaBrokers := strings.Split(os.Getenv("KAFKA_BROKERS"), ",")
+    automatedTradingService := services.NewAutomatedTradingService(db, redisClient, kafkaBrokers, topics)
+    portfolioService := services.NewPortfolioService(db, redisClient)
 
-	reader, err := setupKafkaReader(brokers, topics)
-	if err != nil {
-		log.Fatalf("Failed to setup Kafka reader: %v", err)
-	}
-
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	marketDataService, err := services.NewMarketDataService(reader, redisClient)
-	if err != nil {
-		log.Fatalf("Failed to create market data service: %v", err)
-	}
-
-	go func() {
-		if err := marketDataService.Start(ctx); err != nil {
-			log.Printf("Market data service error: %v", err)
-			cancel()
-		}
-	}()
+	// Start services
+    go automatedTradingService.Start()
+    go portfolioService.Start()
 
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
 	<-sigChan
 
 	log.Println("Shutting down...")
-	cancel()
-	marketDataService.Stop()
+	automatedTradingService.Stop()
+	portfolioService.Stop()
 	redisClient.Close()
 	db.Close()
 	log.Println("Shutdown complete")

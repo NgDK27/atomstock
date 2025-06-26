@@ -143,7 +143,7 @@ class Home extends ConsumerWidget {
                   padding: EdgeInsets.symmetric(
                       horizontal: OpSpacing.md, vertical: OpSpacing.xl2,),
                   child: Column(children: [
-                    Icon(Symbols.error_circle_rounded_error),
+                    Icon(Symbols.error_circle_rounded),
                     const SizedBox(
                       height: OpSpacing.md,
                     ),

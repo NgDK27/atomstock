@@ -41,6 +41,8 @@ class StockDetailsOverview extends HookConsumerWidget {
     final provider = stockDetailsProvider(identifier, type);
     final data = ref.watch(provider);
 
+    print(data);
+
     final timeRange = useState(StockPriceDateFilter.oneDay);
 
     final marketSession = useState(

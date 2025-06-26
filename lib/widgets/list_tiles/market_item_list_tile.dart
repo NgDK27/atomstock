@@ -37,38 +37,43 @@ class MarketItemListTile extends HookWidget {
         .copyWith(color: OpDynamicColor.onSurfaceVariant(context));
 
     final animationController = useAnimationController(
-      duration: const Duration(milliseconds: 1000), 
+      duration: const Duration(milliseconds: 1000),
     );
 
     final colorAnimation = useAnimation(
       ColorTween(
         begin: determineStockChangeColor(context: context, change: change),
         end: OpDynamicColor.onSurface(context),
-      ).animate(CurvedAnimation(
-        parent: animationController,
-        curve: Curves.easeInOut,
-      ),),
+      ).animate(
+        CurvedAnimation(
+          parent: animationController,
+          curve: Curves.easeInOut,
+        ),
+      ),
     );
 
-    useEffect(() {
-      animationController.forward(from: 0.0);
-      return null;
-    }, [currentValue, change],);
+    useEffect(
+      () {
+        animationController.forward(from: 0.0);
+        return null;
+      },
+      [currentValue, change],
+    );
 
     return PlatformListTile(
       onTap: onTap,
       title: AnimatedBuilder(
-            animation: animationController,
-            builder: (context, child) {
-              return Text(
-                symbol.toUpperCase(),
-                key: ValueKey(currentValue),
-                style: titleStyle.spacedOut().copyWith(
+        animation: animationController,
+        builder: (context, child) {
+          return Text(
+            symbol.toUpperCase(),
+            key: ValueKey(currentValue),
+            style: titleStyle.spacedOut().copyWith(
                   color: colorAnimation,
                 ),
-              );
-            },
-          ),
+          );
+        },
+      ),
       subtitle: Text(name, style: subtitleStyle),
       trailing: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -81,8 +86,8 @@ class MarketItemListTile extends HookWidget {
                 currentValue,
                 key: ValueKey(currentValue),
                 style: titleStyle.spacedOut().copyWith(
-                  color: colorAnimation,
-                ),
+                      color: colorAnimation,
+                    ),
               );
             },
           ),

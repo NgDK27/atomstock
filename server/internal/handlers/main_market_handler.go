@@ -23,6 +23,8 @@ var upgrader = websocket.Upgrader{
     },
 }
 
+// Development mode - bypass market hours check
+var developmentMode = true // Set to false for production
 
 type MainMarketConnection struct {
     conn          *websocket.Conn
@@ -74,8 +76,10 @@ func MainMarketWebSocket(redisClient *redis.Client) gin.HandlerFunc {
 
         initialStocks := make(map[string]bool)
         for _, category := range []string{"topVolume", "topIncrease", "topDecrease"} {
-            for _, stock := range initialData[category].([]models.StockData) {
-                initialStocks[stock.Symbol] = true
+            if stockList, ok := initialData[category].([]models.StockData); ok {
+                for _, stock := range stockList {
+                    initialStocks[stock.Symbol] = true
+                }
             }
         }
 
@@ -84,8 +88,8 @@ func MainMarketWebSocket(redisClient *redis.Client) gin.HandlerFunc {
             initialStocks: initialStocks,
         }
 
-        stockUpdateChan := make(chan models.StockData)
-        indexUpdateChan := make(chan models.IndexData)
+        stockUpdateChan := make(chan models.StockData, 100)
+        indexUpdateChan := make(chan models.IndexData, 100)
 
         go listenForUpdates(ctx, redisClient, stockUpdateChan, indexUpdateChan)
 
@@ -107,7 +111,18 @@ func handleStockUpdate(conn *MainMarketConnection, update models.StockData) {
     defer conn.mu.Unlock()
 
     if conn.initialStocks[update.Symbol] {
-        err := conn.conn.WriteJSON(gin.H{"type": "stockUpdate", "data": update})
+        // Convert to format expected by Dart
+        stockUpdate := gin.H{
+            "type": "stockUpdate",
+            "data": gin.H{
+                "Symbol": update.Symbol,
+                "Price": update.Price,
+                "Change": update.Change,
+                "RatioChange": update.RatioChange,
+                "Volume": update.Volume,
+            },
+        }
+        err := conn.conn.WriteJSON(stockUpdate)
         if err != nil {
             log.Printf("Failed to send stock update: %v", err)
         }
@@ -116,7 +131,20 @@ func handleStockUpdate(conn *MainMarketConnection, update models.StockData) {
 
 func handleIndexUpdate(conn *MainMarketConnection, update models.IndexData) {
     if update.IndexId == "VNIndex" || update.IndexId == "VN30" {
-        err := conn.conn.WriteJSON(gin.H{"type": "indexUpdate", "data": update})
+        // Convert to format expected by Dart
+        indexUpdate := gin.H{
+            "type": "indexUpdate",
+            "data": gin.H{
+                "IndexId": update.IndexId,
+                "IndexValue": update.IndexValue,
+                "Change": update.Change,
+                "RatioChange": update.RatioChange,
+                "TotalTrade": update.TotalTrade,
+                "TotalQtty": update.TotalQtty,
+                "TotalValue": update.TotalValue,
+            },
+        }
+        err := conn.conn.WriteJSON(indexUpdate)
         if err != nil {
             log.Printf("Failed to send index update: %v", err)
         }
@@ -185,7 +213,7 @@ func getAllIndexes(ctx context.Context, redisClient *redis.Client) []models.Inde
 
     indexes := make([]models.IndexData, 0, len(keys))
     for _, key := range keys {
-        indexId := key[6:] 
+        indexId := key[6:]
         indexData := getIndexData(ctx, redisClient, indexId)
         if indexData != nil {
             indexes = append(indexes, *indexData)
@@ -196,7 +224,8 @@ func getAllIndexes(ctx context.Context, redisClient *redis.Client) []models.Inde
 }
 
 func getDefaultIndexes(ctx context.Context, redisClient *redis.Client) []models.IndexData {
-    indexSymbols := []string{"VNIndex", "VN30"}
+    // Updated to use standardized index symbols
+    indexSymbols := []string{"VNIndex", "VN30", "HNXIndex"}
     indexes := make([]models.IndexData, 0, len(indexSymbols))
     for _, symbol := range indexSymbols {
         indexData := getIndexData(ctx, redisClient, symbol)
@@ -268,6 +297,8 @@ func GetStockDetail(redisClient *redis.Client) gin.HandlerFunc {
     }
 }
 
+
+// Fix for StockDetailWebSocket in main_market_handler.go
 func StockDetailWebSocket(redisClient *redis.Client) gin.HandlerFunc {
     return func(c *gin.Context) {
         symbol := c.Param("symbol")
@@ -281,20 +312,40 @@ func StockDetailWebSocket(redisClient *redis.Client) gin.HandlerFunc {
         ctx, cancel := context.WithCancel(c.Request.Context())
         defer cancel()
 
-        updateChan := make(chan models.StockData)
+        updateChan := make(chan models.StockData, 100)
 
         go listenForStockUpdates(ctx, redisClient, symbol, updateChan)
 
         initialData := getStockData(ctx, redisClient, symbol)
-        if err := conn.WriteJSON(initialData); err != nil {
-            log.Printf("Error sending initial data: %v", err)
-            return
+        if initialData != nil {
+            // Send initial data in the format Dart expects
+            initialUpdate := gin.H{
+                "Symbol": initialData.Symbol,           // Add Symbol field
+                "Price": initialData.Price,             // Change from currentPrice
+                "Change": initialData.Change,           // Change from priceChange
+                "RatioChange": initialData.RatioChange, // Change from percentChange
+                "Volume": initialData.Volume,
+            }
+            if err := conn.WriteJSON(initialUpdate); err != nil {
+                log.Printf("Error sending initial data: %v", err)
+                return
+            }
+        } else {
+            log.Printf("No initial data found for symbol: %s", symbol)
         }
 
         for {
             select {
             case update := <-updateChan:
-                if err := conn.WriteJSON(update); err != nil {
+                // Convert to format expected by Dart StockDetailUpdate
+                stockUpdate := gin.H{
+                    "Symbol": update.Symbol,           // Add Symbol field
+                    "Price": update.Price,             // Change from currentPrice
+                    "Change": update.Change,           // Change from priceChange
+                    "RatioChange": update.RatioChange, // Change from percentChange
+                    "Volume": update.Volume,
+                }
+                if err := conn.WriteJSON(stockUpdate); err != nil {
                     log.Printf("Error writing to WebSocket: %v", err)
                     return
                 }
@@ -304,6 +355,7 @@ func StockDetailWebSocket(redisClient *redis.Client) gin.HandlerFunc {
         }
     }
 }
+
 
 func listenForStockUpdates(ctx context.Context, redisClient *redis.Client, symbol string, updateChan chan<- models.StockData) {
     pubsub := redisClient.Subscribe(ctx, "stock_updates")
@@ -354,20 +406,44 @@ func IndexDetailWebSocket(redisClient *redis.Client) gin.HandlerFunc {
         ctx, cancel := context.WithCancel(c.Request.Context())
         defer cancel()
 
-        updateChan := make(chan models.IndexData)
+        updateChan := make(chan models.IndexData, 100)
 
         go listenForIndexUpdates(ctx, redisClient, indexId, updateChan)
 
         initialData := getIndexData(ctx, redisClient, indexId)
-        if err := conn.WriteJSON(initialData); err != nil {
-            log.Printf("Error sending initial data: %v", err)
-            return
+        if initialData != nil {
+            // Send initial data in the format Dart expects
+            initialUpdate := gin.H{
+                "IndexId": initialData.IndexId,         // Add IndexId field
+                "IndexValue": initialData.IndexValue,
+                "Change": initialData.Change,
+                "RatioChange": initialData.RatioChange,
+                "TotalTrade": initialData.TotalTrade,
+                "TotalQtty": initialData.TotalQtty,
+                "TotalValue": initialData.TotalValue,
+            }
+            if err := conn.WriteJSON(initialUpdate); err != nil {
+                log.Printf("Error sending initial data: %v", err)
+                return
+            }
+        } else {
+            log.Printf("No initial data found for index: %s", indexId)
         }
 
         for {
             select {
             case update := <-updateChan:
-                if err := conn.WriteJSON(update); err != nil {
+                // Convert to format expected by Dart IndexDetailUpdate
+                indexUpdate := gin.H{
+                    "IndexId": update.IndexId,         // Add IndexId field
+                    "IndexValue": update.IndexValue,
+                    "Change": update.Change,
+                    "RatioChange": update.RatioChange,
+                    "TotalTrade": update.TotalTrade,
+                    "TotalQtty": update.TotalQtty,
+                    "TotalValue": update.TotalValue,
+                }
+                if err := conn.WriteJSON(indexUpdate); err != nil {
                     log.Printf("Error writing to WebSocket: %v", err)
                     return
                 }
@@ -404,13 +480,24 @@ func SearchStocks(redisClient *redis.Client, dbConn *sql.DB) gin.HandlerFunc {
         query := c.Query("q")
         ctx := c.Request.Context()
 
+        log.Printf("🔍 Search request for: '%s'", query)
+
+        if query == "" {
+            // Return all stocks if no query provided
+            results, _ := getAllStocksFromRedis(ctx, redisClient, 0, 50)
+            log.Printf("📊 Returning %d stocks (no query)", len(results))
+            c.JSON(http.StatusOK, results)
+            return
+        }
+
         results, err := searchStocksInRedisAndDB(ctx, redisClient, dbConn, query)
         if err != nil {
-            log.Printf("Failed to search stocks: %v", err)
+            log.Printf("❌ Failed to search stocks: %v", err)
             c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to search stocks"})
             return
         }
 
+        log.Printf("✅ Search completed, found %d results for '%s'", len(results), query)
         c.JSON(http.StatusOK, results)
     }
 }
@@ -457,7 +544,7 @@ func GetAllStocks(redisClient *redis.Client) gin.HandlerFunc {
         limit := 50
 
         stocks, hasMore := getAllStocksFromRedis(ctx, redisClient, offset, limit)
-        
+
         c.JSON(http.StatusOK, gin.H{
             "stocks": stocks,
             "hasMore": hasMore,
@@ -472,6 +559,8 @@ func getAllStocksFromRedis(ctx context.Context, redisClient *redis.Client, offse
         log.Printf("Error fetching stock keys: %v", err)
         return []models.StockData{}, false
     }
+
+    log.Printf("📊 Found %d stock keys in Redis", len(keys))
 
     symbols := make([]string, len(keys))
     for i, key := range keys {
@@ -495,5 +584,6 @@ func getAllStocksFromRedis(ctx context.Context, redisClient *redis.Client, offse
         }
     }
 
+    log.Printf("✅ Returning %d stocks from Redis (hasMore: %v)", len(stocks), hasMore)
     return stocks, hasMore
 }

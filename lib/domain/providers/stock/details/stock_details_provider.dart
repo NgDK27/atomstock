@@ -126,11 +126,11 @@ class StockDetails extends _$StockDetails {
     ),);
     _listenToUpdates(state.value!, identifier, type);
   }
-//
-// Future<void> refreshStockDetails(
-//     String identifier, StockItemType type, StockPriceDateFilter timeRange) async {
-//   state = const AsyncValue.loading();
-//   state = await AsyncValue.guard(
-//       () => _fetchDetails(identifier: identifier, type: type, timeRange: timeRange));
-// }
+
+Future<void> refreshStockDetails(
+    String identifier, StockItemType type, StockPriceDateFilter timeRange) async {
+  state = const AsyncValue.loading();
+  state = await AsyncValue.guard(
+      () => _fetchDetails(identifier: identifier, type: type, timeRange: timeRange));
+}
 }

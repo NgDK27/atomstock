@@ -1,54 +1,43 @@
+import 'package:currency_formatter/currency_formatter.dart';
 
-
-import 'package:money_formatter/money_formatter.dart';
-
-extension CurrencyFormatter on double {
+extension VNDCurrencyFormatter on double {
 
   String vndFormat() {
-    final MoneyFormatter fmf = MoneyFormatter(
-        amount: this,
-        settings: MoneyFormatterSettings(
-            symbol: '₫',
-            thousandSeparator: '.',
-            decimalSeparator: ',',
-            symbolAndNumberSeparator: ' ',
-            fractionDigits: 0,
-            compactFormatType: CompactFormatType.short,
-        ),
+    final CurrencyFormat vndSettings = CurrencyFormat(
+      code: 'vnd',
+      symbol: '₫',
+      symbolSide: SymbolSide.right,
+      thousandSeparator: '.',
+      decimalSeparator: ',',
+      symbolSeparator: ' ',
     );
 
-    return fmf.output.symbolOnRight;
+    return CurrencyFormatter.format(this, vndSettings, decimal: 0);
   }
 
   String vndNoSymbolFormat() {
-    final MoneyFormatter fmf = MoneyFormatter(
-      amount: this,
-      settings: MoneyFormatterSettings(
-        symbol: '₫',
-        thousandSeparator: '.',
-        decimalSeparator: ',',
-        symbolAndNumberSeparator: ' ',
-        fractionDigits: 0,
-        compactFormatType: CompactFormatType.short,
-      ),
+    final CurrencyFormat vndSettings = CurrencyFormat(
+      code: 'vnd',
+      symbol: '₫',
+      symbolSide: SymbolSide.none, // No symbol
+      thousandSeparator: '.',
+      decimalSeparator: ',',
+      symbolSeparator: ' ',
     );
 
-    return fmf.output.nonSymbol;
+    return CurrencyFormatter.format(this, vndSettings, decimal: 0);
   }
 
   String vndCompactFormat() {
-    final MoneyFormatter fmf = MoneyFormatter(
-        amount: this,
-        settings: MoneyFormatterSettings(
-            symbol: '₫',
-            thousandSeparator: '.',
-            decimalSeparator: ',',
-            symbolAndNumberSeparator: ' ',
-            fractionDigits: 3,
-            compactFormatType: CompactFormatType.short,
-        ),
+    final CurrencyFormat vndSettings = CurrencyFormat(
+      code: 'vnd',
+      symbol: '₫',
+      symbolSide: SymbolSide.right,
+      thousandSeparator: '.',
+      decimalSeparator: ',',
+      symbolSeparator: ' ',
     );
 
-    return fmf.output.compactSymbolOnRight;
+    return CurrencyFormatter.format(this, vndSettings, compact: true, decimal: 3);
   }
 }

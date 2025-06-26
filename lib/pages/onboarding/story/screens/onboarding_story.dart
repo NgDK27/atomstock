@@ -55,6 +55,7 @@ class _OnboardingStoryState extends ConsumerState<OnboardingStory> {
         indicatorPadding: EdgeInsets.fromLTRB(
             OpSpacing.md, MediaQuery.of(context).padding.top, OpSpacing.md, 0,),
         pageLength: 1,
+          indicatorDuration: Duration(seconds: 30),
         storyLength: (_) {
           return 6;
         },

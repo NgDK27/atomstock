@@ -22,13 +22,14 @@ class StockLineChart extends StatefulHookWidget {
   final bool isReloading;
   final StockItemType type;
 
-  const StockLineChart(
-      {super.key,
-      required this.stockPricePoints,
-      required this.selectedDateFilter,
-      required this.accentColor,
-      required this.isReloading,
-      required this.type,});
+  const StockLineChart({
+    super.key,
+    required this.stockPricePoints,
+    required this.selectedDateFilter,
+    required this.accentColor,
+    required this.isReloading,
+    required this.type,
+  });
 
   @override
   State<StockLineChart> createState() => _StockLineChartState();
@@ -57,7 +58,10 @@ class _StockLineChartState extends State<StockLineChart> {
                     curve: Curves.easeInOutQuad,
                     duration: const Duration(milliseconds: 300),
                     mainData(
-                        widget.accentColor, allData, widget.selectedDateFilter,),
+                      widget.accentColor,
+                      allData,
+                      widget.selectedDateFilter,
+                    ),
                   )
                 : const Center(
                     child: Text('No data available for this period'),
@@ -69,7 +73,10 @@ class _StockLineChartState extends State<StockLineChart> {
   }
 
   Widget bottomTitleWidgets(
-      double value, TitleMeta meta, StockPriceDateFilter filter,) {
+    double value,
+    TitleMeta meta,
+    StockPriceDateFilter filter,
+  ) {
     final style = OpTextStyle.labelSmall(context);
     final date = DateTime.fromMillisecondsSinceEpoch(value.toInt());
 
@@ -82,7 +89,8 @@ class _StockLineChartState extends State<StockLineChart> {
     };
 
     return SideTitleWidget(
-      axisSide: meta.axisSide,
+      // axisSide: meta.axisSide,
+      meta: meta,
       space: OpSpacing.xl,
       fitInside: SideTitleFitInsideData.fromTitleMeta(
         meta,
@@ -107,17 +115,19 @@ class _StockLineChartState extends State<StockLineChart> {
         value == maxPrice ||
         value.toStringAsFixed(2) == middlePrice.toStringAsFixed(2)) {
       return SideTitleWidget(
-        axisSide: meta.axisSide,
+        // axisSide: meta.axisSide,
+        meta: meta,
         child: Stack(
           clipBehavior: Clip.none,
           children: [
             Positioned(
               left: OpSpacing.md,
               child: ChipSmall(
-                  text: switch (widget.type) {
-                StockItemType.idx => value.toStringAsFixed(2),
-                StockItemType.stock => value.vndFormat(),
-              },),
+                text: switch (widget.type) {
+                  StockItemType.idx => value.toStringAsFixed(2),
+                  StockItemType.stock => value.vndFormat(),
+                },
+              ),
             ),
             const SizedBox.shrink(),
           ],
@@ -183,7 +193,7 @@ class _StockLineChartState extends State<StockLineChart> {
         getTouchLineStart: (data, index) => maxY,
         getTouchLineEnd: (data, index) => minY,
         touchTooltipData: LineTouchTooltipData(
-          tooltipRoundedRadius: OpRadius.xl,
+          tooltipBorderRadius: BorderRadius.circular(OpRadius.xl),
           showOnTopOfTheChartBoxArea: true,
           fitInsideHorizontally: true,
           getTooltipColor: (_) => OpDynamicColor.onSurface(context),
@@ -194,7 +204,8 @@ class _StockLineChartState extends State<StockLineChart> {
                   OpTextStyle.regular(),
                   children: [
                     TextSpan(
-                      text: '${touchedSpot.y.vndFormat()}\n',
+                      text:
+                          '${widget.type == StockItemType.idx ? touchedSpot.y : touchedSpot.y.vndFormat()}\n',
                       style: OpTextStyle.labelLarge(context)
                           .bold()
                           .copyWith(color: OpDynamicColor.surface(context)),
